@@ -35,6 +35,27 @@ describe('Health (e2e)', () => {
       .expect({ data: { status: 'ok' } });
   });
 
+  it('/api/currency/convert (GET) rejects missing amount', () => {
+    return request(app.getHttpServer())
+      .get('/api/currency/convert')
+      .query({ from: 'USD', to: 'EUR' })
+      .expect(400);
+  });
+
+  it('/api/flights/search (GET) rejects missing origin', () => {
+    return request(app.getHttpServer())
+      .get('/api/flights/search')
+      .query({ destination: 'BCN' })
+      .expect(400);
+  });
+
+  it('/api/hotels/search (GET) rejects missing city', () => {
+    return request(app.getHttpServer())
+      .get('/api/hotels/search')
+      .query({ countryCode: 'ES' })
+      .expect(400);
+  });
+
   afterAll(async () => {
     await app.close();
   });
