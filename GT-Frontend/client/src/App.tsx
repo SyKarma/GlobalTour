@@ -1,10 +1,7 @@
+import AppRouter from './routes/AppRouter';
+
 function App() {
-  return (
-    <main>
-      <h1>GlobalTour</h1>
-      <p>Frontend base ready.</p>
-    </main>
-  );
+  return <AppRouter />;
 }
 
 export default App;
