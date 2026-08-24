@@ -1,5 +1,21 @@
+:root {
+  font-family:
+    Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+
+  color: #172033;
+  background: #f6f8fc;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
 * {
   box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html,
@@ -11,5 +27,121 @@ body,
 }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #f6f8fc;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.main-header {
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e8ecf3;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar {
+  width: min(1200px, calc(100% - 40px));
+  min-height: 72px;
+  margin: 0 auto;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.brand {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #2563eb;
+  letter-spacing: -0.03em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-link {
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #667085;
+  font-weight: 500;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-link:hover {
+  background: #f2f5fa;
+  color: #172033;
+}
+
+.nav-link.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.page-container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.04em;
+}
+
+p {
+  color: #667085;
+  line-height: 1.7;
+}
+
+@media (max-width: 720px) {
+  .navbar {
+    width: min(100% - 24px, 1200px);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 0;
+    gap: 12px;
+  }
+
+  .nav-links {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .nav-link {
+    white-space: nowrap;
+  }
+
+  .page-container {
+    width: min(100% - 24px, 1200px);
+    padding: 32px 0;
+  }
 }
