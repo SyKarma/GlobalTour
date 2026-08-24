@@ -1,63 +1,103 @@
+import { NavLink } from 'react-router-dom';
 import TripSearchForm from '../components/trip/TripSearchForm';
+
+const popularDestinations = [
+  {
+    city: 'Miami',
+    country: 'Estados Unidos',
+    iata: 'MIA',
+    price: '$295',
+  },
+  {
+    city: 'Madrid',
+    country: 'España',
+    iata: 'MAD',
+    price: '$620',
+  },
+  {
+    city: 'Cancún',
+    country: 'México',
+    iata: 'CUN',
+    price: '$340',
+  },
+  {
+    city: 'Bogotá',
+    country: 'Colombia',
+    iata: 'BOG',
+    price: '$280',
+  },
+];
 
 function HomePage() {
   return (
-    <main>
-      <section className="home-hero">
-        <div className="hero-content">
-          <span className="hero-eyebrow">Tu próximo viaje comienza aquí</span>
+    <main className="home-page">
+      <section className="search-hero">
+        <div className="hero-heading">
+          <span className="hero-kicker">Compara. Organiza. Viaja.</span>
 
-          <h1>
-            Planea tu viaje
-            <span> en un solo lugar.</span>
-          </h1>
+          <h1>Encuentra tu próximo viaje.</h1>
 
           <p>
-            Compara vuelos, hospedaje y transporte para estructurar tu próxima
-            aventura de forma simple.
+            Compara vuelos, hospedaje y transporte desde un solo lugar.
           </p>
+        </div>
+
+        <div className="travel-tabs">
+          <NavLink to="/" end className="travel-tab active">
+            Vuelos
+          </NavLink>
+
+          <NavLink to="/hotels" className="travel-tab">
+            Hospedaje
+          </NavLink>
+
+          <NavLink to="/cars" className="travel-tab">
+            Rent a Car
+          </NavLink>
         </div>
 
         <TripSearchForm />
       </section>
 
-      <section className="service-section">
-        <div className="section-heading">
-          <span>Todo lo que necesitas</span>
-          <h2>Organiza cada parte de tu viaje</h2>
+      <section className="explore-section">
+        <div className="explore-heading">
+          <div>
+            <span>Inspiración para tu viaje</span>
+            <h2>Explora destinos populares</h2>
+          </div>
+
           <p>
-            GlobalTour reúne diferentes opciones para ayudarte a tomar mejores
-            decisiones antes de viajar.
+            Descubre algunas rutas que podrías considerar para tu próxima
+            aventura.
           </p>
         </div>
 
-        <div className="service-grid">
-          <article className="service-card">
-            <span className="service-number">01</span>
-            <h3>Vuelos</h3>
-            <p>
-              Compara alternativas de vuelo según destino, fecha, aerolínea y
-              precio.
-            </p>
-          </article>
+        <div className="destination-grid">
+          {popularDestinations.map((destination) => (
+            <article
+              className="destination-card"
+              key={destination.iata}
+            >
+              <div className="destination-card-top">
+                <span className="destination-iata">
+                  {destination.iata}
+                </span>
 
-          <article className="service-card">
-            <span className="service-number">02</span>
-            <h3>Hospedaje</h3>
-            <p>
-              Explora diferentes opciones de alojamiento disponibles para tu
-              destino.
-            </p>
-          </article>
+                <span className="destination-price">
+                  desde {destination.price}
+                </span>
+              </div>
 
-          <article className="service-card">
-            <span className="service-number">03</span>
-            <h3>Rent a Car</h3>
-            <p>
-              Complementa tu viaje encontrando opciones de transporte en el
-              destino.
-            </p>
-          </article>
+              <div>
+                <h3>{destination.city}</h3>
+                <p>{destination.country}</p>
+              </div>
+
+              <span className="destination-action">
+                Explorar
+              </span>
+            </article>
+          ))}
         </div>
       </section>
     </main>

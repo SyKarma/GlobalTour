@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react';
 
+type TripType = 'round-trip' | 'one-way';
+
 function TripSearchForm() {
-  const [tripType, setTripType] = useState<'round-trip' | 'one-way'>(
-    'round-trip',
-  );
+  const [tripType, setTripType] = useState<TripType>('round-trip');
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -11,57 +11,78 @@ function TripSearchForm() {
 
   return (
     <form className="trip-search" onSubmit={handleSubmit}>
-      <div className="trip-type-selector">
-        <button
-          type="button"
-          className={tripType === 'round-trip' ? 'trip-type active' : 'trip-type'}
-          onClick={() => setTripType('round-trip')}
+      <div className="search-options">
+        <select
+          value={tripType}
+          onChange={(event) =>
+            setTripType(event.target.value as TripType)
+          }
+          aria-label="Tipo de viaje"
         >
-          Ida y vuelta
-        </button>
+          <option value="round-trip">Ida y vuelta</option>
+          <option value="one-way">Solo ida</option>
+        </select>
 
-        <button
-          type="button"
-          className={tripType === 'one-way' ? 'trip-type active' : 'trip-type'}
-          onClick={() => setTripType('one-way')}
-        >
-          Solo ida
-        </button>
+        <select aria-label="Clase">
+          <option value="economy">Económica</option>
+          <option value="premium">Premium Economy</option>
+          <option value="business">Business</option>
+          <option value="first">Primera clase</option>
+        </select>
       </div>
 
-      <div className="trip-search-grid">
-        <label className="search-field">
+      <div className="main-search-row">
+        <label className="search-box search-location">
           <span>Origen</span>
-          <input
-            type="text"
-            placeholder="San José, Costa Rica"
-            aria-label="Origen"
-          />
+
+          <div className="search-value">
+            <strong>SJO</strong>
+
+            <input
+              type="text"
+              placeholder="San José, Costa Rica"
+              aria-label="Origen"
+            />
+          </div>
         </label>
 
-        <label className="search-field">
+        <button
+          type="button"
+          className="swap-button"
+          aria-label="Intercambiar origen y destino"
+        >
+          ⇄
+        </button>
+
+        <label className="search-box search-location">
           <span>Destino</span>
-          <input
-            type="text"
-            placeholder="Miami, Estados Unidos"
-            aria-label="Destino"
-          />
+
+          <div className="search-value">
+            <strong>MIA</strong>
+
+            <input
+              type="text"
+              placeholder="Miami, Estados Unidos"
+              aria-label="Destino"
+            />
+          </div>
         </label>
 
-        <label className="search-field">
+        <label className="search-box search-date">
           <span>Salida</span>
           <input type="date" aria-label="Fecha de salida" />
         </label>
 
         {tripType === 'round-trip' && (
-          <label className="search-field">
+          <label className="search-box search-date">
             <span>Regreso</span>
             <input type="date" aria-label="Fecha de regreso" />
           </label>
         )}
 
-        <label className="search-field">
+        <label className="search-box search-travelers">
           <span>Viajeros</span>
+
           <select defaultValue="1" aria-label="Cantidad de viajeros">
             <option value="1">1 viajero</option>
             <option value="2">2 viajeros</option>
@@ -72,7 +93,7 @@ function TripSearchForm() {
         </label>
 
         <button className="search-button" type="submit">
-          Buscar viaje
+          Buscar
         </button>
       </div>
     </form>
