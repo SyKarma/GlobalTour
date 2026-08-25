@@ -1,16 +1,30 @@
 import { apiClient } from '../api/client';
-import type { Destination } from '../types/destination.types';
+import type {
+  Destination,
+  DestinationDetailResponse,
+  DestinationSearchParams,
+  DestinationSearchResponse,
+} from '../types/destination.types';
 
-export interface DestinationSearchParams {
-  query?: string;
-}
-
-export const getDestinations = async (
-  params?: DestinationSearchParams,
-): Promise<Destination[]> => {
-  const response = await apiClient.get<Destination[]>('/api/destinations', {
-    params,
-  });
+export const searchDestinations = async (
+  params: DestinationSearchParams = {},
+): Promise<DestinationSearchResponse> => {
+  const response = await apiClient.get<DestinationSearchResponse>(
+    '/api/destinations',
+    {
+      params,
+    },
+  );
 
   return response.data;
+};
+
+export const getDestinationByIata = async (
+  iata: string,
+): Promise<Destination> => {
+  const response = await apiClient.get<DestinationDetailResponse>(
+    `/api/destinations/${iata.toUpperCase()}`,
+  );
+
+  return response.data.data;
 };
