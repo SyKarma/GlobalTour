@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import FlightSearchEditor from '../components/flights/FlightSearchEditor';
 import { searchFlights } from '../services/flights.service';
+
 import type {
   FlightOffer,
   FlightResponseMeta,
@@ -74,11 +76,14 @@ function FlightsPage() {
   const [searchParams] = useSearchParams();
 
   const [flights, setFlights] = useState<FlightOffer[]>([]);
+
   const [meta, setMeta] =
     useState<FlightResponseMeta | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+
+  const [error, setError] =
+    useState<string | null>(null);
 
   const [stopsFilter, setStopsFilter] =
     useState<StopsFilter>('all');
@@ -90,10 +95,18 @@ function FlightsPage() {
     useState<SortOption>('price-asc');
 
   const origin = searchParams.get('origin');
-  const destination = searchParams.get('destination');
-  const departureAt = searchParams.get('departureAt');
-  const returnAt = searchParams.get('returnAt');
-  const currency = searchParams.get('currency') || 'USD';
+
+  const destination =
+    searchParams.get('destination');
+
+  const departureAt =
+    searchParams.get('departureAt');
+
+  const returnAt =
+    searchParams.get('returnAt');
+
+  const currency =
+    searchParams.get('currency') || 'USD';
 
   useEffect(() => {
     let isCancelled = false;
@@ -103,7 +116,9 @@ function FlightsPage() {
         setError(
           'Debes seleccionar un origen y un destino.',
         );
+
         setIsLoading(false);
+
         return;
       }
 
@@ -114,8 +129,10 @@ function FlightsPage() {
         const response = await searchFlights({
           origin,
           destination,
-          departureAt: departureAt || undefined,
-          returnAt: returnAt || undefined,
+          departureAt:
+            departureAt || undefined,
+          returnAt:
+            returnAt || undefined,
           currency,
           limit: 30,
         });
@@ -163,7 +180,8 @@ function FlightsPage() {
   ]);
 
   const airlines = useMemo(() => {
-    const airlineMap = new Map<string, string>();
+    const airlineMap =
+      new Map<string, string>();
 
     flights.forEach((flight) => {
       if (!flight.airline) {
@@ -172,12 +190,16 @@ function FlightsPage() {
 
       airlineMap.set(
         flight.airline,
-        formatAirlineName(flight.airlineName),
+        formatAirlineName(
+          flight.airlineName,
+        ),
       );
     });
 
-    return Array.from(airlineMap.entries()).sort(
-      (a, b) => a[1].localeCompare(b[1]),
+    return Array.from(
+      airlineMap.entries(),
+    ).sort((a, b) =>
+      a[1].localeCompare(b[1]),
     );
   }, [flights]);
 
@@ -186,20 +208,23 @@ function FlightsPage() {
 
     if (stopsFilter === 'direct') {
       result = result.filter(
-        (flight) => flight.transfers === 0,
+        (flight) =>
+          flight.transfers === 0,
       );
     }
 
     if (stopsFilter === 'stops') {
       result = result.filter(
-        (flight) => flight.transfers > 0,
+        (flight) =>
+          flight.transfers > 0,
       );
     }
 
     if (selectedAirline !== 'all') {
       result = result.filter(
         (flight) =>
-          flight.airline === selectedAirline,
+          flight.airline ===
+          selectedAirline,
       );
     }
 
@@ -247,7 +272,8 @@ function FlightsPage() {
           <p className="flights-search-summary">
             {departureAt}
 
-            {returnAt && ` — ${returnAt}`}
+            {returnAt &&
+              ` — ${returnAt}`}
 
             {' · '}
 
@@ -256,20 +282,39 @@ function FlightsPage() {
         )}
       </section>
 
+      {origin && destination && (
+        <FlightSearchEditor
+          key={`${origin}-${destination}-${departureAt}-${returnAt}`}
+          initialOriginIata={origin}
+          initialDestinationIata={
+            destination
+          }
+          initialDepartureAt={
+            departureAt
+          }
+          initialReturnAt={returnAt}
+          currency={currency}
+        />
+      )}
+
       {isLoading && (
         <section className="flights-status">
-          <h2>Buscando las mejores opciones...</h2>
+          <h2>
+            Buscando las mejores opciones...
+          </h2>
 
           <p>
-            Estamos comparando vuelos disponibles para tu
-            viaje.
+            Estamos comparando vuelos
+            disponibles para tu viaje.
           </p>
         </section>
       )}
 
       {!isLoading && error && (
         <section className="flights-status flights-error">
-          <h2>No pudimos realizar la búsqueda</h2>
+          <h2>
+            No pudimos realizar la búsqueda
+          </h2>
 
           <p>{error}</p>
         </section>
@@ -279,11 +324,13 @@ function FlightsPage() {
         !error &&
         flights.length === 0 && (
           <section className="flights-status">
-            <h2>No encontramos vuelos</h2>
+            <h2>
+              No encontramos vuelos
+            </h2>
 
             <p>
-              Intenta cambiar las fechas o seleccionar otra
-              ruta.
+              Intenta cambiar las fechas o
+              seleccionar otra ruta.
             </p>
           </section>
         )}
@@ -295,22 +342,24 @@ function FlightsPage() {
             <section className="flights-results-heading">
               <div>
                 <h2>
-                  {filteredFlights.length} de{' '}
-                  {flights.length}{' '}
+                  {filteredFlights.length}{' '}
+                  de {flights.length}{' '}
                   {flights.length === 1
                     ? 'opción'
                     : 'opciones'}
                 </h2>
 
                 <p>
-                  Filtra y ordena los resultados según tus
+                  Filtra y ordena los
+                  resultados según tus
                   preferencias.
                 </p>
               </div>
 
               {meta?.stale && (
                 <span className="flight-cache-warning">
-                  Datos almacenados temporalmente
+                  Datos almacenados
+                  temporalmente
                 </span>
               )}
             </section>
@@ -339,12 +388,15 @@ function FlightsPage() {
                   <button
                     type="button"
                     className={
-                      stopsFilter === 'direct'
+                      stopsFilter ===
+                      'direct'
                         ? 'flight-filter-button active'
                         : 'flight-filter-button'
                     }
                     onClick={() =>
-                      setStopsFilter('direct')
+                      setStopsFilter(
+                        'direct',
+                      )
                     }
                   >
                     Directos
@@ -353,12 +405,15 @@ function FlightsPage() {
                   <button
                     type="button"
                     className={
-                      stopsFilter === 'stops'
+                      stopsFilter ===
+                      'stops'
                         ? 'flight-filter-button active'
                         : 'flight-filter-button'
                     }
                     onClick={() =>
-                      setStopsFilter('stops')
+                      setStopsFilter(
+                        'stops',
+                      )
                     }
                   >
                     Con escalas
@@ -367,7 +422,9 @@ function FlightsPage() {
               </div>
 
               <label className="flight-filter-select">
-                <span>Aerolínea</span>
+                <span>
+                  Aerolínea
+                </span>
 
                 <select
                   value={selectedAirline}
@@ -381,19 +438,23 @@ function FlightsPage() {
                     Todas las aerolíneas
                   </option>
 
-                  {airlines.map(([code, name]) => (
-                    <option
-                      key={code}
-                      value={code}
-                    >
-                      {name}
-                    </option>
-                  ))}
+                  {airlines.map(
+                    ([code, name]) => (
+                      <option
+                        key={code}
+                        value={code}
+                      >
+                        {name}
+                      </option>
+                    ),
+                  )}
                 </select>
               </label>
 
               <label className="flight-filter-select">
-                <span>Ordenar por</span>
+                <span>
+                  Ordenar por
+                </span>
 
                 <select
                   value={sortOption}
@@ -419,15 +480,18 @@ function FlightsPage() {
               </label>
             </section>
 
-            {filteredFlights.length === 0 ? (
+            {filteredFlights.length ===
+            0 ? (
               <section className="flights-status">
                 <h2>
-                  No hay vuelos con estos filtros
+                  No hay vuelos con estos
+                  filtros
                 </h2>
 
                 <p>
-                  Prueba seleccionando otra aerolínea o
-                  cambiando el filtro de escalas.
+                  Prueba seleccionando otra
+                  aerolínea o cambiando el
+                  filtro de escalas.
                 </p>
               </section>
             ) : (
@@ -440,7 +504,8 @@ function FlightsPage() {
                     >
                       <div className="flight-airline">
                         <div className="airline-code">
-                          {flight.airline || '—'}
+                          {flight.airline ||
+                            '—'}
                         </div>
 
                         <div>
@@ -453,7 +518,9 @@ function FlightsPage() {
                           {flight.flightNumber && (
                             <span>
                               Vuelo{' '}
-                              {flight.flightNumber}
+                              {
+                                flight.flightNumber
+                              }
                             </span>
                           )}
                         </div>
@@ -521,13 +588,16 @@ function FlightsPage() {
                       </div>
 
                       <div className="flight-price">
-                        <span>Desde</span>
+                        <span>
+                          Desde
+                        </span>
 
                         <strong>
                           {new Intl.NumberFormat(
                             'en-US',
                             {
-                              style: 'currency',
+                              style:
+                                'currency',
                               currency:
                                 flight.currency,
                               maximumFractionDigits: 0,
@@ -554,7 +624,8 @@ function FlightsPage() {
                             className="flight-offer-button"
                             disabled
                           >
-                            Oferta no disponible
+                            Oferta no
+                            disponible
                           </button>
                         )}
                       </div>

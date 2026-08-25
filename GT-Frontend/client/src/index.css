@@ -1462,3 +1462,129 @@ button {
     width: 100%;
   }
 }
+
+/* EDIT FLIGHT SEARCH */
+
+.flight-search-editor {
+  margin-bottom: 30px;
+}
+
+.flight-search-edit-button {
+  padding: 10px 16px;
+
+  background: #ffffff;
+
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+
+  color: #344054;
+
+  font-size: 0.84rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.flight-search-edit-button:hover {
+  background: #f8fafc;
+  border-color: #2563eb;
+
+  color: #2563eb;
+}
+
+.flight-search-edit-form {
+  margin-top: 14px;
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 16px;
+
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.05);
+}
+
+.flight-search-edit-options {
+  margin-bottom: 12px;
+}
+
+.flight-search-edit-options select {
+  min-height: 36px;
+  padding: 0 34px 0 10px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+
+  color: #344054;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.flight-search-edit-fields {
+  display: grid;
+
+  grid-template-columns:
+    minmax(180px, 1fr)
+    42px
+    minmax(180px, 1fr)
+    minmax(140px, 0.7fr)
+    minmax(140px, 0.7fr)
+    auto;
+
+  align-items: stretch;
+  gap: 8px;
+}
+
+.flight-search-edit-fields
+  .destination-autocomplete {
+  min-width: 0;
+}
+
+.flight-search-edit-fields .search-box {
+  min-height: 64px;
+}
+
+.flight-search-edit-fields .search-button {
+  min-width: 105px;
+}
+
+@media (max-width: 1050px) {
+  .flight-search-edit-fields {
+    grid-template-columns:
+      minmax(180px, 1fr)
+      42px
+      minmax(180px, 1fr);
+  }
+
+  .flight-search-edit-fields
+    .search-date,
+  .flight-search-edit-fields
+    .search-button {
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 700px) {
+  .flight-search-edit-fields {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .flight-search-edit-fields
+    .swap-button {
+    align-self: center;
+  }
+
+  .flight-search-edit-fields
+    .search-button {
+    width: 100%;
+  }
+}
