@@ -11,7 +11,11 @@ export class FlightsController {
   constructor(private readonly flights: FlightsService) {}
 
   @Get('search')
-  @ApiOperation({ summary: 'Compare flight offers between two cities' })
+  @ApiOperation({
+    summary: 'Compare flight offers between two cities',
+    description:
+      'Aviasales cached prices, not a live GDS. Exact YYYY-MM-DD round trips are often empty. Search then falls back to one-way that day, then to /calendar days in the departure or return month.',
+  })
   @ApiOkResponse({ description: 'Indicative flight offers sorted by price' })
   search(@Query() query: SearchFlightsDto) {
     return this.flights.search(query);

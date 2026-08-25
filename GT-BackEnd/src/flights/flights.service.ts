@@ -4,7 +4,6 @@ import { CurrencyService } from '../currency/currency.service';
 import { CacheProvider } from '../database/enums';
 import { TravelpayoutsClient } from '../travelpayouts/travelpayouts.client';
 import {
-  TravelpayoutsAirline,
   TravelpayoutsGroupedResponse,
   TravelpayoutsSearchResponse,
   TravelpayoutsTicket,
@@ -16,6 +15,28 @@ import { SearchFlightsDto } from './dto/search-flights.dto';
 const SEARCH_TTL_MS = 3 * 60 * 60 * 1000;
 const TREND_TTL_MS = 12 * 60 * 60 * 1000;
 const AIRLINES_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const YEAR_MONTH = /^\d{4}-\d{2}$/;
+const YEAR_MONTH_DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+function isYearMonth(value?: string): value is string {
+  return !!value && YEAR_MONTH.test(value);
+}
+
+function isYearMonthDay(value?: string): value is string {
+  return !!value && YEAR_MONTH_DAY.test(value);
+}
+
+function yearMonthOf(value: string): string {
+  return value.slice(0, 7);
+}
+
+type SearchFallback = 'one_way' | 'one_way_month' | 'calendar';
+
+type SearchFetch = {
+  payload: TravelpayoutsSearchResponse;
+  fallback?: SearchFallback;
+  fallbackPeriod?: string;
+};
 
 export type FlightOffer = {
   origin: string;
@@ -49,6 +70,7 @@ export class FlightsService {
     const key = AppCacheService.hashKey([
       'travelpayouts',
       'search',
+      'v3',
       query.origin,
       query.destination,
       query.departureAt,
@@ -59,29 +81,144 @@ export class FlightsService {
     ]);
 
     const cached = await this.cache.get<TravelpayoutsSearchResponse>(key);
-    if (cached && !cached.stale) {
+    if (cached && !cached.stale && this.hasTickets(cached.value)) {
       return this.toSearchResult(cached.value, currency, 'cache', false);
     }
 
     try {
-      const live = await this.travelpayouts.getPricesForDates({
-        origin: query.origin,
-        destination: query.destination,
-        departureAt: query.departureAt,
-        returnAt: query.returnAt,
+      const live = await this.fetchSearchPrices(query, currency);
+      if (this.hasTickets(live.payload)) {
+        await this.cache.set(
+          key,
+          live.payload,
+          CacheProvider.TRAVELPAYOUTS,
+          SEARCH_TTL_MS,
+        );
+      }
+      return this.toSearchResult(
+        live.payload,
         currency,
-        direct: query.direct,
-        limit: query.limit,
-      });
-      await this.cache.set(key, live, CacheProvider.TRAVELPAYOUTS, SEARCH_TTL_MS);
-      return this.toSearchResult(live, currency, 'travelpayouts', false);
+        'travelpayouts',
+        false,
+        live,
+      );
     } catch (error) {
-      if (cached) {
+      if (cached && this.hasTickets(cached.value)) {
         this.logger.warn('Serving flight search from stale cache');
         return this.toSearchResult(cached.value, currency, 'cache', true);
       }
       throw error;
     }
+  }
+
+  private async fetchSearchPrices(
+    query: SearchFlightsDto,
+    currency: string,
+  ): Promise<SearchFetch> {
+    const requested = await this.travelpayouts.getPricesForDates({
+      origin: query.origin,
+      destination: query.destination,
+      departureAt: query.departureAt,
+      returnAt: query.returnAt,
+      currency,
+      direct: query.direct,
+      limit: query.limit,
+    });
+    if (this.hasTickets(requested)) {
+      return { payload: requested };
+    }
+
+    if (isYearMonth(query.departureAt) && isYearMonthDay(query.returnAt)) {
+      const oneWayMonth = await this.travelpayouts.getPricesForDates({
+        origin: query.origin,
+        destination: query.destination,
+        departureAt: query.departureAt,
+        currency,
+        direct: query.direct,
+        limit: query.limit,
+      });
+      if (this.hasTickets(oneWayMonth)) {
+        return {
+          payload: oneWayMonth,
+          fallback: 'one_way_month',
+          fallbackPeriod: query.departureAt,
+        };
+      }
+    }
+
+    if (!isYearMonthDay(query.departureAt)) {
+      return { payload: requested };
+    }
+
+    const oneWayDay = await this.travelpayouts.getPricesForDates({
+      origin: query.origin,
+      destination: query.destination,
+      departureAt: query.departureAt,
+      currency,
+      direct: query.direct,
+      limit: query.limit,
+    });
+    if (this.hasTickets(oneWayDay)) {
+      return {
+        payload: oneWayDay,
+        fallback: 'one_way',
+        fallbackPeriod: query.departureAt,
+      };
+    }
+
+    const departureMonth = yearMonthOf(query.departureAt);
+    const departureCalendar = await this.calendarAsSearch(
+      query,
+      currency,
+      departureMonth,
+    );
+    if (this.hasTickets(departureCalendar)) {
+      return {
+        payload: departureCalendar,
+        fallback: 'calendar',
+        fallbackPeriod: departureMonth,
+      };
+    }
+
+    if (isYearMonthDay(query.returnAt)) {
+      const returnMonth = yearMonthOf(query.returnAt);
+      if (returnMonth !== departureMonth) {
+        const returnCalendar = await this.calendarAsSearch(
+          query,
+          currency,
+          returnMonth,
+        );
+        if (this.hasTickets(returnCalendar)) {
+          return {
+            payload: returnCalendar,
+            fallback: 'calendar',
+            fallbackPeriod: returnMonth,
+          };
+        }
+      }
+    }
+
+    return { payload: requested };
+  }
+
+  private async calendarAsSearch(
+    query: SearchFlightsDto,
+    currency: string,
+    month: string,
+  ): Promise<TravelpayoutsSearchResponse> {
+    const grouped = await this.travelpayouts.getGroupedPrices({
+      origin: query.origin,
+      destination: query.destination,
+      groupBy: 'departure_at',
+      departureAt: month,
+      currency,
+      direct: query.direct,
+    });
+    return {
+      success: grouped.success,
+      currency: grouped.currency,
+      data: Object.values(grouped.data ?? {}),
+    };
   }
 
   async calendar(query: CalendarFlightsDto) {
@@ -135,16 +272,36 @@ export class FlightsService {
 
     const cached = await this.cache.get<TravelpayoutsGroupedResponse>(key);
     if (cached && !cached.stale) {
-      return this.toGroupedResult(cached.value, params.currency, 'cache', false);
+      return this.toGroupedResult(
+        cached.value,
+        params.currency,
+        'cache',
+        false,
+      );
     }
 
     try {
       const live = await this.travelpayouts.getGroupedPrices(params);
-      await this.cache.set(key, live, CacheProvider.TRAVELPAYOUTS, TREND_TTL_MS);
-      return this.toGroupedResult(live, params.currency, 'travelpayouts', false);
+      await this.cache.set(
+        key,
+        live,
+        CacheProvider.TRAVELPAYOUTS,
+        TREND_TTL_MS,
+      );
+      return this.toGroupedResult(
+        live,
+        params.currency,
+        'travelpayouts',
+        false,
+      );
     } catch (error) {
       if (cached) {
-        return this.toGroupedResult(cached.value, params.currency, 'cache', true);
+        return this.toGroupedResult(
+          cached.value,
+          params.currency,
+          'cache',
+          true,
+        );
       }
       throw error;
     }
@@ -155,9 +312,12 @@ export class FlightsService {
     fallbackCurrency: string,
     source: 'travelpayouts' | 'cache',
     stale: boolean,
+    extras: Pick<SearchFetch, 'fallback' | 'fallbackPeriod'> = {},
   ) {
     const tickets = this.asTicketList(payload.data);
-    const providerCurrency = (payload.currency ?? fallbackCurrency).toUpperCase();
+    const providerCurrency = (
+      payload.currency ?? fallbackCurrency
+    ).toUpperCase();
     const airlines = await this.getAirlineNames();
     const raw = tickets
       .map((ticket) => this.toOffer(ticket, providerCurrency, airlines))
@@ -176,7 +336,12 @@ export class FlightsService {
         stale,
         unavailable: data.length === 0,
         currency,
-        disclaimer: 'Prices are indicative reference points, not bookable quotes.',
+        fallback: extras.fallback,
+        fallbackPeriod: extras.fallbackPeriod,
+        disclaimer:
+          extras.fallback === 'calendar'
+            ? 'No dump for these exact dates; showing cheapest one-way days nearby. Prices are indicative, not bookable quotes.'
+            : 'Prices are indicative reference points, not bookable quotes.',
       },
     };
   }
@@ -187,7 +352,9 @@ export class FlightsService {
     source: 'travelpayouts' | 'cache',
     stale: boolean,
   ) {
-    const providerCurrency = (payload.currency ?? fallbackCurrency).toUpperCase();
+    const providerCurrency = (
+      payload.currency ?? fallbackCurrency
+    ).toUpperCase();
     const airlines = await this.getAirlineNames();
     const raw = Object.entries(payload.data ?? {})
       .map(([period, ticket]) => {
@@ -212,7 +379,8 @@ export class FlightsService {
         stale,
         unavailable: offers.length === 0,
         currency,
-        disclaimer: 'Prices are indicative reference points, not bookable quotes.',
+        disclaimer:
+          'Prices are indicative reference points, not bookable quotes.',
       },
     };
   }
@@ -222,10 +390,7 @@ export class FlightsService {
     providerCurrency: string,
     requestedCurrency: string,
   ): Promise<{ offers: T[]; currency: string }> {
-    if (
-      !offers.length ||
-      providerCurrency === requestedCurrency
-    ) {
+    if (!offers.length || providerCurrency === requestedCurrency) {
       return { offers, currency: providerCurrency };
     }
 
@@ -261,6 +426,12 @@ export class FlightsService {
     return Array.isArray(data) ? data : Object.values(data);
   }
 
+  private hasTickets(payload: TravelpayoutsSearchResponse): boolean {
+    return this.asTicketList(payload.data).some(
+      (ticket) => ticket.price !== undefined && ticket.price !== null,
+    );
+  }
+
   private toOffer(
     ticket: TravelpayoutsTicket,
     currency: string,
@@ -280,14 +451,13 @@ export class FlightsService {
       currency,
       airline,
       airlineName: airline ? (airlines[airline] ?? null) : null,
-      flightNumber: ticket.flight_number != null ? String(ticket.flight_number) : null,
+      flightNumber:
+        ticket.flight_number != null ? String(ticket.flight_number) : null,
       departureAt: ticket.departure_at ?? null,
       returnAt: ticket.return_at ?? null,
       transfers: ticket.transfers ?? 0,
       durationMinutes: ticket.duration ?? null,
-      deeplink: ticket.link
-        ? `https://www.aviasales.com${ticket.link}`
-        : null,
+      deeplink: ticket.link ? `https://www.aviasales.com${ticket.link}` : null,
     };
   }
 
@@ -305,7 +475,12 @@ export class FlightsService {
           .filter((row) => row.code && row.name)
           .map((row) => [row.code!.toUpperCase(), row.name!]),
       );
-      await this.cache.set(key, map, CacheProvider.TRAVELPAYOUTS, AIRLINES_TTL_MS);
+      await this.cache.set(
+        key,
+        map,
+        CacheProvider.TRAVELPAYOUTS,
+        AIRLINES_TTL_MS,
+      );
       return map;
     } catch {
       return cached?.value ?? {};
