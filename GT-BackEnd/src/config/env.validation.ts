@@ -27,7 +27,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @MinLength(1)
-  CORS_ORIGIN: string;
+  CORS_ORIGIN!: string;
 
   @IsString()
   @MinLength(1)
@@ -35,11 +35,11 @@ export class EnvironmentVariables {
 
   @IsString()
   @MinLength(1)
-  JWT_SECRET: string;
+  JWT_SECRET!: string;
 
   @IsString()
   @MinLength(1)
-  DATABASE_HOST: string;
+  DATABASE_HOST!: string;
 
   @Transform(({ value }) => Number(value))
   @IsInt()
@@ -47,40 +47,53 @@ export class EnvironmentVariables {
 
   @IsString()
   @MinLength(1)
-  DATABASE_USER: string;
+  DATABASE_USER!: string;
 
   @IsString()
-  DATABASE_PASSWORD: string;
-
-  @IsString()
-  @MinLength(1)
-  DATABASE_NAME: string;
+  DATABASE_PASSWORD!: string;
 
   @IsString()
   @MinLength(1)
-  TRAVELPAYOUTS_API_TOKEN: string;
+  DATABASE_NAME!: string;
+
+  @IsString()
+  @MinLength(1)
+  TRAVELPAYOUTS_API_TOKEN!: string;
 
   @IsUrl({ require_tld: false })
-  FRANKFURTER_BASE_URL: string;
+  FRANKFURTER_BASE_URL!: string;
 
   @IsString()
   @MinLength(1)
-  LITEAPI_API_KEY: string;
+  LITEAPI_API_KEY!: string;
 
   @IsUrl({ require_tld: false })
-  LITEAPI_BASE_URL: string;
+  LITEAPI_BASE_URL!: string;
 
+  @Transform(({ value }: { value: unknown }) => blankToUndefined(value))
   @IsOptional()
   @IsString()
+  @MinLength(1)
   GOOGLE_CLIENT_ID?: string;
 
+  @Transform(({ value }: { value: unknown }) => blankToUndefined(value))
   @IsOptional()
   @IsString()
+  @MinLength(1)
   GOOGLE_CLIENT_SECRET?: string;
 
+  @Transform(({ value }: { value: unknown }) => blankToUndefined(value))
   @IsOptional()
-  @IsString()
+  @IsUrl({ require_tld: false })
   GOOGLE_CALLBACK_URL?: string;
+}
+
+function blankToUndefined(value: unknown): string | undefined {
+  if (typeof value !== 'string') {
+    return undefined;
+  }
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
 }
 
 export function validateEnv(

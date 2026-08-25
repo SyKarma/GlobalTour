@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, it } from '@jest/globals';
 import { ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
@@ -17,6 +18,7 @@ describe('Health (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
+    app.use(cookieParser());
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
@@ -54,6 +56,21 @@ describe('Health (e2e)', () => {
       .get('/api/hotels/search')
       .query({ countryCode: 'ES' })
       .expect(400);
+  });
+
+  it('/api/auth/me (GET) returns 401 for guests', () => {
+    return request(app.getHttpServer()).get('/api/auth/me').expect(401);
+  });
+
+  it('/api/auth/google (GET) returns 503 when OAuth is not configured', () => {
+    return request(app.getHttpServer()).get('/api/auth/google').expect(503);
+  });
+
+  it('/api/auth/logout (POST) clears the session cookie', () => {
+    return request(app.getHttpServer())
+      .post('/api/auth/logout')
+      .expect(200)
+      .expect({ data: { loggedOut: true } });
   });
 
   afterAll(async () => {
