@@ -8,3 +8,23 @@ export interface Destination {
   longitude: number | null;
   timezone: string | null;
 }
+
+export interface DestinationSearchParams {
+  q?: string;
+  country?: string;
+  limit?: number;
+}
+
+export interface DestinationSearchMeta {
+  count: number;
+  featured: boolean;
+}
+
+export interface DestinationSearchResponse {
+  data: Destination[];
+  meta: DestinationSearchMeta;
+}
+
+export interface DestinationDetailResponse {
+  data: Destination;
+}
