@@ -5,11 +5,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import {
-  EnvironmentVariables,
-  validateEnv,
-} from './config/env.validation';
+import { EnvironmentVariables, validateEnv } from './config/env.validation';
 import { typeOrmConfig } from './config/typeorm.config';
+import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { CurrencyModule } from './currency/currency.module';
 import { DestinationsModule } from './destinations/destinations.module';
@@ -41,6 +39,7 @@ import { HotelsModule } from './hotels/hotels.module';
       ],
     }),
     CommonModule,
+    AuthModule,
     HealthModule,
     CurrencyModule,
     DestinationsModule,
