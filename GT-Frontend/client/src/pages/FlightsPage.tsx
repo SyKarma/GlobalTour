@@ -16,41 +16,106 @@ type SortOption =
   | 'price-desc'
   | 'duration-asc';
 
+/**
+ * Muestra la hora local que viene en el dato del vuelo.
+ *
+ * Ejemplo:
+ * 2026-09-06T22:20:00+02:00
+ *
+ * Se muestra como:
+ * 10:20 p. m.
+ *
+ * No se convierte a la zona horaria del navegador.
+ */
 function formatTime(date: string | null) {
   if (!date) {
     return '--:--';
   }
 
-  return new Intl.DateTimeFormat('es-CR', {
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(date));
+  const match = date.match(
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/,
+  );
+
+  if (!match) {
+    return '--:--';
+  }
+
+  const [, , , , hourString, minute] = match;
+
+  const hour = Number(hourString);
+
+  const period =
+    hour >= 12 ? 'p. m.' : 'a. m.';
+
+  const normalizedHour =
+    hour % 12 || 12;
+
+  return `${normalizedHour
+    .toString()
+    .padStart(2, '0')}:${minute} ${period}`;
 }
 
+/**
+ * Extrae directamente la fecha recibida del proveedor.
+ *
+ * Evita que JavaScript cambie el día al convertir
+ * el timestamp a la zona horaria del navegador.
+ */
 function formatDate(date: string | null) {
   if (!date) {
     return '';
   }
 
-  return new Intl.DateTimeFormat('es-CR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).format(new Date(date));
+  const match = date.match(
+    /^(\d{4})-(\d{2})-(\d{2})/,
+  );
+
+  if (!match) {
+    return '';
+  }
+
+  const [, year, month, day] = match;
+
+  const months = [
+    'ene',
+    'feb',
+    'mar',
+    'abr',
+    'may',
+    'jun',
+    'jul',
+    'ago',
+    'sept',
+    'oct',
+    'nov',
+    'dic',
+  ];
+
+  return `${day} ${
+    months[Number(month) - 1]
+  } ${year}`;
 }
 
-function formatDuration(minutes: number | null) {
+function formatDuration(
+  minutes: number | null,
+) {
   if (minutes === null) {
     return 'Duración no disponible';
   }
 
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
+  const hours = Math.floor(
+    minutes / 60,
+  );
+
+  const remainingMinutes =
+    minutes % 60;
 
   return `${hours}h ${remainingMinutes}min`;
 }
 
-function formatTransfers(transfers: number) {
+function formatTransfers(
+  transfers: number,
+) {
   if (transfers === 0) {
     return 'Directo';
   }
@@ -62,109 +127,152 @@ function formatTransfers(transfers: number) {
   return `${transfers} escalas`;
 }
 
-function formatAirlineName(name: string | null) {
+function formatAirlineName(
+  name: string | null,
+) {
   if (!name) {
     return 'Aerolínea';
   }
 
   return name
     .toLowerCase()
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    .replace(
+      /\b\w/g,
+      (letter) =>
+        letter.toUpperCase(),
+    );
 }
 
 function FlightsPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams] =
+    useSearchParams();
 
-  const [flights, setFlights] = useState<FlightOffer[]>([]);
+  const [flights, setFlights] =
+    useState<FlightOffer[]>([]);
 
   const [meta, setMeta] =
-    useState<FlightResponseMeta | null>(null);
+    useState<FlightResponseMeta | null>(
+      null,
+    );
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] =
+    useState(true);
 
   const [error, setError] =
     useState<string | null>(null);
 
-  const [stopsFilter, setStopsFilter] =
-    useState<StopsFilter>('all');
+  const [
+    stopsFilter,
+    setStopsFilter,
+  ] = useState<StopsFilter>('all');
 
-  const [selectedAirline, setSelectedAirline] =
-    useState('all');
+  const [
+    selectedAirline,
+    setSelectedAirline,
+  ] = useState('all');
 
-  const [sortOption, setSortOption] =
-    useState<SortOption>('price-asc');
+  const [
+    sortOption,
+    setSortOption,
+  ] =
+    useState<SortOption>(
+      'price-asc',
+    );
 
-  const origin = searchParams.get('origin');
+  const origin =
+    searchParams.get('origin');
 
   const destination =
-    searchParams.get('destination');
+    searchParams.get(
+      'destination',
+    );
 
   const departureAt =
-    searchParams.get('departureAt');
+    searchParams.get(
+      'departureAt',
+    );
 
   const returnAt =
     searchParams.get('returnAt');
 
   const currency =
-    searchParams.get('currency') || 'USD';
+    searchParams.get('currency') ||
+    'USD';
 
   useEffect(() => {
     let isCancelled = false;
 
-    const loadFlights = async () => {
-      if (!origin || !destination) {
-        setError(
-          'Debes seleccionar un origen y un destino.',
-        );
+    const loadFlights =
+      async () => {
+        if (
+          !origin ||
+          !destination
+        ) {
+          setError(
+            'Debes seleccionar un origen y un destino.',
+          );
 
-        setIsLoading(false);
-
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await searchFlights({
-          origin,
-          destination,
-          departureAt:
-            departureAt || undefined,
-          returnAt:
-            returnAt || undefined,
-          currency,
-          limit: 30,
-        });
-
-        if (isCancelled) {
-          return;
-        }
-
-        setFlights(response.data);
-        setMeta(response.meta);
-      } catch (requestError) {
-        if (isCancelled) {
-          return;
-        }
-
-        console.error(
-          'Error al buscar vuelos:',
-          requestError,
-        );
-
-        setFlights([]);
-        setMeta(null);
-
-        setError(
-          'No pudimos obtener los vuelos en este momento.',
-        );
-      } finally {
-        if (!isCancelled) {
           setIsLoading(false);
+
+          return;
         }
-      }
-    };
+
+        try {
+          setIsLoading(true);
+          setError(null);
+
+          const response =
+            await searchFlights({
+              origin,
+              destination,
+
+              departureAt:
+                departureAt ||
+                undefined,
+
+              returnAt:
+                returnAt ||
+                undefined,
+
+              currency,
+              limit: 30,
+            });
+
+          if (isCancelled) {
+            return;
+          }
+
+          setFlights(
+            response.data,
+          );
+
+          setMeta(
+            response.meta,
+          );
+        } catch (
+          requestError
+        ) {
+          if (isCancelled) {
+            return;
+          }
+
+          console.error(
+            'Error al buscar vuelos:',
+            requestError,
+          );
+
+          setFlights([]);
+          setMeta(null);
+
+          setError(
+            'No pudimos obtener los vuelos en este momento.',
+          );
+        } finally {
+          if (!isCancelled) {
+            setIsLoading(false);
+          }
+        }
+      };
 
     void loadFlights();
 
@@ -179,81 +287,119 @@ function FlightsPage() {
     currency,
   ]);
 
-  const airlines = useMemo(() => {
-    const airlineMap =
-      new Map<string, string>();
+  const airlines =
+    useMemo(() => {
+      const airlineMap =
+        new Map<
+          string,
+          string
+        >();
 
-    flights.forEach((flight) => {
-      if (!flight.airline) {
-        return;
-      }
+      flights.forEach(
+        (flight) => {
+          if (
+            !flight.airline
+          ) {
+            return;
+          }
 
-      airlineMap.set(
-        flight.airline,
-        formatAirlineName(
-          flight.airlineName,
+          airlineMap.set(
+            flight.airline,
+
+            formatAirlineName(
+              flight.airlineName,
+            ),
+          );
+        },
+      );
+
+      return Array.from(
+        airlineMap.entries(),
+      ).sort((a, b) =>
+        a[1].localeCompare(
+          b[1],
         ),
       );
-    });
+    }, [flights]);
 
-    return Array.from(
-      airlineMap.entries(),
-    ).sort((a, b) =>
-      a[1].localeCompare(b[1]),
-    );
-  }, [flights]);
+  const filteredFlights =
+    useMemo(() => {
+      let result = [
+        ...flights,
+      ];
 
-  const filteredFlights = useMemo(() => {
-    let result = [...flights];
-
-    if (stopsFilter === 'direct') {
-      result = result.filter(
-        (flight) =>
-          flight.transfers === 0,
-      );
-    }
-
-    if (stopsFilter === 'stops') {
-      result = result.filter(
-        (flight) =>
-          flight.transfers > 0,
-      );
-    }
-
-    if (selectedAirline !== 'all') {
-      result = result.filter(
-        (flight) =>
-          flight.airline ===
-          selectedAirline,
-      );
-    }
-
-    result.sort((a, b) => {
-      switch (sortOption) {
-        case 'price-desc':
-          return b.price - a.price;
-
-        case 'duration-asc':
-          return (
-            (a.durationMinutes ??
-              Number.MAX_SAFE_INTEGER) -
-            (b.durationMinutes ??
-              Number.MAX_SAFE_INTEGER)
+      if (
+        stopsFilter ===
+        'direct'
+      ) {
+        result =
+          result.filter(
+            (flight) =>
+              flight.transfers ===
+              0,
           );
-
-        case 'price-asc':
-        default:
-          return a.price - b.price;
       }
-    });
 
-    return result;
-  }, [
-    flights,
-    stopsFilter,
-    selectedAirline,
-    sortOption,
-  ]);
+      if (
+        stopsFilter ===
+        'stops'
+      ) {
+        result =
+          result.filter(
+            (flight) =>
+              flight.transfers >
+              0,
+          );
+      }
+
+      if (
+        selectedAirline !==
+        'all'
+      ) {
+        result =
+          result.filter(
+            (flight) =>
+              flight.airline ===
+              selectedAirline,
+          );
+      }
+
+      result.sort(
+        (a, b) => {
+          switch (
+            sortOption
+          ) {
+            case 'price-desc':
+              return (
+                b.price -
+                a.price
+              );
+
+            case 'duration-asc':
+              return (
+                (a.durationMinutes ??
+                  Number.MAX_SAFE_INTEGER) -
+                (b.durationMinutes ??
+                  Number.MAX_SAFE_INTEGER)
+              );
+
+            case 'price-asc':
+            default:
+              return (
+                a.price -
+                b.price
+              );
+          }
+        },
+      );
+
+      return result;
+    }, [
+      flights,
+      stopsFilter,
+      selectedAirline,
+      sortOption,
+    ]);
 
   return (
     <main className="flights-page">
@@ -263,7 +409,8 @@ function FlightsPage() {
         </p>
 
         <h1>
-          {origin && destination
+          {origin &&
+          destination
             ? `${origin} → ${destination}`
             : 'Vuelos'}
         </h1>
@@ -282,83 +429,109 @@ function FlightsPage() {
         )}
       </section>
 
-      {origin && destination && (
-        <FlightSearchEditor
-          key={`${origin}-${destination}-${departureAt}-${returnAt}`}
-          initialOriginIata={origin}
-          initialDestinationIata={
-            destination
-          }
-          initialDepartureAt={
-            departureAt
-          }
-          initialReturnAt={returnAt}
-          currency={currency}
-        />
-      )}
+      {origin &&
+        destination && (
+          <FlightSearchEditor
+            key={`${origin}-${destination}-${departureAt}-${returnAt}`}
+            initialOriginIata={
+              origin
+            }
+            initialDestinationIata={
+              destination
+            }
+            initialDepartureAt={
+              departureAt
+            }
+            initialReturnAt={
+              returnAt
+            }
+            currency={
+              currency
+            }
+          />
+        )}
 
       {isLoading && (
         <section className="flights-status">
           <h2>
-            Buscando las mejores opciones...
+            Buscando las
+            mejores opciones...
           </h2>
 
           <p>
-            Estamos comparando vuelos
-            disponibles para tu viaje.
+            Estamos comparando
+            vuelos disponibles
+            para tu viaje.
           </p>
         </section>
       )}
 
-      {!isLoading && error && (
-        <section className="flights-status flights-error">
-          <h2>
-            No pudimos realizar la búsqueda
-          </h2>
+      {!isLoading &&
+        error && (
+          <section className="flights-status flights-error">
+            <h2>
+              No pudimos
+              realizar la
+              búsqueda
+            </h2>
 
-          <p>{error}</p>
-        </section>
-      )}
+            <p>{error}</p>
+          </section>
+        )}
 
       {!isLoading &&
         !error &&
-        flights.length === 0 && (
+        flights.length ===
+          0 && (
           <section className="flights-status">
             <h2>
-              No encontramos vuelos
+              No encontramos
+              vuelos
             </h2>
 
             <p>
-              Intenta cambiar las fechas o
-              seleccionar otra ruta.
+              Intenta cambiar
+              las fechas o
+              seleccionar otra
+              ruta.
             </p>
           </section>
         )}
 
       {!isLoading &&
         !error &&
-        flights.length > 0 && (
+        flights.length >
+          0 && (
           <>
             <section className="flights-results-heading">
               <div>
                 <h2>
-                  {filteredFlights.length}{' '}
-                  de {flights.length}{' '}
-                  {flights.length === 1
+                  {
+                    filteredFlights.length
+                  }{' '}
+                  de{' '}
+                  {
+                    flights.length
+                  }{' '}
+                  {flights.length ===
+                  1
                     ? 'opción'
                     : 'opciones'}
                 </h2>
 
                 <p>
-                  Filtra y ordena los
-                  resultados según tus
+                  Filtra y
+                  ordena los
+                  resultados
+                  según tus
                   preferencias.
                 </p>
               </div>
 
               {meta?.stale && (
                 <span className="flight-cache-warning">
-                  Datos almacenados
+                  Datos
+                  almacenados
                   temporalmente
                 </span>
               )}
@@ -374,12 +547,15 @@ function FlightsPage() {
                   <button
                     type="button"
                     className={
-                      stopsFilter === 'all'
+                      stopsFilter ===
+                      'all'
                         ? 'flight-filter-button active'
                         : 'flight-filter-button'
                     }
                     onClick={() =>
-                      setStopsFilter('all')
+                      setStopsFilter(
+                        'all',
+                      )
                     }
                   >
                     Todos
@@ -427,22 +603,36 @@ function FlightsPage() {
                 </span>
 
                 <select
-                  value={selectedAirline}
-                  onChange={(event) =>
+                  value={
+                    selectedAirline
+                  }
+                  onChange={(
+                    event,
+                  ) =>
                     setSelectedAirline(
-                      event.target.value,
+                      event
+                        .target
+                        .value,
                     )
                   }
                 >
                   <option value="all">
-                    Todas las aerolíneas
+                    Todas las
+                    aerolíneas
                   </option>
 
                   {airlines.map(
-                    ([code, name]) => (
+                    ([
+                      code,
+                      name,
+                    ]) => (
                       <option
-                        key={code}
-                        value={code}
+                        key={
+                          code
+                        }
+                        value={
+                          code
+                        }
                       >
                         {name}
                       </option>
@@ -457,10 +647,15 @@ function FlightsPage() {
                 </span>
 
                 <select
-                  value={sortOption}
-                  onChange={(event) =>
+                  value={
+                    sortOption
+                  }
+                  onChange={(
+                    event,
+                  ) =>
                     setSortOption(
-                      event.target
+                      event
+                        .target
                         .value as SortOption,
                     )
                   }
@@ -474,7 +669,8 @@ function FlightsPage() {
                   </option>
 
                   <option value="duration-asc">
-                    Menor duración
+                    Menor
+                    duración
                   </option>
                 </select>
               </label>
@@ -484,20 +680,28 @@ function FlightsPage() {
             0 ? (
               <section className="flights-status">
                 <h2>
-                  No hay vuelos con estos
+                  No hay vuelos
+                  con estos
                   filtros
                 </h2>
 
                 <p>
-                  Prueba seleccionando otra
-                  aerolínea o cambiando el
-                  filtro de escalas.
+                  Prueba
+                  seleccionando
+                  otra
+                  aerolínea o
+                  cambiando el
+                  filtro de
+                  escalas.
                 </p>
               </section>
             ) : (
               <section className="flight-results-list">
                 {filteredFlights.map(
-                  (flight, index) => (
+                  (
+                    flight,
+                    index,
+                  ) => (
                     <article
                       className="flight-card"
                       key={`${flight.airline}-${flight.flightNumber}-${flight.departureAt}-${index}`}
@@ -598,8 +802,10 @@ function FlightsPage() {
                             {
                               style:
                                 'currency',
+
                               currency:
                                 flight.currency,
+
                               maximumFractionDigits: 0,
                             },
                           ).format(
@@ -637,7 +843,9 @@ function FlightsPage() {
 
             {meta?.disclaimer && (
               <p className="flight-disclaimer">
-                {meta.disclaimer}
+                {
+                  meta.disclaimer
+                }
               </p>
             )}
           </>
