@@ -1,6 +1,27 @@
+import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 function MainLayout() {
+  const {
+    user,
+    isLoading,
+    isAuthenticated,
+    login,
+    logout,
+  } = useAuth();
+
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsUserMenuOpen(false);
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
   return (
     <div className="app-shell">
       <header className="main-header">
@@ -47,6 +68,69 @@ function MainLayout() {
               Rent a Car
             </NavLink>
           </nav>
+
+          <div className="navbar-auth">
+            {isLoading ? (
+              <div className="auth-loading">
+                Cargando...
+              </div>
+            ) : isAuthenticated && user ? (
+              <div className="user-menu">
+                <button
+                  type="button"
+                  className="user-menu-trigger"
+                  onClick={() =>
+                    setIsUserMenuOpen((current) => !current)
+                  }
+                >
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.displayName}
+                      className="user-avatar"
+                    />
+                  ) : (
+                    <span className="user-avatar-fallback">
+                      {user.displayName.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+
+                  <span className="user-name">
+                    {user.displayName}
+                  </span>
+
+                  <span className="user-menu-arrow">⌄</span>
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="user-dropdown">
+                    <div className="user-dropdown-info">
+                      <strong>{user.displayName}</strong>
+                      <span>{user.email}</span>
+                    </div>
+
+                    <div className="user-dropdown-divider" />
+
+                    <button
+                      type="button"
+                      className="logout-button"
+                      onClick={handleLogout}
+                    >
+                      Cerrar sesión
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="login-button"
+                onClick={login}
+              >
+                Continuar con Google
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
