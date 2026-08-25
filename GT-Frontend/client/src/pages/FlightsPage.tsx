@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 import { searchFlights } from '../services/flights.service';
@@ -6,6 +6,13 @@ import type {
   FlightOffer,
   FlightResponseMeta,
 } from '../types/flight.types';
+
+type StopsFilter = 'all' | 'direct' | 'stops';
+
+type SortOption =
+  | 'price-asc'
+  | 'price-desc'
+  | 'duration-asc';
 
 function formatTime(date: string | null) {
   if (!date) {
@@ -72,6 +79,15 @@ function FlightsPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [stopsFilter, setStopsFilter] =
+    useState<StopsFilter>('all');
+
+  const [selectedAirline, setSelectedAirline] =
+    useState('all');
+
+  const [sortOption, setSortOption] =
+    useState<SortOption>('price-asc');
 
   const origin = searchParams.get('origin');
   const destination = searchParams.get('destination');
@@ -146,6 +162,74 @@ function FlightsPage() {
     currency,
   ]);
 
+  const airlines = useMemo(() => {
+    const airlineMap = new Map<string, string>();
+
+    flights.forEach((flight) => {
+      if (!flight.airline) {
+        return;
+      }
+
+      airlineMap.set(
+        flight.airline,
+        formatAirlineName(flight.airlineName),
+      );
+    });
+
+    return Array.from(airlineMap.entries()).sort(
+      (a, b) => a[1].localeCompare(b[1]),
+    );
+  }, [flights]);
+
+  const filteredFlights = useMemo(() => {
+    let result = [...flights];
+
+    if (stopsFilter === 'direct') {
+      result = result.filter(
+        (flight) => flight.transfers === 0,
+      );
+    }
+
+    if (stopsFilter === 'stops') {
+      result = result.filter(
+        (flight) => flight.transfers > 0,
+      );
+    }
+
+    if (selectedAirline !== 'all') {
+      result = result.filter(
+        (flight) =>
+          flight.airline === selectedAirline,
+      );
+    }
+
+    result.sort((a, b) => {
+      switch (sortOption) {
+        case 'price-desc':
+          return b.price - a.price;
+
+        case 'duration-asc':
+          return (
+            (a.durationMinutes ??
+              Number.MAX_SAFE_INTEGER) -
+            (b.durationMinutes ??
+              Number.MAX_SAFE_INTEGER)
+          );
+
+        case 'price-asc':
+        default:
+          return a.price - b.price;
+      }
+    });
+
+    return result;
+  }, [
+    flights,
+    stopsFilter,
+    selectedAirline,
+    sortOption,
+  ]);
+
   return (
     <main className="flights-page">
       <section className="flights-header">
@@ -211,14 +295,16 @@ function FlightsPage() {
             <section className="flights-results-heading">
               <div>
                 <h2>
+                  {filteredFlights.length} de{' '}
                   {flights.length}{' '}
                   {flights.length === 1
-                    ? 'opción encontrada'
-                    : 'opciones encontradas'}
+                    ? 'opción'
+                    : 'opciones'}
                 </h2>
 
                 <p>
-                  Ordenadas desde el precio más bajo.
+                  Filtra y ordena los resultados según tus
+                  preferencias.
                 </p>
               </div>
 
@@ -229,126 +315,254 @@ function FlightsPage() {
               )}
             </section>
 
-            <section className="flight-results-list">
-              {flights.map((flight, index) => (
-                <article
-                  className="flight-card"
-                  key={`${flight.airline}-${flight.flightNumber}-${flight.departureAt}-${index}`}
+            <section className="flight-filters">
+              <div className="flight-filter-group">
+                <span className="flight-filter-label">
+                  Escalas
+                </span>
+
+                <div className="flight-filter-buttons">
+                  <button
+                    type="button"
+                    className={
+                      stopsFilter === 'all'
+                        ? 'flight-filter-button active'
+                        : 'flight-filter-button'
+                    }
+                    onClick={() =>
+                      setStopsFilter('all')
+                    }
+                  >
+                    Todos
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      stopsFilter === 'direct'
+                        ? 'flight-filter-button active'
+                        : 'flight-filter-button'
+                    }
+                    onClick={() =>
+                      setStopsFilter('direct')
+                    }
+                  >
+                    Directos
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      stopsFilter === 'stops'
+                        ? 'flight-filter-button active'
+                        : 'flight-filter-button'
+                    }
+                    onClick={() =>
+                      setStopsFilter('stops')
+                    }
+                  >
+                    Con escalas
+                  </button>
+                </div>
+              </div>
+
+              <label className="flight-filter-select">
+                <span>Aerolínea</span>
+
+                <select
+                  value={selectedAirline}
+                  onChange={(event) =>
+                    setSelectedAirline(
+                      event.target.value,
+                    )
+                  }
                 >
-                  <div className="flight-airline">
-                    <div className="airline-code">
-                      {flight.airline || '—'}
-                    </div>
+                  <option value="all">
+                    Todas las aerolíneas
+                  </option>
 
-                    <div>
-                      <strong>
-                        {formatAirlineName(
-                          flight.airlineName,
-                        )}
-                      </strong>
+                  {airlines.map(([code, name]) => (
+                    <option
+                      key={code}
+                      value={code}
+                    >
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-                      {flight.flightNumber && (
-                        <span>
-                          Vuelo {flight.flightNumber}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              <label className="flight-filter-select">
+                <span>Ordenar por</span>
 
-                  <div className="flight-route">
-                    <div className="flight-route-point">
-                      <small className="flight-route-label">
-                        Salida
-                      </small>
+                <select
+                  value={sortOption}
+                  onChange={(event) =>
+                    setSortOption(
+                      event.target
+                        .value as SortOption,
+                    )
+                  }
+                >
+                  <option value="price-asc">
+                    Menor precio
+                  </option>
 
-                      <strong>
-                        {formatTime(
-                          flight.departureAt,
-                        )}
-                      </strong>
+                  <option value="price-desc">
+                    Mayor precio
+                  </option>
 
-                      <span>
-                        {flight.originAirport ||
-                          flight.origin}
-                      </span>
-
-                      <small>
-                        {formatDate(
-                          flight.departureAt,
-                        )}
-                      </small>
-                    </div>
-
-                    <div className="flight-route-middle">
-                      <span>
-                        {formatDuration(
-                          flight.durationMinutes,
-                        )}
-                      </span>
-
-                      <div className="flight-route-line" />
-
-                      <strong>
-                        {formatTransfers(
-                          flight.transfers,
-                        )}
-                      </strong>
-                    </div>
-
-                    <div className="flight-route-point">
-                      <small className="flight-route-label">
-                        Destino
-                      </small>
-
-                      <strong>
-                        {flight.destinationAirport ||
-                          flight.destination}
-                      </strong>
-
-                      {flight.returnAt && (
-                        <small className="flight-return">
-                          Regreso:{' '}
-                          {formatDate(
-                            flight.returnAt,
-                          )}
-                        </small>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flight-price">
-                    <span>Desde</span>
-
-                    <strong>
-                      {new Intl.NumberFormat('en-US', {
-                        style: 'currency',
-                        currency: flight.currency,
-                        maximumFractionDigits: 0,
-                      }).format(flight.price)}
-                    </strong>
-
-                    {flight.deeplink ? (
-                      <a
-                        href={flight.deeplink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flight-offer-button"
-                      >
-                        Ver oferta
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        className="flight-offer-button"
-                        disabled
-                      >
-                        Oferta no disponible
-                      </button>
-                    )}
-                  </div>
-                </article>
-              ))}
+                  <option value="duration-asc">
+                    Menor duración
+                  </option>
+                </select>
+              </label>
             </section>
+
+            {filteredFlights.length === 0 ? (
+              <section className="flights-status">
+                <h2>
+                  No hay vuelos con estos filtros
+                </h2>
+
+                <p>
+                  Prueba seleccionando otra aerolínea o
+                  cambiando el filtro de escalas.
+                </p>
+              </section>
+            ) : (
+              <section className="flight-results-list">
+                {filteredFlights.map(
+                  (flight, index) => (
+                    <article
+                      className="flight-card"
+                      key={`${flight.airline}-${flight.flightNumber}-${flight.departureAt}-${index}`}
+                    >
+                      <div className="flight-airline">
+                        <div className="airline-code">
+                          {flight.airline || '—'}
+                        </div>
+
+                        <div>
+                          <strong>
+                            {formatAirlineName(
+                              flight.airlineName,
+                            )}
+                          </strong>
+
+                          {flight.flightNumber && (
+                            <span>
+                              Vuelo{' '}
+                              {flight.flightNumber}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flight-route">
+                        <div className="flight-route-point">
+                          <small className="flight-route-label">
+                            Salida
+                          </small>
+
+                          <strong>
+                            {formatTime(
+                              flight.departureAt,
+                            )}
+                          </strong>
+
+                          <span>
+                            {flight.originAirport ||
+                              flight.origin}
+                          </span>
+
+                          <small>
+                            {formatDate(
+                              flight.departureAt,
+                            )}
+                          </small>
+                        </div>
+
+                        <div className="flight-route-middle">
+                          <span>
+                            {formatDuration(
+                              flight.durationMinutes,
+                            )}
+                          </span>
+
+                          <div className="flight-route-line" />
+
+                          <strong>
+                            {formatTransfers(
+                              flight.transfers,
+                            )}
+                          </strong>
+                        </div>
+
+                        <div className="flight-route-point">
+                          <small className="flight-route-label">
+                            Destino
+                          </small>
+
+                          <strong>
+                            {flight.destinationAirport ||
+                              flight.destination}
+                          </strong>
+
+                          {flight.returnAt && (
+                            <small className="flight-return">
+                              Regreso:{' '}
+                              {formatDate(
+                                flight.returnAt,
+                              )}
+                            </small>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flight-price">
+                        <span>Desde</span>
+
+                        <strong>
+                          {new Intl.NumberFormat(
+                            'en-US',
+                            {
+                              style: 'currency',
+                              currency:
+                                flight.currency,
+                              maximumFractionDigits: 0,
+                            },
+                          ).format(
+                            flight.price,
+                          )}
+                        </strong>
+
+                        {flight.deeplink ? (
+                          <a
+                            href={
+                              flight.deeplink
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flight-offer-button"
+                          >
+                            Ver oferta
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            className="flight-offer-button"
+                            disabled
+                          >
+                            Oferta no disponible
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  ),
+                )}
+              </section>
+            )}
 
             {meta?.disclaimer && (
               <p className="flight-disclaimer">
