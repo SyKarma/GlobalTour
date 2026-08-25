@@ -53,6 +53,16 @@ function formatTransfers(transfers: number) {
   return `${transfers} escalas`;
 }
 
+function formatAirlineName(name: string | null) {
+  if (!name) {
+    return 'Aerolínea';
+  }
+
+  return name
+    .toLowerCase()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 function FlightsPage() {
   const [searchParams] = useSearchParams();
 
@@ -112,6 +122,7 @@ function FlightsPage() {
 
         setFlights([]);
         setMeta(null);
+
         setError(
           'No pudimos obtener los vuelos en este momento.',
         );
@@ -175,6 +186,7 @@ function FlightsPage() {
       {!isLoading && error && (
         <section className="flights-status flights-error">
           <h2>No pudimos realizar la búsqueda</h2>
+
           <p>{error}</p>
         </section>
       )}
@@ -230,8 +242,9 @@ function FlightsPage() {
 
                     <div>
                       <strong>
-                        {flight.airlineName ||
-                          'Aerolínea'}
+                        {formatAirlineName(
+                          flight.airlineName,
+                        )}
                       </strong>
 
                       {flight.flightNumber && (
@@ -244,6 +257,10 @@ function FlightsPage() {
 
                   <div className="flight-route">
                     <div className="flight-route-point">
+                      <small className="flight-route-label">
+                        Salida
+                      </small>
+
                       <strong>
                         {formatTime(
                           flight.departureAt,
@@ -279,12 +296,23 @@ function FlightsPage() {
                     </div>
 
                     <div className="flight-route-point">
+                      <small className="flight-route-label">
+                        Destino
+                      </small>
+
                       <strong>
                         {flight.destinationAirport ||
                           flight.destination}
                       </strong>
 
-                      <span>{flight.destination}</span>
+                      {flight.returnAt && (
+                        <small className="flight-return">
+                          Regreso:{' '}
+                          {formatDate(
+                            flight.returnAt,
+                          )}
+                        </small>
+                      )}
                     </div>
                   </div>
 
