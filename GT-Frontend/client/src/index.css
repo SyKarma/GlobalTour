@@ -1642,3 +1642,58 @@ button {
   font-size: 0.84rem;
   line-height: 1.5;
 }
+
+/* HOTEL SEARCH */
+
+.hotel-search {
+  width: 100%;
+}
+
+.hotel-search-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(260px, 1.5fr)
+    minmax(150px, 0.75fr)
+    minmax(150px, 0.75fr)
+    minmax(140px, 0.6fr)
+    auto;
+
+  gap: 8px;
+  align-items: stretch;
+}
+
+.hotel-search-row .destination-autocomplete {
+  min-width: 0;
+}
+
+.hotel-search-row .search-box {
+  min-height: 68px;
+}
+
+.hotel-search-row .search-button {
+  min-width: 145px;
+}
+
+@media (max-width: 950px) {
+  .hotel-search-row {
+    grid-template-columns:
+      minmax(220px, 1fr)
+      minmax(140px, 1fr);
+  }
+
+  .hotel-search-row .search-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .hotel-search-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hotel-search-row .search-button {
+    width: 100%;
+  }
+}
