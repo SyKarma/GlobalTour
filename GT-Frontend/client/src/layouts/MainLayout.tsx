@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import CurrencySelector from '../components/currency/CurrencySelector';
 
 function MainLayout() {
   const {
@@ -70,6 +71,8 @@ function MainLayout() {
           </nav>
 
           <div className="navbar-auth">
+            <CurrencySelector />
+
             {isLoading ? (
               <div className="auth-loading">
                 Cargando...
@@ -99,14 +102,21 @@ function MainLayout() {
                     {user.displayName}
                   </span>
 
-                  <span className="user-menu-arrow">⌄</span>
+                  <span className="user-menu-arrow">
+                    ⌄
+                  </span>
                 </button>
 
                 {isUserMenuOpen && (
                   <div className="user-dropdown">
                     <div className="user-dropdown-info">
-                      <strong>{user.displayName}</strong>
-                      <span>{user.email}</span>
+                      <strong>
+                        {user.displayName}
+                      </strong>
+
+                      <span>
+                        {user.email}
+                      </span>
                     </div>
 
                     <div className="user-dropdown-divider" />

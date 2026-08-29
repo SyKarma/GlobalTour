@@ -4,13 +4,16 @@ import { BrowserRouter } from 'react-router-dom';
 import AuthProvider from './context/AuthProvider';
 import './index.css';
 import App from './App';
+import { CurrencyProvider } from './context/CurrencyProvider';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <CurrencyProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </CurrencyProvider>
     </BrowserRouter>
   </StrictMode>,
 );
