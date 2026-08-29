@@ -10,10 +10,12 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
 import { CurrencyModule } from './currency/currency.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { DestinationsModule } from './destinations/destinations.module';
 import { FlightsModule } from './flights/flights.module';
 import { HealthModule } from './health/health.module';
 import { HotelsModule } from './hotels/hotels.module';
+import { SearchHistoryModule } from './search-history/search-history.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { HotelsModule } from './hotels/hotels.module';
     DestinationsModule,
     FlightsModule,
     HotelsModule,
+    SearchHistoryModule,
+    DashboardModule,
   ],
   providers: [
     {

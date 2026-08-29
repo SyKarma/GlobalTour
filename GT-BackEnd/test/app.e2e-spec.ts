@@ -1,4 +1,4 @@
-import { afterAll, beforeAll, describe, it } from '@jest/globals';
+import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
 import { ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
@@ -71,6 +71,31 @@ describe('Health (e2e)', () => {
       .post('/api/auth/logout')
       .expect(200)
       .expect({ data: { loggedOut: true } });
+  });
+
+  it('/api/dashboard (GET) is public and returns chart aggregates', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/api/dashboard')
+      .query({ days: 7 })
+      .expect(200);
+
+    expect(response.body.data.summary.totalSearches).toEqual(
+      expect.any(Number),
+    );
+    expect(response.body.data.topDestinations).toEqual(expect.any(Array));
+    expect(response.body.data.topOrigins).toEqual(expect.any(Array));
+    expect(response.body.data.topCountries).toEqual(expect.any(Array));
+    expect(response.body.data.topRoutes).toEqual(expect.any(Array));
+    expect(response.body.data.volumeByDay).toHaveLength(7);
+    expect(response.body.data.travelMonths).toEqual(expect.any(Array));
+    expect(response.body.meta.cached).toEqual(expect.any(Boolean));
+  });
+
+  it('/api/dashboard (GET) rejects an invalid lookback window', () => {
+    return request(app.getHttpServer())
+      .get('/api/dashboard')
+      .query({ days: 0 })
+      .expect(400);
   });
 
   afterAll(async () => {
