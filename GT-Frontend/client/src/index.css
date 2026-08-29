@@ -2537,3 +2537,181 @@ button {
 .hotel-description {
   white-space: pre-line;
 }
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* =========================
+   CURRENCY SELECTOR
+   ========================= */
+
+.currency-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+.currency-selector-label {
+  color: #667085;
+
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.currency-select-control {
+  position: relative;
+
+  height: 42px;
+  min-width: 116px;
+
+  display: flex;
+  align-items: center;
+
+  background: #f5f8ff;
+
+  border: 1px solid #dbe5f5;
+  border-radius: 12px;
+
+  color: #2563eb;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.currency-select-control:hover {
+  background: #eef4ff;
+  border-color: #bfd1f5;
+}
+
+.currency-select-control:focus-within {
+  background: #ffffff;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.currency-selector-icon {
+  position: absolute;
+  left: 11px;
+
+  width: 18px;
+  height: 18px;
+
+  color: #2563eb;
+
+  pointer-events: none;
+}
+
+.currency-selector {
+  width: 100%;
+  height: 100%;
+
+  padding:
+    0
+    34px
+    0
+    38px;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  background: transparent;
+
+  border: none;
+  outline: none;
+
+  color: #1d4ed8;
+
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.currency-selector option {
+  background: #ffffff;
+
+  color: #172033;
+
+  font-weight: 500;
+}
+
+.currency-selector-chevron {
+  position: absolute;
+  right: 10px;
+
+  width: 16px;
+  height: 16px;
+
+  color: #667085;
+
+  pointer-events: none;
+
+  transition: transform 0.2s ease;
+}
+
+.currency-select-control:focus-within
+  .currency-selector-chevron {
+  transform: rotate(180deg);
+}
+
+.currency-selector:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.currency-select-error {
+  background: #fff5f5;
+
+  border-color: #fecdca;
+
+  color: #b42318;
+}
+
+.currency-select-error
+  .currency-selector-icon {
+  color: #b42318;
+}
+
+.currency-select-error
+  .currency-selector {
+  color: #b42318;
+}
+
+/* NAVBAR RIGHT SIDE */
+
+.navbar-auth {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 18px;
+}
+
+@media (max-width: 1000px) {
+  .currency-selector-label {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .currency-select-control {
+    min-width: 96px;
+  }
+
+  .currency-selector {
+    padding-left: 34px;
+  }
+}
