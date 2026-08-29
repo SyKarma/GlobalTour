@@ -33,11 +33,22 @@ export interface FlightSearchParams {
   limit?: number;
 }
 
+export type FlightSearchFallback =
+  | 'one_way'
+  | 'one_way_month'
+  | 'calendar';
+
 export interface FlightResponseMeta {
   source: 'travelpayouts' | 'cache';
+
   stale: boolean;
   unavailable: boolean;
+
   currency: string;
+
+  fallback?: FlightSearchFallback;
+  fallbackPeriod?: string;
+
   disclaimer: string;
 }
 

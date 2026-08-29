@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
 import { getDestinationByIata } from '../../services/destinations.service';
+import { useCurrency } from '../../hooks/useCurrency';
+
 import type { Destination } from '../../types/destination.types';
 
 interface FlightSearchEditorProps {
@@ -14,7 +16,6 @@ interface FlightSearchEditorProps {
   initialDestinationIata: string;
   initialDepartureAt?: string | null;
   initialReturnAt?: string | null;
-  currency?: string;
 }
 
 type TripType = 'round-trip' | 'one-way';
@@ -24,11 +25,14 @@ function FlightSearchEditor({
   initialDestinationIata,
   initialDepartureAt,
   initialReturnAt,
-  currency = 'USD',
 }: FlightSearchEditorProps) {
   const navigate = useNavigate();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const { selectedCurrency } = useCurrency();
+
+  const [isOpen, setIsOpen] =
+    useState(false);
+
   const [isInitializing, setIsInitializing] =
     useState(true);
 
@@ -38,17 +42,17 @@ function FlightSearchEditor({
   const [destination, setDestination] =
     useState<Destination | null>(null);
 
-  const [departureDate, setDepartureDate] = useState(
-    initialDepartureAt || '',
-  );
+  const [departureDate, setDepartureDate] =
+    useState(initialDepartureAt || '');
 
-  const [returnDate, setReturnDate] = useState(
-    initialReturnAt || '',
-  );
+  const [returnDate, setReturnDate] =
+    useState(initialReturnAt || '');
 
   const [tripType, setTripType] =
     useState<TripType>(
-      initialReturnAt ? 'round-trip' : 'one-way',
+      initialReturnAt
+        ? 'round-trip'
+        : 'one-way',
     );
 
   useEffect(() => {
@@ -56,11 +60,15 @@ function FlightSearchEditor({
 
     const loadDestinations = async () => {
       try {
+        setIsInitializing(true);
+
         const [
           originDestination,
           destinationDestination,
         ] = await Promise.all([
-          getDestinationByIata(initialOriginIata),
+          getDestinationByIata(
+            initialOriginIata,
+          ),
           getDestinationByIata(
             initialDestinationIata,
           ),
@@ -70,8 +78,13 @@ function FlightSearchEditor({
           return;
         }
 
-        setOrigin(originDestination);
-        setDestination(destinationDestination);
+        setOrigin(
+          originDestination,
+        );
+
+        setDestination(
+          destinationDestination,
+        );
       } catch (error) {
         if (isCancelled) {
           return;
@@ -113,7 +126,10 @@ function FlightSearchEditor({
   ) => {
     setDepartureDate(value);
 
-    if (returnDate && returnDate < value) {
+    if (
+      returnDate &&
+      returnDate < value
+    ) {
       setReturnDate('');
     }
   };
@@ -130,7 +146,11 @@ function FlightSearchEditor({
   ) => {
     event.preventDefault();
 
-    if (!origin || !destination || !departureDate) {
+    if (
+      !origin ||
+      !destination ||
+      !departureDate
+    ) {
       return;
     }
 
@@ -141,21 +161,34 @@ function FlightSearchEditor({
       return;
     }
 
-    const params = new URLSearchParams({
-      origin: origin.cityIata,
-      destination: destination.cityIata,
-      departureAt: departureDate,
-      currency,
-    });
+    const params =
+      new URLSearchParams({
+        origin:
+          origin.cityIata,
+
+        destination:
+          destination.cityIata,
+
+        departureAt:
+          departureDate,
+
+        currency:
+          selectedCurrency,
+      });
 
     if (
       tripType === 'round-trip' &&
       returnDate
     ) {
-      params.set('returnAt', returnDate);
+      params.set(
+        'returnAt',
+        returnDate,
+      );
     }
 
-    navigate(`/flights?${params.toString()}`);
+    navigate(
+      `/flights?${params.toString()}`,
+    );
 
     setIsOpen(false);
   };
@@ -165,7 +198,10 @@ function FlightSearchEditor({
     !origin ||
     !destination ||
     !departureDate ||
-    (tripType === 'round-trip' && !returnDate);
+    (
+      tripType === 'round-trip' &&
+      !returnDate
+    );
 
   return (
     <section className="flight-search-editor">
@@ -173,7 +209,10 @@ function FlightSearchEditor({
         type="button"
         className="flight-search-edit-button"
         onClick={() =>
-          setIsOpen((current) => !current)
+          setIsOpen(
+            (current) =>
+              !current,
+          )
         }
       >
         {isOpen
@@ -192,7 +231,8 @@ function FlightSearchEditor({
               aria-label="Tipo de viaje"
               onChange={(event) =>
                 handleTripTypeChange(
-                  event.target.value as TripType,
+                  event.target
+                    .value as TripType,
                 )
               }
             >
@@ -221,9 +261,12 @@ function FlightSearchEditor({
               type="button"
               className="swap-button"
               aria-label="Intercambiar origen y destino"
-              onClick={handleSwapLocations}
+              onClick={
+                handleSwapLocations
+              }
               disabled={
-                !origin && !destination
+                !origin &&
+                !destination
               }
             >
               ⇄
@@ -234,15 +277,21 @@ function FlightSearchEditor({
               placeholder="¿A dónde quieres ir?"
               value={destination}
               onChange={setDestination}
-              excludeIata={origin?.cityIata}
+              excludeIata={
+                origin?.cityIata
+              }
             />
 
             <label className="search-box search-date">
-              <span>Salida</span>
+              <span>
+                Salida
+              </span>
 
               <input
                 type="date"
-                value={departureDate}
+                value={
+                  departureDate
+                }
                 aria-label="Fecha de salida"
                 onChange={(event) =>
                   handleDepartureDateChange(
@@ -252,15 +301,21 @@ function FlightSearchEditor({
               />
             </label>
 
-            {tripType === 'round-trip' && (
+            {tripType ===
+              'round-trip' && (
               <label className="search-box search-date">
-                <span>Regreso</span>
+                <span>
+                  Regreso
+                </span>
 
                 <input
                   type="date"
-                  value={returnDate}
+                  value={
+                    returnDate
+                  }
                   min={
-                    departureDate || undefined
+                    departureDate ||
+                    undefined
                   }
                   aria-label="Fecha de regreso"
                   onChange={(event) =>
@@ -275,7 +330,9 @@ function FlightSearchEditor({
             <button
               type="submit"
               className="search-button"
-              disabled={isSearchDisabled}
+              disabled={
+                isSearchDisabled
+              }
             >
               Buscar
             </button>

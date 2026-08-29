@@ -2,12 +2,16 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
+import { useCurrency } from '../../hooks/useCurrency';
+
 import type { Destination } from '../../types/destination.types';
 
 type TripType = 'round-trip' | 'one-way';
 
 function TripSearchForm() {
   const navigate = useNavigate();
+
+  const { selectedCurrency } = useCurrency();
 
   const [tripType, setTripType] =
     useState<TripType>('round-trip');
@@ -61,7 +65,7 @@ function TripSearchForm() {
       origin: origin.cityIata,
       destination: destination.cityIata,
       departureAt: departureDate,
-      currency: 'USD',
+      currency: selectedCurrency,
     });
 
     if (tripType === 'round-trip' && returnDate) {
