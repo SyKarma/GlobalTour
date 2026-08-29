@@ -70,6 +70,15 @@ function MainLayout() {
             </NavLink>
           </nav>
 
+          <NavLink
+  to="/dashboard"
+  className={({ isActive }) =>
+    isActive ? 'nav-link active' : 'nav-link'
+  }
+>
+  Dashboard
+</NavLink>
+
           <div className="navbar-auth">
             <CurrencySelector />
 
