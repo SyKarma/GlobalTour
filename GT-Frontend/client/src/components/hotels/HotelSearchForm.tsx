@@ -2,10 +2,14 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
+import { useCurrency } from '../../hooks/useCurrency';
+
 import type { Destination } from '../../types/destination.types';
 
 function HotelSearchForm() {
   const navigate = useNavigate();
+
+  const { selectedCurrency } = useCurrency();
 
   const [destination, setDestination] =
     useState<Destination | null>(null);
@@ -41,10 +45,12 @@ function HotelSearchForm() {
       checkin,
       checkout,
       adults,
-      currency: 'USD',
+      currency: selectedCurrency,
     });
 
-    navigate(`/hotels?${params.toString()}`);
+    navigate(
+      `/hotels?${params.toString()}`,
+    );
   };
 
   const isSearchDisabled =

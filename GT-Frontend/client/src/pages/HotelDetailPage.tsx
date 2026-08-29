@@ -10,6 +10,8 @@ import {
   getHotelRates,
 } from '../services/hotels.service';
 
+import { useCurrency } from '../hooks/useCurrency';
+
 import type {
   HotelDetail,
   HotelDetailMeta,
@@ -78,7 +80,15 @@ function hasValidChain(chain: string | null) {
 
 function HotelDetailPage() {
   const { id } = useParams();
-  const [searchParams] = useSearchParams();
+
+  const [
+    searchParams,
+    setSearchParams,
+  ] = useSearchParams();
+
+  const {
+    selectedCurrency,
+  } = useCurrency();
 
   const [hotel, setHotel] =
     useState<HotelDetail | null>(null);
@@ -114,12 +124,67 @@ function HotelDetailPage() {
     searchParams.get('adults') || '2',
   );
 
+  /*
+   * La moneda global del navbar es
+   * ahora la fuente de verdad.
+   */
   const currency =
-    searchParams.get('currency') || 'USD';
+    selectedCurrency;
 
   const hasStayDates =
     Boolean(checkin && checkout);
 
+  /*
+   * Sincroniza la moneda seleccionada
+   * con la URL.
+   *
+   * Ejemplo:
+   *
+   * currency=USD
+   *
+   * cambia automáticamente a:
+   *
+   * currency=EUR
+   */
+  useEffect(() => {
+    const urlCurrency =
+      searchParams.get('currency');
+
+    if (
+      urlCurrency ===
+      selectedCurrency
+    ) {
+      return;
+    }
+
+    const updatedParams =
+      new URLSearchParams(
+        searchParams,
+      );
+
+    updatedParams.set(
+      'currency',
+      selectedCurrency,
+    );
+
+    setSearchParams(
+      updatedParams,
+      {
+        replace: true,
+      },
+    );
+  }, [
+    searchParams,
+    selectedCurrency,
+    setSearchParams,
+  ]);
+
+  /*
+   * Carga la información general
+   * del hotel.
+   *
+   * La moneda no afecta este endpoint.
+   */
   useEffect(() => {
     let isCancelled = false;
 
@@ -176,6 +241,14 @@ function HotelDetailPage() {
     };
   }, [id]);
 
+  /*
+   * Consulta disponibilidad y tarifas.
+   *
+   * Este efecto sí depende de currency,
+   * por lo que cambiar USD -> EUR desde
+   * el navbar vuelve a consultar las
+   * tarifas automáticamente.
+   */
   useEffect(() => {
     let isCancelled = false;
 
@@ -197,19 +270,27 @@ function HotelDetailPage() {
         setRatesError(null);
 
         const response =
-          await getHotelRates(id, {
-            checkin,
-            checkout,
-            adults,
-            currency,
-          });
+          await getHotelRates(
+            id,
+            {
+              checkin,
+              checkout,
+              adults,
+              currency,
+            },
+          );
 
         if (isCancelled) {
           return;
         }
 
-        setRates(response.data.rates);
-        setRatesMeta(response.meta);
+        setRates(
+          response.data.rates,
+        );
+
+        setRatesMeta(
+          response.meta,
+        );
       } catch (error) {
         if (isCancelled) {
           return;
@@ -291,12 +372,14 @@ function HotelDetailPage() {
     hotel.images[0]?.url ||
     hotel.thumbnail;
 
-  const galleryImages = hotel.images
-    .filter(
-      (image) =>
-        image.url !== mainImage,
-    )
-    .slice(0, 4);
+  const galleryImages =
+    hotel.images
+      .filter(
+        (image) =>
+          image.url !==
+          mainImage,
+      )
+      .slice(0, 4);
 
   const cleanDescription =
     hotel.description
@@ -324,7 +407,9 @@ function HotelDetailPage() {
             </span>
           )}
 
-          <h1>{hotel.name}</h1>
+          <h1>
+            {hotel.name}
+          </h1>
 
           <p>
             {[
@@ -425,7 +510,9 @@ function HotelDetailPage() {
               </p>
             )}
 
-            {hasValidChain(hotel.chain) && (
+            {hasValidChain(
+              hotel.chain,
+            ) && (
               <p className="hotel-chain">
                 Cadena:{' '}
                 <strong>
@@ -440,7 +527,8 @@ function HotelDetailPage() {
               Servicios y comodidades
             </h2>
 
-            {hotel.amenities.length > 0 ? (
+            {hotel.amenities.length >
+            0 ? (
               <div className="hotel-amenities">
                 {hotel.amenities.map(
                   (amenity) => (
@@ -469,7 +557,9 @@ function HotelDetailPage() {
           {hasStayDates ? (
             <>
               <div className="hotel-stay-row">
-                <span>Check-in</span>
+                <span>
+                  Check-in
+                </span>
 
                 <strong>
                   {checkin}
@@ -477,7 +567,9 @@ function HotelDetailPage() {
               </div>
 
               <div className="hotel-stay-row">
-                <span>Check-out</span>
+                <span>
+                  Check-out
+                </span>
 
                 <strong>
                   {checkout}
@@ -485,7 +577,9 @@ function HotelDetailPage() {
               </div>
 
               <div className="hotel-stay-row">
-                <span>Huéspedes</span>
+                <span>
+                  Huéspedes
+                </span>
 
                 <strong>
                   {adults}{' '}
@@ -496,7 +590,9 @@ function HotelDetailPage() {
               </div>
 
               <div className="hotel-stay-row">
-                <span>Moneda</span>
+                <span>
+                  Moneda
+                </span>
 
                 <strong>
                   {currency}
@@ -566,7 +662,9 @@ function HotelDetailPage() {
                 No pudimos obtener las tarifas
               </h3>
 
-              <p>{ratesError}</p>
+              <p>
+                {ratesError}
+              </p>
             </div>
           )}
 
@@ -609,11 +707,15 @@ function HotelDetailPage() {
                         </span>
                       )}
 
-                      {rate.maxOccupancy !== null && (
+                      {rate.maxOccupancy !==
+                        null && (
                         <p>
                           Hasta{' '}
-                          {rate.maxOccupancy}{' '}
-                          {rate.maxOccupancy === 1
+                          {
+                            rate.maxOccupancy
+                          }{' '}
+                          {rate.maxOccupancy ===
+                          1
                             ? 'persona'
                             : 'personas'}
                         </p>
