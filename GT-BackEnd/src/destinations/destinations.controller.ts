@@ -1,18 +1,33 @@
 import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SearchHistoryService } from '../search-history/search-history.service';
 import { DestinationsService } from './destinations.service';
 import { SearchDestinationsDto } from './dto/search-destinations.dto';
 
 @ApiTags('destinations')
 @Controller('destinations')
 export class DestinationsController {
-  constructor(private readonly destinations: DestinationsService) {}
+  constructor(
+    private readonly destinations: DestinationsService,
+    private readonly searchHistory: SearchHistoryService,
+  ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Search destinations by city, country, or IATA' })
+  @ApiOperation({
+    summary: 'Search destinations by city, country, or IATA',
+    description:
+      'City-first autocomplete. Returns flightable cities so users can pick San José, Costa Rica (SJO) without knowing airport codes. Non-flightable duplicates such as SYQ are hidden unless the user types that IATA exactly.',
+  })
   @ApiOkResponse({ description: 'Matching destinations' })
-  search(@Query() query: SearchDestinationsDto) {
-    return this.destinations.search(query);
+  async search(@Query() query: SearchDestinationsDto) {
+    const result = await this.destinations.search(query);
+    if (query.q || query.country) {
+      this.searchHistory.recordDestination(
+        query,
+        result.data[0]?.cityIata ?? null,
+      );
+    }
+    return result;
   }
 
   @Post('sync')

@@ -4,6 +4,7 @@ import { HttpClientService } from '../common/http/http-client.service';
 import { EnvironmentVariables } from '../config/env.validation';
 import {
   TravelpayoutsAirline,
+  TravelpayoutsAirport,
   TravelpayoutsCity,
   TravelpayoutsCountry,
   TravelpayoutsGroupedResponse,
@@ -52,6 +53,13 @@ export class TravelpayoutsClient {
   getCountries(): Promise<TravelpayoutsCountry[]> {
     return this.http.getJson<TravelpayoutsCountry[]>(
       `${this.baseUrl}/data/en/countries.json`,
+      { headers: this.headers(), timeoutMs: 30_000 },
+    );
+  }
+
+  getAirports(): Promise<TravelpayoutsAirport[]> {
+    return this.http.getJson<TravelpayoutsAirport[]>(
+      `${this.baseUrl}/data/en/airports.json`,
       { headers: this.headers(), timeoutMs: 30_000 },
     );
   }

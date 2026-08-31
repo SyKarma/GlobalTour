@@ -14,12 +14,15 @@ export class SearchHistory {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'user_id', type: 'varchar', length: 36 })
-  userId: string;
+  @Column({ name: 'user_id', type: 'varchar', length: 36, nullable: true })
+  userId: string | null;
 
-  @ManyToOne(() => User, (user) => user.searchHistory, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.searchHistory, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: User | null;
 
   @Column({
     name: 'search_type',
@@ -38,6 +41,9 @@ export class SearchHistory {
     nullable: true,
   })
   destinationIata: string | null;
+
+  @Column({ name: 'travel_month', type: 'char', length: 7, nullable: true })
+  travelMonth: string | null;
 
   @Column({ name: 'query_json', type: 'json' })
   queryJson: Record<string, unknown>;

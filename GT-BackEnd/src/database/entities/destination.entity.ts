@@ -18,6 +18,16 @@ export class Destination {
   @Column({ name: 'city_iata', type: 'char', length: 3, unique: true })
   cityIata: string;
 
+  @Column({
+    name: 'has_flightable_airport',
+    type: 'boolean',
+    default: false,
+  })
+  hasFlightableAirport: boolean;
+
+  @Column({ type: 'json', nullable: true })
+  airports: Array<{ iata: string; name: string }> | null;
+
   @Column({ type: 'decimal', precision: 10, scale: 7, nullable: true })
   latitude: string | null;
 
