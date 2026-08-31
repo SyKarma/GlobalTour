@@ -12,6 +12,8 @@ import HotelDetailPage from '../pages/HotelDetailPage';
 import CarsPage from '../pages/CarsPage';
 import DashboardPage from '../pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import RestaurantsPage from '../pages/RestaurantsPage';
+import RestaurantDetailPage from '../pages/RestaurantDetailPage';
 
 function AppRouter() {
   return (
@@ -20,6 +22,16 @@ function AppRouter() {
         <Route
           path="/"
           element={<HomePage />}
+        />
+
+        <Route
+  path="/restaurants"
+  element={<RestaurantsPage />}
+/>
+
+        <Route
+          path="/restaurants/:id"
+          element={<RestaurantDetailPage />}
         />
 
         <Route

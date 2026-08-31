@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
+
 import { useAuth } from '../hooks/useAuth';
 import CurrencySelector from '../components/currency/CurrencySelector';
 
@@ -12,14 +13,18 @@ function MainLayout() {
     logout,
   } = useAuth();
 
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] =
+    useState(false);
 
   const handleLogout = async () => {
     try {
       await logout();
       setIsUserMenuOpen(false);
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error(
+        'Error al cerrar sesión:',
+        error,
+      );
     }
   };
 
@@ -27,7 +32,10 @@ function MainLayout() {
     <div className="app-shell">
       <header className="main-header">
         <div className="navbar">
-          <NavLink to="/" className="brand">
+          <NavLink
+            to="/"
+            className="brand"
+          >
             GlobalTour
           </NavLink>
 
@@ -36,7 +44,9 @@ function MainLayout() {
               to="/"
               end
               className={({ isActive }) =>
-                isActive ? 'nav-link active' : 'nav-link'
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
               }
             >
               Inicio
@@ -45,7 +55,9 @@ function MainLayout() {
             <NavLink
               to="/flights"
               className={({ isActive }) =>
-                isActive ? 'nav-link active' : 'nav-link'
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
               }
             >
               Vuelos
@@ -54,30 +66,47 @@ function MainLayout() {
             <NavLink
               to="/hotels"
               className={({ isActive }) =>
-                isActive ? 'nav-link active' : 'nav-link'
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
               }
             >
               Hospedaje
             </NavLink>
 
             <NavLink
+              to="/restaurants"
+              className={({ isActive }) =>
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
+              }
+            >
+              Restaurantes
+            </NavLink>
+
+            <NavLink
               to="/cars"
               className={({ isActive }) =>
-                isActive ? 'nav-link active' : 'nav-link'
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
               }
             >
               Rent a Car
             </NavLink>
-          </nav>
 
-          <NavLink
-  to="/dashboard"
-  className={({ isActive }) =>
-    isActive ? 'nav-link active' : 'nav-link'
-  }
->
-  Dashboard
-</NavLink>
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                isActive
+                  ? 'nav-link active'
+                  : 'nav-link'
+              }
+            >
+              Dashboard
+            </NavLink>
+          </nav>
 
           <div className="navbar-auth">
             <CurrencySelector />
@@ -92,7 +121,9 @@ function MainLayout() {
                   type="button"
                   className="user-menu-trigger"
                   onClick={() =>
-                    setIsUserMenuOpen((current) => !current)
+                    setIsUserMenuOpen(
+                      (current) => !current,
+                    )
                   }
                 >
                   {user.avatarUrl ? (
@@ -103,7 +134,9 @@ function MainLayout() {
                     />
                   ) : (
                     <span className="user-avatar-fallback">
-                      {user.displayName.charAt(0).toUpperCase()}
+                      {user.displayName
+                        .charAt(0)
+                        .toUpperCase()}
                     </span>
                   )}
 
