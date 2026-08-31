@@ -9,6 +9,8 @@ import { SearchType } from '../database/enums';
 import { SearchDestinationsDto } from '../destinations/dto/search-destinations.dto';
 import { SearchFlightsDto } from '../flights/dto/search-flights.dto';
 import { SearchHotelsDto } from '../hotels/dto/search-hotels.dto';
+import { SearchRestaurantsDto } from '../restaurants/dto/search-restaurants.dto';
+import { SearchCarsDto } from '../cars/dto/search-cars.dto';
 
 const IATA = /^[A-Z]{3}$/;
 const YEAR_MONTH = /^\d{4}-\d{2}/;
@@ -77,6 +79,42 @@ export class SearchHistoryService {
       queryJson: {
         from: query.from ?? 'USD',
         to: query.to,
+      },
+    });
+  }
+
+  recordRestaurant(
+    query: SearchRestaurantsDto,
+    destinationIata?: string | null,
+  ): void {
+    this.enqueue({
+      searchType: SearchType.RESTAURANT,
+      destinationIata,
+      queryJson: {
+        cityName: query.cityName,
+        countryCode: query.countryCode ?? null,
+        radius: query.radius ?? 4000,
+        limit: query.limit ?? 20,
+        type: query.type ?? null,
+        cuisine: query.cuisine ?? null,
+        q: query.q ?? null,
+        hasWebsite: query.hasWebsite === true,
+      },
+    });
+  }
+
+  recordCar(query: SearchCarsDto, destinationIata?: string | null): void {
+    this.enqueue({
+      searchType: SearchType.CAR,
+      destinationIata,
+      queryJson: {
+        cityName: query.cityName,
+        countryCode: query.countryCode ?? null,
+        radius: query.radius ?? 8000,
+        limit: query.limit ?? 20,
+        type: query.type ?? null,
+        q: query.q ?? null,
+        hasWebsite: query.hasWebsite === true,
       },
     });
   }

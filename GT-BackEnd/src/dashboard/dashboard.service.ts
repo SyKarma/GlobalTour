@@ -48,6 +48,18 @@ export type MonthCount = {
   count: number;
 };
 
+export type PlaceCount = {
+  cityName: string;
+  countryCode: string | null;
+  iata: string | null;
+  count: number;
+};
+
+export type LabelCount = {
+  value: string;
+  count: number;
+};
+
 export type DashboardData = {
   generatedAt: string;
   period: {
@@ -65,6 +77,11 @@ export type DashboardData = {
   topOrigins: NamedIataCount[];
   topCountries: CountryCount[];
   topRoutes: RouteCount[];
+  topRestaurantCities: PlaceCount[];
+  topCarCities: PlaceCount[];
+  topRestaurantCuisines: LabelCount[];
+  topRestaurantTypes: LabelCount[];
+  topCarTypes: LabelCount[];
   volumeByDay: DayCount[];
   travelMonths: MonthCount[];
 };
@@ -86,7 +103,7 @@ export class DashboardService {
   async getAnalytics(query: DashboardQueryDto): Promise<DashboardResult> {
     const days = query.days ?? 30;
     const limit = query.limit ?? 10;
-    const cacheKey = `dashboard:v2:${days}:${limit}`;
+    const cacheKey = `dashboard:v3:${days}:${limit}`;
 
     const cached = await this.cache.get<DashboardData>(cacheKey);
     if (cached) {
@@ -109,6 +126,11 @@ export class DashboardService {
       routeRows,
       volumeRows,
       travelMonthRows,
+      restaurantCityRows,
+      carCityRows,
+      restaurantCuisineRows,
+      restaurantTypeRows,
+      carTypeRows,
     ] = await Promise.all([
       this.totalSince(fromSql),
       this.countsByType(fromSql),
@@ -119,6 +141,11 @@ export class DashboardService {
       this.topRoutes(fromSql, limit),
       this.volumeByDay(fromSql),
       this.travelMonths(fromSql),
+      this.topCities(fromSql, SearchType.RESTAURANT, limit),
+      this.topCities(fromSql, SearchType.CAR, limit),
+      this.topJsonValues(fromSql, SearchType.RESTAURANT, 'cuisine', limit),
+      this.topJsonValues(fromSql, SearchType.RESTAURANT, 'type', limit),
+      this.topJsonValues(fromSql, SearchType.CAR, 'type', limit),
     ]);
 
     const data: DashboardData = {
@@ -132,10 +159,7 @@ export class DashboardService {
         totalSearches: toCount(totalRow?.total),
         uniqueOrigins: toCount(uniqueRow?.uniqueOrigins),
         uniqueDestinations: toCount(uniqueRow?.uniqueDestinations),
-        byType: byTypeRows.map((row) => ({
-          searchType: row.searchType,
-          count: toCount(row.count),
-        })),
+        byType: fillByType(byTypeRows),
       },
       topDestinations: destinationRows.map(toNamedIata),
       topOrigins: originRows.map(toNamedIata),
@@ -151,6 +175,11 @@ export class DashboardService {
         destinationCityName: row.destinationCityName ?? null,
         count: toCount(row.count),
       })),
+      topRestaurantCities: restaurantCityRows.map(toPlaceCount),
+      topCarCities: carCityRows.map(toPlaceCount),
+      topRestaurantCuisines: restaurantCuisineRows.map(toLabelCount),
+      topRestaurantTypes: restaurantTypeRows.map(toLabelCount),
+      topCarTypes: carTypeRows.map(toLabelCount),
       volumeByDay: fillDays(from, days, volumeRows),
       travelMonths: travelMonthRows.map((row) => ({
         month: row.month,
@@ -295,6 +324,55 @@ export class DashboardService {
       .getRawMany<{ date: string | Date; count: string | number }>();
   }
 
+  private topCities(fromSql: string, searchType: SearchType, limit: number) {
+    const cityName = jsonField('cityName');
+    const countryCode = jsonField('countryCode');
+
+    return this.searches
+      .createQueryBuilder('search')
+      .select(cityName, 'cityName')
+      .addSelect(countryCode, 'countryCode')
+      .addSelect('MAX(search.destinationIata)', 'iata')
+      .addSelect('COUNT(*)', 'count')
+      .where('search.createdAt >= :from', { from: fromSql })
+      .andWhere('search.searchType = :searchType', { searchType })
+      .andWhere(`${cityName} IS NOT NULL`)
+      .andWhere(`${cityName} <> ''`)
+      .groupBy(cityName)
+      .addGroupBy(countryCode)
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany<{
+        cityName: string;
+        countryCode: string | null;
+        iata: string | null;
+        count: string | number;
+      }>();
+  }
+
+  private topJsonValues(
+    fromSql: string,
+    searchType: SearchType,
+    field: 'cuisine' | 'type',
+    limit: number,
+  ) {
+    const value = jsonField(field);
+
+    return this.searches
+      .createQueryBuilder('search')
+      .select(value, 'value')
+      .addSelect('COUNT(*)', 'count')
+      .where('search.createdAt >= :from', { from: fromSql })
+      .andWhere('search.searchType = :searchType', { searchType })
+      .andWhere(`${value} IS NOT NULL`)
+      .andWhere(`${value} <> ''`)
+      .andWhere(`${value} <> 'null'`)
+      .groupBy(value)
+      .orderBy('count', 'DESC')
+      .limit(limit)
+      .getRawMany<{ value: string; count: string | number }>();
+  }
+
   private travelMonths(fromSql: string) {
     return this.searches
       .createQueryBuilder('search')
@@ -338,6 +416,64 @@ function toNamedIata(row: {
     countryCode: row.countryCode ?? null,
     count: toCount(row.count),
   };
+}
+
+function fillByType(
+  rows: Array<{ searchType: SearchType; count: string | number }>,
+): TypeCount[] {
+  const counts = new Map<string, number>(
+    Object.values(SearchType).map((searchType) => [searchType, 0]),
+  );
+  for (const row of rows) {
+    if (counts.has(row.searchType)) {
+      counts.set(row.searchType, toCount(row.count));
+    }
+  }
+  return Object.values(SearchType)
+    .map((searchType) => ({
+      searchType,
+      count: counts.get(searchType) ?? 0,
+    }))
+    .sort(
+      (left, right) =>
+        right.count - left.count ||
+        left.searchType.localeCompare(right.searchType),
+    );
+}
+
+function jsonField(field: 'cityName' | 'countryCode' | 'cuisine' | 'type') {
+  return `JSON_UNQUOTE(JSON_EXTRACT(search.query_json, '$.${field}'))`;
+}
+
+function toPlaceCount(row: {
+  cityName: string;
+  countryCode: string | null;
+  iata: string | null;
+  count: string | number;
+}): PlaceCount {
+  return {
+    cityName: row.cityName,
+    countryCode: emptyToNull(row.countryCode),
+    iata: emptyToNull(row.iata),
+    count: toCount(row.count),
+  };
+}
+
+function toLabelCount(row: {
+  value: string;
+  count: string | number;
+}): LabelCount {
+  return {
+    value: row.value,
+    count: toCount(row.count),
+  };
+}
+
+function emptyToNull(value: string | null | undefined): string | null {
+  if (!value || value === 'null') {
+    return null;
+  }
+  return value;
 }
 
 function fillDays(

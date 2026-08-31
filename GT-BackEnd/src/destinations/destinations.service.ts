@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import {
+  BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
@@ -161,6 +162,38 @@ export class DestinationsService implements OnModuleInit {
     return { data: this.toDto(destination) };
   }
 
+  async getByCity(cityName: string, countryCode?: string) {
+    const name = cityName.trim();
+    const country = countryCode?.trim().toUpperCase();
+    const qb = this.destinations
+      .createQueryBuilder('destination')
+      .where('LOWER(destination.cityName) = LOWER(:cityName)', {
+        cityName: name,
+      });
+
+    if (country) {
+      qb.andWhere('destination.countryCode = :countryCode', {
+        countryCode: country,
+      });
+    }
+
+    const matches = await qb.getMany();
+    if (matches.length === 0) {
+      const label = country ? `${name}, ${country}` : name;
+      throw new NotFoundException(`Destination ${label} was not found`);
+    }
+
+    const countries = [...new Set(matches.map((row) => row.countryCode))];
+    if (!country && countries.length > 1) {
+      throw new BadRequestException(
+        `City ${name} matches ${countries.join(', ')}. Pass countryCode to disambiguate.`,
+      );
+    }
+
+    const chosen = pickCityMatch(matches);
+    return { data: this.toDto(chosen) };
+  }
+
   async syncFromTravelpayouts() {
     if (this.seeding) {
       return { data: { status: 'already_running' } };
@@ -305,4 +338,17 @@ function groupFlightableAirports(
   }
 
   return grouped;
+}
+
+function pickCityMatch(matches: Destination[]): Destination {
+  const withCoords = matches.filter(
+    (row) => row.latitude != null && row.longitude != null,
+  );
+  const pool = withCoords.length > 0 ? withCoords : matches;
+  return [...pool].sort((left, right) => {
+    if (left.hasFlightableAirport !== right.hasFlightableAirport) {
+      return left.hasFlightableAirport ? -1 : 1;
+    }
+    return left.cityIata.localeCompare(right.cityIata);
+  })[0];
 }

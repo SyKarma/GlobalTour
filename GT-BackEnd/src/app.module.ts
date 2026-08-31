@@ -15,6 +15,9 @@ import { DestinationsModule } from './destinations/destinations.module';
 import { FlightsModule } from './flights/flights.module';
 import { HealthModule } from './health/health.module';
 import { HotelsModule } from './hotels/hotels.module';
+import { OsmModule } from './osm/osm.module';
+import { CarsModule } from './cars/cars.module';
+import { RestaurantsModule } from './restaurants/restaurants.module';
 import { SearchHistoryModule } from './search-history/search-history.module';
 
 @Module({
@@ -47,6 +50,9 @@ import { SearchHistoryModule } from './search-history/search-history.module';
     DestinationsModule,
     FlightsModule,
     HotelsModule,
+    OsmModule,
+    RestaurantsModule,
+    CarsModule,
     SearchHistoryModule,
     DashboardModule,
   ],

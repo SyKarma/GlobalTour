@@ -58,6 +58,23 @@ describe('Health (e2e)', () => {
       .expect(400);
   });
 
+  it('/api/restaurants/search (GET) rejects missing cityName', () => {
+    return request(app.getHttpServer())
+      .get('/api/restaurants/search')
+      .expect(400);
+  });
+
+  it('/api/restaurants/search (GET) rejects an invalid type', () => {
+    return request(app.getHttpServer())
+      .get('/api/restaurants/search')
+      .query({ cityName: 'San Jose', countryCode: 'CR', type: 'hotel' })
+      .expect(400);
+  });
+
+  it('/api/cars/search (GET) rejects missing cityName', () => {
+    return request(app.getHttpServer()).get('/api/cars/search').expect(400);
+  });
+
   it('/api/auth/me (GET) returns 401 for guests', () => {
     return request(app.getHttpServer()).get('/api/auth/me').expect(401);
   });
@@ -86,6 +103,17 @@ describe('Health (e2e)', () => {
     expect(response.body.data.topOrigins).toEqual(expect.any(Array));
     expect(response.body.data.topCountries).toEqual(expect.any(Array));
     expect(response.body.data.topRoutes).toEqual(expect.any(Array));
+    expect(response.body.data.topRestaurantCities).toEqual(expect.any(Array));
+    expect(response.body.data.topCarCities).toEqual(expect.any(Array));
+    expect(response.body.data.topRestaurantCuisines).toEqual(expect.any(Array));
+    expect(response.body.data.topRestaurantTypes).toEqual(expect.any(Array));
+    expect(response.body.data.topCarTypes).toEqual(expect.any(Array));
+    expect(response.body.data.summary.byType).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ searchType: 'restaurant' }),
+        expect.objectContaining({ searchType: 'car' }),
+      ]),
+    );
     expect(response.body.data.volumeByDay).toHaveLength(7);
     expect(response.body.data.travelMonths).toEqual(expect.any(Array));
     expect(response.body.meta.cached).toEqual(expect.any(Boolean));
