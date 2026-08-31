@@ -106,6 +106,56 @@ describe('SearchHistoryService', () => {
     );
   });
 
+  it('records a restaurant search against the destination IATA', async () => {
+    service.recordRestaurant(
+      { cityName: 'San Jose', countryCode: 'CR', radius: 2500, limit: 10 },
+      'SJO',
+    );
+    await flush();
+
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        searchType: SearchType.RESTAURANT,
+        destinationIata: 'SJO',
+        originIata: null,
+        queryJson: {
+          cityName: 'San Jose',
+          countryCode: 'CR',
+          radius: 2500,
+          limit: 10,
+          type: null,
+          cuisine: null,
+          q: null,
+          hasWebsite: false,
+        },
+      }),
+    );
+  });
+
+  it('records a car search against the destination IATA', async () => {
+    service.recordCar(
+      { cityName: 'San Jose', countryCode: 'CR', radius: 8000, limit: 10 },
+      'SJO',
+    );
+    await flush();
+
+    expect(save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        searchType: SearchType.CAR,
+        destinationIata: 'SJO',
+        queryJson: {
+          cityName: 'San Jose',
+          countryCode: 'CR',
+          radius: 8000,
+          limit: 10,
+          type: null,
+          q: null,
+          hasWebsite: false,
+        },
+      }),
+    );
+  });
+
   it('records a currency conversion without IATA codes', async () => {
     service.recordCurrency({ amount: 100, from: 'USD', to: 'EUR' });
     await flush();

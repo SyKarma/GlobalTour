@@ -86,6 +86,16 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsUrl({ require_tld: false })
   GOOGLE_CALLBACK_URL?: string;
+
+  @Transform(({ value }: { value: unknown }) => blankToUndefined(value))
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  OVERPASS_BASE_URL?: string;
+
+  @Transform(({ value }: { value: unknown }) => blankToUndefined(value))
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  NOMINATIM_BASE_URL?: string;
 }
 
 function blankToUndefined(value: unknown): string | undefined {

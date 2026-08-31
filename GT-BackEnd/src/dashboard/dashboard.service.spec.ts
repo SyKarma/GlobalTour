@@ -77,6 +77,24 @@ describe('DashboardService', () => {
     expect(result.data.topOrigins).toEqual([]);
     expect(result.data.topCountries).toEqual([]);
     expect(result.data.topRoutes).toEqual([]);
+    expect(result.data.topRestaurantCities).toEqual([]);
+    expect(result.data.topCarCities).toEqual([]);
+    expect(result.data.topRestaurantCuisines).toEqual([]);
+    expect(result.data.topRestaurantTypes).toEqual([]);
+    expect(result.data.topCarTypes).toEqual([]);
+    expect(result.data.summary.byType).toHaveLength(
+      Object.values(SearchType).length,
+    );
+    expect(
+      result.data.summary.byType.some(
+        (row) => row.searchType === SearchType.RESTAURANT,
+      ),
+    ).toBe(true);
+    expect(
+      result.data.summary.byType.some(
+        (row) => row.searchType === SearchType.CAR,
+      ),
+    ).toBe(true);
     expect(result.data.volumeByDay).toHaveLength(7);
     expect(result.data.volumeByDay.every((point) => point.count === 0)).toBe(
       true,
@@ -170,6 +188,45 @@ describe('DashboardService', () => {
         mockQueryBuilder({
           many: [{ month: '2026-09', count: '2' }],
         }),
+      )
+      .mockImplementationOnce(() =>
+        mockQueryBuilder({
+          many: [
+            {
+              cityName: 'San Ramón',
+              countryCode: 'CR',
+              iata: null,
+              count: '4',
+            },
+          ],
+        }),
+      )
+      .mockImplementationOnce(() =>
+        mockQueryBuilder({
+          many: [
+            {
+              cityName: 'San Jose',
+              countryCode: 'CR',
+              iata: 'SJO',
+              count: '2',
+            },
+          ],
+        }),
+      )
+      .mockImplementationOnce(() =>
+        mockQueryBuilder({
+          many: [{ value: 'costa_rican', count: '3' }],
+        }),
+      )
+      .mockImplementationOnce(() =>
+        mockQueryBuilder({
+          many: [{ value: 'cafe', count: '2' }],
+        }),
+      )
+      .mockImplementationOnce(() =>
+        mockQueryBuilder({
+          many: [{ value: 'car_rental', count: '2' }],
+        }),
       );
 
     const result = await service.getAnalytics({ days: 1, limit: 5 });
@@ -177,9 +234,16 @@ describe('DashboardService', () => {
     expect(result.data.summary.totalSearches).toBe(5);
     expect(result.data.summary.uniqueOrigins).toBe(2);
     expect(result.data.summary.uniqueDestinations).toBe(3);
-    expect(result.data.summary.byType).toEqual([
-      { searchType: SearchType.FLIGHT, count: 5 },
-    ]);
+    expect(result.data.summary.byType).toEqual(
+      expect.arrayContaining([
+        { searchType: SearchType.FLIGHT, count: 5 },
+        { searchType: SearchType.RESTAURANT, count: 0 },
+        { searchType: SearchType.CAR, count: 0 },
+      ]),
+    );
+    expect(result.data.summary.byType).toHaveLength(
+      Object.values(SearchType).length,
+    );
     expect(result.data.topDestinations[0]).toEqual({
       iata: 'MIA',
       cityName: 'Miami',
@@ -199,5 +263,30 @@ describe('DashboardService', () => {
       count: 2,
     });
     expect(result.data.travelMonths).toEqual([{ month: '2026-09', count: 2 }]);
+    expect(result.data.topRestaurantCities).toEqual([
+      {
+        cityName: 'San Ramón',
+        countryCode: 'CR',
+        iata: null,
+        count: 4,
+      },
+    ]);
+    expect(result.data.topCarCities).toEqual([
+      {
+        cityName: 'San Jose',
+        countryCode: 'CR',
+        iata: 'SJO',
+        count: 2,
+      },
+    ]);
+    expect(result.data.topRestaurantCuisines).toEqual([
+      { value: 'costa_rican', count: 3 },
+    ]);
+    expect(result.data.topRestaurantTypes).toEqual([
+      { value: 'cafe', count: 2 },
+    ]);
+    expect(result.data.topCarTypes).toEqual([
+      { value: 'car_rental', count: 2 },
+    ]);
   });
 });

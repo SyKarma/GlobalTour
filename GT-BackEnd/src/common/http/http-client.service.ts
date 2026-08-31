@@ -19,6 +19,22 @@ export class HttpClientService {
     return this.requestJson<T>(url, { method: 'GET', ...options });
   }
 
+  async postForm<T>(
+    url: string,
+    fields: Record<string, string>,
+    options: HttpClientOptions = {},
+  ): Promise<T> {
+    return this.requestJson<T>(url, {
+      method: 'POST',
+      body: new URLSearchParams(fields).toString(),
+      ...options,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        ...options.headers,
+      },
+    });
+  }
+
   async postJson<T>(
     url: string,
     body: unknown,
@@ -80,7 +96,8 @@ export class HttpClientService {
   }
 
   private toHttpException(status: number, body: string) {
-    const message = this.parseMessage(body) ?? `Upstream request failed (${status})`;
+    const message =
+      this.parseMessage(body) ?? `Upstream request failed (${status})`;
 
     if (status === 404) {
       return new NotFoundException(message);
@@ -98,8 +115,11 @@ export class HttpClientService {
 
   private parseMessage(body: string): string | null {
     try {
-      const parsed = JSON.parse(body) as { message?: string };
-      return parsed.message ?? null;
+      const parsed = JSON.parse(body) as {
+        message?: string;
+        error?: { message?: string };
+      };
+      return parsed.message ?? parsed.error?.message ?? null;
     } catch {
       return null;
     }

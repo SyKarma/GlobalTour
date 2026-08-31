@@ -134,4 +134,29 @@ describe('DestinationsService', () => {
     findOne.mockResolvedValue(null);
     await expect(service.getByIata('ZZZ')).rejects.toThrow('Destination ZZZ');
   });
+
+  it('resolves a city name and country to catalog coordinates', async () => {
+    getMany.mockResolvedValue([
+      destination({ cityIata: 'SJO', cityName: 'San Jose', countryCode: 'CR' }),
+    ]);
+
+    const result = await service.getByCity('san jose', 'cr');
+    expect(result.data.cityIata).toBe('SJO');
+    expect(result.data.latitude).toBe(9.9);
+  });
+
+  it('requires countryCode when the city name exists in multiple countries', async () => {
+    getMany.mockResolvedValue([
+      destination({ cityIata: 'SJO', countryCode: 'CR' }),
+      destination({
+        cityIata: 'SJC',
+        countryCode: 'US',
+        countryName: 'United States',
+      }),
+    ]);
+
+    await expect(service.getByCity('San Jose')).rejects.toThrow(
+      'Pass countryCode to disambiguate',
+    );
+  });
 });
