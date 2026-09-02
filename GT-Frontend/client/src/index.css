@@ -7360,3 +7360,429 @@ button {
     width: 210px;
   }
 }
+
+/* =========================================
+   DASHBOARD RANKING CHARTS
+   ========================================= */
+
+.dashboard-ranking-chart {
+  width: 100%;
+  min-height: 260px;
+
+  padding:
+    14px
+    12px
+    6px;
+}
+
+.dashboard-ranking-chart
+  .recharts-cartesian-grid
+  line {
+  stroke: #eef1f5;
+}
+
+.dashboard-ranking-chart
+  .recharts-cartesian-axis-line {
+  stroke: transparent;
+}
+
+.dashboard-ranking-chart
+  .recharts-cartesian-axis-tick-line {
+  stroke: transparent;
+}
+
+.dashboard-ranking-chart
+  .recharts-cartesian-axis-tick-value {
+  fill: #667085;
+
+  font-family: inherit;
+
+  font-size: 0.74rem;
+}
+
+.dashboard-ranking-chart
+  .recharts-yAxis
+  .recharts-cartesian-axis-tick-value {
+  fill: #344054;
+
+  font-weight: 650;
+}
+
+.dashboard-ranking-chart
+  .recharts-xAxis
+  .recharts-cartesian-axis-tick-value {
+  fill: #98a2b3;
+
+  font-size: 0.7rem;
+}
+
+/* Makes panels with ranking charts
+   feel visually balanced */
+
+.dashboard-bottom-grid
+  .dashboard-panel {
+  min-width: 0;
+}
+
+.dashboard-bottom-grid
+  .dashboard-chart-container {
+  width: 100%;
+}
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1000px) {
+  .dashboard-ranking-chart {
+    padding:
+      10px
+      5px
+      4px;
+  }
+}
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 650px) {
+  .dashboard-ranking-chart {
+    min-height: 240px;
+
+    overflow-x: auto;
+
+    padding:
+      8px
+      0
+      4px;
+  }
+
+  .dashboard-ranking-chart
+    .recharts-cartesian-axis-tick-value {
+    font-size: 0.68rem;
+  }
+
+  .dashboard-ranking-chart
+    .recharts-yAxis
+    .recharts-cartesian-axis-tick-value {
+    font-size: 0.68rem;
+  }
+}
+
+/* =========================================
+   LOCATION SEARCH WITHOUT FLIGHT CATALOG
+   ========================================= */
+
+.car-location-fields {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    140px;
+  gap: 12px;
+}
+
+.hotel-location-fields {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1fr)
+    100px;
+  gap: 8px;
+  min-width: 300px;
+}
+
+.hotel-location-fields .search-box {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .car-location-fields,
+  .hotel-location-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .hotel-location-fields {
+    min-width: 0;
+  }
+}
+
+/* =========================================================
+   LOCATION SEARCH
+   Ciudad + País sin dependencia de /api/destinations
+   ========================================================= */
+
+
+/* =========================================================
+   RENT A CAR
+   ========================================================= */
+
+.car-location-fields {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 130px;
+  gap: 12px;
+  width: 100%;
+  align-items: end;
+}
+
+.car-destination-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.car-location-fields .car-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.car-location-fields .car-filter-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.car-location-fields .car-filter-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172033;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.car-location-fields .car-filter-field input::placeholder {
+  color: #8b97a8;
+}
+
+.car-location-fields .car-filter-field input:hover {
+  border-color: #b9c5d4;
+}
+
+.car-location-fields .car-filter-field input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+
+/* =========================================================
+   RESTAURANTES
+   ========================================================= */
+
+.restaurant-search-main {
+  display: grid;
+  grid-template-columns:
+    minmax(240px, 1fr)
+    130px
+    auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.restaurant-search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.restaurant-search-field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.restaurant-search-field > input,
+.restaurant-search-input-wrapper {
+  width: 100%;
+}
+
+.restaurant-search-field > input {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172033;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.restaurant-search-field > input::placeholder {
+  color: #8b97a8;
+}
+
+.restaurant-search-field > input:hover {
+  border-color: #b9c5d4;
+}
+
+.restaurant-search-field > input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+.restaurant-search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.restaurant-search-input-wrapper svg {
+  position: absolute;
+  left: 14px;
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: #64748b;
+  stroke-width: 1.8;
+  pointer-events: none;
+}
+
+.restaurant-search-input-wrapper input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px 0 43px;
+  border: 1px solid #d7dee8;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172033;
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.restaurant-search-input-wrapper input::placeholder {
+  color: #8b97a8;
+}
+
+.restaurant-search-input-wrapper input:hover {
+  border-color: #b9c5d4;
+}
+
+.restaurant-search-input-wrapper input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 12%);
+}
+
+.restaurant-search-input-wrapper:focus-within svg {
+  stroke: #2563eb;
+}
+
+
+/* =========================================================
+   HOSPEDAJE
+   ========================================================= */
+
+.hotel-location-fields {
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) 105px;
+  gap: 8px;
+  min-width: 310px;
+}
+
+.hotel-location-fields .search-box {
+  width: 100%;
+  min-width: 0;
+}
+
+.hotel-location-fields .search-box input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hotel-location-fields .search-country input {
+  text-transform: uppercase;
+}
+
+
+/* =========================================================
+   PAÍS
+   ========================================================= */
+
+#car-country,
+#restaurant-country {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#car-country::placeholder,
+#restaurant-country::placeholder {
+  text-transform: uppercase;
+  letter-spacing: normal;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+  .restaurant-search-main {
+    grid-template-columns:
+      minmax(220px, 1fr)
+      120px;
+  }
+
+  .restaurant-search-button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .hotel-location-fields {
+    grid-template-columns:
+      minmax(170px, 1fr)
+      100px;
+  }
+}
+
+@media (max-width: 760px) {
+  .car-location-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .restaurant-search-main {
+    grid-template-columns: 1fr;
+  }
+
+  .restaurant-search-button {
+    grid-column: auto;
+  }
+
+  .hotel-location-fields {
+    grid-template-columns: 1fr;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .car-location-fields,
+  .restaurant-search-main,
+  .hotel-location-fields {
+    gap: 10px;
+  }
+
+  .car-location-fields .car-filter-field input,
+  .restaurant-search-field > input,
+  .restaurant-search-input-wrapper input {
+    min-height: 46px;
+    font-size: 0.9rem;
+  }
+}

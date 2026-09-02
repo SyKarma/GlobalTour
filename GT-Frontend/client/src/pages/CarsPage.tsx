@@ -23,48 +23,68 @@ import type {
 } from '../types/car.types';
 
 function CarsPage() {
-  const navigate = useNavigate();
+  const navigate =
+    useNavigate();
 
   const [searchParams] =
     useSearchParams();
 
-  const [cars, setCars] = useState<
-    CarSummary[]
-  >([]);
+  const [cars, setCars] =
+    useState<CarSummary[]>([]);
 
   const [meta, setMeta] =
     useState<CarSearchMeta | null>(
       null,
     );
 
-  const [isLoading, setIsLoading] =
-    useState(false);
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(false);
 
   const [error, setError] =
-    useState<string | null>(null);
+    useState<string | null>(
+      null,
+    );
 
   const cityName =
-    searchParams.get('cityName') ?? '';
+    searchParams.get(
+      'cityName',
+    ) ?? '';
 
   const countryCode =
-    searchParams.get('countryCode') ??
-    '';
+    searchParams.get(
+      'countryCode',
+    ) ?? '';
 
   const type =
-    searchParams.get('type') ?? '';
+    searchParams.get(
+      'type',
+    ) ?? '';
 
   const q =
-    searchParams.get('q') ?? '';
+    searchParams.get(
+      'q',
+    ) ?? '';
 
   const radius =
     Number(
-      searchParams.get('radius'),
+      searchParams.get(
+        'radius',
+      ),
     ) || 8000;
 
   const hasWebsite =
-    searchParams.get('hasWebsite') ===
-    'true';
+    searchParams.get(
+      'hasWebsite',
+    ) === 'true';
 
+  /*
+   * Cars ya no depende de
+   * DestinationAutocomplete ni de IATA.
+   *
+   * La ciudad es suficiente.
+   */
   const hasSearch =
     cityName.trim().length >= 2;
 
@@ -75,64 +95,79 @@ function CarsPage() {
 
     let cancelled = false;
 
-    const loadCars = async () => {
-      setIsLoading(true);
+    const loadCars =
+      async () => {
+        setIsLoading(true);
 
-      try {
-        const response =
-          await searchCars({
-            cityName,
+        try {
+          const response =
+            await searchCars({
+              cityName:
+                cityName.trim(),
 
-            countryCode:
-              countryCode ||
-              undefined,
+              countryCode:
+                countryCode.trim() ||
+                undefined,
 
-            radius,
+              radius,
 
-            limit: 20,
+              limit: 20,
 
-            type:
-              type === 'car_rental' ||
-              type === 'car_sharing'
-                ? type
-                : undefined,
+              type:
+                type ===
+                  'car_rental' ||
+                type ===
+                  'car_sharing'
+                  ? type
+                  : undefined,
 
-            q:
-              q.trim() ||
-              undefined,
+              q:
+                q.trim() ||
+                undefined,
 
-            hasWebsite:
-              hasWebsite ||
-              undefined,
-          });
+              hasWebsite:
+                hasWebsite ||
+                undefined,
+            });
 
-        if (cancelled) {
-          return;
-        }
+          if (cancelled) {
+            return;
+          }
 
-        setCars(response.data);
-        setMeta(response.meta);
-        setError(null);
-      } catch (requestError) {
-        console.error(
-          'Error al buscar Rent a Car:',
-          requestError,
-        );
-
-        if (!cancelled) {
-          setCars([]);
-          setMeta(null);
-
-          setError(
-            'No fue posible buscar opciones de Rent a Car en este momento.',
+          setCars(
+            response.data,
           );
+
+          setMeta(
+            response.meta,
+          );
+
+          setError(null);
+        } catch (
+          requestError
+        ) {
+          console.error(
+            'Error al buscar Rent a Car:',
+            requestError,
+          );
+
+          if (!cancelled) {
+            setCars([]);
+
+            setMeta(null);
+
+            setError(
+              'No fue posible buscar opciones de Rent a Car en este momento.',
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setIsLoading(
+              false,
+            );
+          }
         }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
+      };
 
     void loadCars();
 
@@ -150,24 +185,37 @@ function CarsPage() {
   ]);
 
   const handleSearch = (
-    values: CarSearchValues,
+    values:
+      CarSearchValues,
   ) => {
     const params =
       new URLSearchParams();
 
     params.set(
       'cityName',
-      values.cityName,
+      values.cityName.trim(),
     );
 
-    params.set(
-      'countryCode',
-      values.countryCode,
-    );
+    /*
+     * El país es opcional.
+     * Si está vacío no lo mandamos.
+     */
+    if (
+      values.countryCode.trim()
+    ) {
+      params.set(
+        'countryCode',
+        values.countryCode
+          .trim()
+          .toUpperCase(),
+      );
+    }
 
     params.set(
       'radius',
-      String(values.radius),
+      String(
+        values.radius,
+      ),
     );
 
     if (values.type) {
@@ -177,14 +225,16 @@ function CarsPage() {
       );
     }
 
-    if (values.q) {
+    if (values.q.trim()) {
       params.set(
         'q',
-        values.q,
+        values.q.trim(),
       );
     }
 
-    if (values.hasWebsite) {
+    if (
+      values.hasWebsite
+    ) {
       params.set(
         'hasWebsite',
         'true',
@@ -223,8 +273,10 @@ function CarsPage() {
               countryCode,
 
               type:
-                type === 'car_rental' ||
-                type === 'car_sharing'
+                type ===
+                  'car_rental' ||
+                type ===
+                  'car_sharing'
                   ? type
                   : '',
 
@@ -232,8 +284,12 @@ function CarsPage() {
               radius,
               hasWebsite,
             }}
-            onSearch={handleSearch}
-            isLoading={isLoading}
+            onSearch={
+              handleSearch
+            }
+            isLoading={
+              isLoading
+            }
           />
         </div>
       </section>
@@ -251,11 +307,14 @@ function CarsPage() {
                 búsqueda
               </h2>
 
-              <p>{error}</p>
+              <p>
+                {error}
+              </p>
             </div>
           ) : isLoading ? (
             <CarsLoading />
-          ) : cars.length === 0 ? (
+          ) : cars.length ===
+            0 ? (
             <CarsEmpty />
           ) : (
             <>
@@ -268,6 +327,7 @@ function CarsPage() {
                   <h2>
                     {meta?.cityName ??
                       cityName}
+
                     {meta?.countryName
                       ? `, ${meta.countryName}`
                       : ''}
@@ -297,12 +357,16 @@ function CarsPage() {
               </div>
 
               <div className="cars-grid">
-                {cars.map((car) => (
-                  <CarCard
-                    key={car.id}
-                    car={car}
-                  />
-                ))}
+                {cars.map(
+                  (car) => (
+                    <CarCard
+                      key={
+                        car.id
+                      }
+                      car={car}
+                    />
+                  ),
+                )}
               </div>
 
               <div className="cars-disclaimer">
@@ -310,8 +374,8 @@ function CarsPage() {
                   GlobalTour muestra
                   ubicaciones de servicios
                   de alquiler. La
-                  disponibilidad, precios y
-                  reservas se consultan
+                  disponibilidad, precios
+                  y reservas se consultan
                   directamente con cada
                   proveedor.
                 </p>
@@ -355,8 +419,12 @@ function CarCard({
           </h3>
 
           {car.brand &&
-            normalize(car.brand) !==
-              normalize(car.name) && (
+            normalize(
+              car.brand,
+            ) !==
+              normalize(
+                car.name,
+              ) && (
               <p className="car-brand">
                 {car.brand}
               </p>
@@ -385,7 +453,9 @@ function CarCard({
 
         {car.links.maps && (
           <a
-            href={car.links.maps}
+            href={
+              car.links.maps
+            }
             target="_blank"
             rel="noreferrer"
             className="car-secondary-button"
@@ -396,9 +466,13 @@ function CarCard({
           </a>
         )}
 
-        {car.links.website && (
+        {car.links
+          .website && (
           <a
-            href={car.links.website}
+            href={
+              car.links
+                .website
+            }
             target="_blank"
             rel="noreferrer"
             className="car-primary-button"
@@ -425,9 +499,9 @@ function CarsWelcome() {
       </h2>
 
       <p>
-        Selecciona un destino para
-        descubrir empresas de alquiler de
-        vehículos y servicios de car
+        Escribe una ciudad para
+        descubrir empresas de alquiler
+        de vehículos y servicios de car
         sharing cercanos.
       </p>
 
@@ -438,8 +512,8 @@ function CarsWelcome() {
           </strong>
 
           <span>
-            Encuentra oficinas de alquiler
-            cercanas.
+            Encuentra oficinas de
+            alquiler cercanas.
           </span>
         </div>
 
@@ -494,20 +568,25 @@ function CarsLoading() {
     <div className="cars-loading-grid">
       {Array.from({
         length: 6,
-      }).map((_, index) => (
-        <div
-          key={index}
-          className="car-loading-card"
-        >
-          <div className="car-loading-line car-loading-short" />
+      }).map(
+        (
+          _,
+          index,
+        ) => (
+          <div
+            key={index}
+            className="car-loading-card"
+          >
+            <div className="car-loading-line car-loading-short" />
 
-          <div className="car-loading-line car-loading-title" />
+            <div className="car-loading-line car-loading-title" />
 
-          <div className="car-loading-line" />
+            <div className="car-loading-line" />
 
-          <div className="car-loading-line" />
-        </div>
-      ))}
+            <div className="car-loading-line" />
+          </div>
+        ),
+      )}
     </div>
   );
 }
@@ -540,7 +619,9 @@ function formatDistance(
   meters: number,
 ) {
   if (meters >= 1000) {
-    return `${meters / 1000} km`;
+    return `${
+      meters / 1000
+    } km`;
   }
 
   return `${meters} m`;

@@ -1,27 +1,71 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useState,
+  type FormEvent,
+} from 'react';
 
-import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
-import { useCurrency } from '../../hooks/useCurrency';
+import {
+  useNavigate,
+} from 'react-router-dom';
 
-import type { Destination } from '../../types/destination.types';
+import {
+  useCurrency,
+} from '../../hooks/useCurrency';
 
 function HotelSearchForm() {
   const navigate = useNavigate();
 
-  const { selectedCurrency } = useCurrency();
+  const {
+    selectedCurrency,
+  } = useCurrency();
 
-  const [destination, setDestination] =
-    useState<Destination | null>(null);
+  const [cityName, setCityName] =
+    useState('');
 
-  const [checkin, setCheckin] = useState('');
-  const [checkout, setCheckout] = useState('');
-  const [adults, setAdults] = useState('2');
+  const [
+    countryCode,
+    setCountryCode,
+  ] = useState('');
 
-  const handleCheckinChange = (value: string) => {
+  const [checkin, setCheckin] =
+    useState('');
+
+  const [checkout, setCheckout] =
+    useState('');
+
+  const [adults, setAdults] =
+    useState('2');
+
+  const cleanCity =
+    cityName.trim();
+
+  const cleanCountry =
+    countryCode
+      .trim()
+      .toUpperCase();
+
+  const handleCountryChange = (
+    value: string,
+  ) => {
+    setCountryCode(
+      value
+        .replace(
+          /[^a-zA-Z]/g,
+          '',
+        )
+        .slice(0, 2)
+        .toUpperCase(),
+    );
+  };
+
+  const handleCheckinChange = (
+    value: string,
+  ) => {
     setCheckin(value);
 
-    if (checkout && checkout <= value) {
+    if (
+      checkout &&
+      checkout <= value
+    ) {
       setCheckout('');
     }
   };
@@ -32,21 +76,27 @@ function HotelSearchForm() {
     event.preventDefault();
 
     if (
-      !destination ||
+      cleanCity.length < 2 ||
+      !/^[A-Z]{2}$/.test(
+        cleanCountry,
+      ) ||
       !checkin ||
       !checkout
     ) {
       return;
     }
 
-    const params = new URLSearchParams({
-      cityName: destination.cityName,
-      countryCode: destination.countryCode,
-      checkin,
-      checkout,
-      adults,
-      currency: selectedCurrency,
-    });
+    const params =
+      new URLSearchParams({
+        cityName: cleanCity,
+        countryCode:
+          cleanCountry,
+        checkin,
+        checkout,
+        adults,
+        currency:
+          selectedCurrency,
+      });
 
     navigate(
       `/hotels?${params.toString()}`,
@@ -54,7 +104,10 @@ function HotelSearchForm() {
   };
 
   const isSearchDisabled =
-    !destination ||
+    cleanCity.length < 2 ||
+    !/^[A-Z]{2}$/.test(
+      cleanCountry,
+    ) ||
     !checkin ||
     !checkout;
 
@@ -64,15 +117,48 @@ function HotelSearchForm() {
       onSubmit={handleSubmit}
     >
       <div className="hotel-search-row">
-        <DestinationAutocomplete
-          label="Destino"
-          placeholder="¿Dónde quieres hospedarte?"
-          value={destination}
-          onChange={setDestination}
-        />
+        <div className="hotel-location-fields">
+          <label className="search-box search-location">
+            <span>Ciudad</span>
+
+            <input
+              type="text"
+              aria-label="Ciudad de hospedaje"
+              value={cityName}
+              maxLength={80}
+              autoComplete="off"
+              placeholder="Ej. Nicoya"
+              onChange={(event) =>
+                setCityName(
+                  event.target.value,
+                )
+              }
+            />
+          </label>
+
+          <label className="search-box search-country">
+            <span>País</span>
+
+            <input
+              type="text"
+              aria-label="Código ISO del país"
+              value={countryCode}
+              maxLength={2}
+              autoComplete="off"
+              placeholder="CR"
+              onChange={(event) =>
+                handleCountryChange(
+                  event.target.value,
+                )
+              }
+            />
+          </label>
+        </div>
 
         <label className="search-box search-date">
-          <span>Check-in</span>
+          <span>
+            Check-in
+          </span>
 
           <input
             type="date"
@@ -87,13 +173,18 @@ function HotelSearchForm() {
         </label>
 
         <label className="search-box search-date">
-          <span>Check-out</span>
+          <span>
+            Check-out
+          </span>
 
           <input
             type="date"
             aria-label="Fecha de check-out"
             value={checkout}
-            min={checkin || undefined}
+            min={
+              checkin ||
+              undefined
+            }
             onChange={(event) =>
               setCheckout(
                 event.target.value,
@@ -103,7 +194,9 @@ function HotelSearchForm() {
         </label>
 
         <label className="search-box search-travelers">
-          <span>Huéspedes</span>
+          <span>
+            Huéspedes
+          </span>
 
           <select
             value={adults}
@@ -151,7 +244,9 @@ function HotelSearchForm() {
         <button
           className="search-button"
           type="submit"
-          disabled={isSearchDisabled}
+          disabled={
+            isSearchDisabled
+          }
         >
           Buscar hoteles
         </button>

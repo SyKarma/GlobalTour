@@ -1,16 +1,7 @@
 import {
-  useEffect,
   useState,
   type FormEvent,
 } from 'react';
-
-import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
-
-import { searchDestinations } from '../../services/destinations.service';
-
-import type {
-  Destination,
-} from '../../types/destination.types';
 
 import type {
   CarAmenity,
@@ -40,11 +31,18 @@ function CarSearchForm({
   onSearch,
   isLoading = false,
 }: CarSearchFormProps) {
+  const [cityName, setCityName] =
+    useState(
+      initialValues?.cityName ?? '',
+    );
+
   const [
-    selectedDestination,
-    setSelectedDestination,
-  ] = useState<Destination | null>(
-    null,
+    countryCode,
+    setCountryCode,
+  ] = useState(
+    (
+      initialValues?.countryCode ?? ''
+    ).toUpperCase(),
   );
 
   const [type, setType] =
@@ -68,98 +66,50 @@ function CarSearchForm({
     initialValues?.hasWebsite ?? false,
   );
 
-  useEffect(() => {
-    const initialCity =
-      initialValues?.cityName?.trim();
+  const cleanCity =
+    cityName.trim();
 
-    if (!initialCity) {
-      return;
-    }
+  const cleanCountry =
+    countryCode
+      .trim()
+      .toUpperCase();
 
-    let cancelled = false;
+  const isCountryValid =
+    cleanCountry.length === 0 ||
+    /^[A-Z]{2}$/.test(cleanCountry);
 
-    const resolveDestination =
-      async () => {
-        try {
-          const response =
-            await searchDestinations({
-              q: initialCity,
-              country:
-                initialValues?.countryCode ||
-                undefined,
-              limit: 10,
-            });
-
-          if (cancelled) {
-            return;
-          }
-
-          const city =
-            normalizeText(initialCity);
-
-          const country =
-            initialValues?.countryCode
-              ?.trim()
-              .toUpperCase();
-
-          const exactMatch =
-            response.data.find(
-              (destination) =>
-                normalizeText(
-                  destination.cityName,
-                ) === city &&
-                (!country ||
-                  destination.countryCode ===
-                    country),
-            );
-
-          setSelectedDestination(
-            exactMatch ??
-              response.data[0] ??
-              null,
-          );
-        } catch (error) {
-          if (!cancelled) {
-            console.error(
-              'Error al resolver destino:',
-              error,
-            );
-          }
-        }
-      };
-
-    void resolveDestination();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    initialValues?.cityName,
-    initialValues?.countryCode,
-  ]);
+  const handleCountryChange = (
+    value: string,
+  ) => {
+    setCountryCode(
+      value
+        .replace(
+          /[^a-zA-Z]/g,
+          '',
+        )
+        .slice(0, 2)
+        .toUpperCase(),
+    );
+  };
 
   const handleSubmit = (
     event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
-    if (!selectedDestination) {
+    if (
+      cleanCity.length < 2 ||
+      !isCountryValid
+    ) {
       return;
     }
 
     onSearch({
-      cityName:
-        selectedDestination.cityName,
-
-      countryCode:
-        selectedDestination.countryCode,
-
+      cityName: cleanCity,
+      countryCode: cleanCountry,
       type,
-
       q: q.trim(),
-
       radius,
-
       hasWebsite,
     });
   };
@@ -171,14 +121,48 @@ function CarSearchForm({
     >
       <div className="car-search-main">
         <div className="car-destination-field">
-          <DestinationAutocomplete
-            label="Destino"
-            placeholder="Busca una ciudad..."
-            value={selectedDestination}
-            onChange={
-              setSelectedDestination
-            }
-          />
+          <div className="car-location-fields">
+            <div className="car-filter-field">
+              <label htmlFor="car-city">
+                Ciudad
+              </label>
+
+              <input
+                id="car-city"
+                type="text"
+                value={cityName}
+                maxLength={80}
+                autoComplete="off"
+                placeholder="Ej. Nicoya"
+                onChange={(event) =>
+                  setCityName(
+                    event.target.value,
+                  )
+                }
+              />
+            </div>
+
+            <div className="car-filter-field">
+              <label htmlFor="car-country">
+                País (opcional)
+              </label>
+
+              <input
+                id="car-country"
+                type="text"
+                value={countryCode}
+                maxLength={2}
+                autoComplete="off"
+                placeholder="CR"
+                aria-label="Código ISO del país"
+                onChange={(event) =>
+                  handleCountryChange(
+                    event.target.value,
+                  )
+                }
+              />
+            </div>
+          </div>
         </div>
 
         <button
@@ -186,7 +170,8 @@ function CarSearchForm({
           className="car-search-button"
           disabled={
             isLoading ||
-            !selectedDestination
+            cleanCity.length < 2 ||
+            !isCountryValid
           }
         >
           <SearchIcon />
@@ -321,19 +306,6 @@ function SearchIcon() {
       <path d="m16.5 16.5 4 4" />
     </svg>
   );
-}
-
-function normalizeText(
-  value: string,
-) {
-  return value
-    .normalize('NFD')
-    .replace(
-      /[\u0300-\u036f]/g,
-      '',
-    )
-    .trim()
-    .toLowerCase();
 }
 
 export default CarSearchForm;
