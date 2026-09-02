@@ -14,6 +14,7 @@ import DashboardPage from '../pages/DashboardPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import RestaurantsPage from '../pages/RestaurantsPage';
 import RestaurantDetailPage from '../pages/RestaurantDetailPage';
+import CarDetailPage from '../pages/CarDetailPage';
 
 function AppRouter() {
   return (
@@ -57,6 +58,11 @@ function AppRouter() {
         <Route
           path="/dashboard"
           element={<DashboardPage />}
+        />
+
+        <Route
+          path="/cars/:id"
+          element={<CarDetailPage />}
         />
 
         <Route

@@ -1,18 +1,17 @@
 import {
-  useEffect,
   useState,
+  type FormEvent,
 } from 'react';
 
-import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
-
-import { searchDestinations } from '../../services/destinations.service';
-
-import type { Destination } from '../../types/destination.types';
+export type RestaurantAmenity =
+  | 'restaurant'
+  | 'cafe'
+  | 'fast_food';
 
 export interface RestaurantSearchValues {
   cityName: string;
   countryCode: string;
-  type: string;
+  type: RestaurantAmenity | '';
   cuisine: string;
   radius: number;
   hasWebsite: boolean;
@@ -33,16 +32,26 @@ function RestaurantSearchForm({
   onSearch,
   isLoading = false,
 }: RestaurantSearchFormProps) {
+  const [cityName, setCityName] =
+    useState(
+      initialValues?.cityName ?? '',
+    );
+
   const [
-    selectedDestination,
-    setSelectedDestination,
-  ] = useState<Destination | null>(
-    null,
+    countryCode,
+    setCountryCode,
+  ] = useState(
+    (
+      initialValues?.countryCode ?? ''
+    ).toUpperCase(),
   );
 
-  const [type, setType] = useState(
-    initialValues?.type ?? '',
-  );
+  const [type, setType] =
+    useState<
+      RestaurantAmenity | ''
+    >(
+      initialValues?.type ?? '',
+    );
 
   const [cuisine, setCuisine] =
     useState(
@@ -61,108 +70,54 @@ function RestaurantSearchForm({
     initialValues?.hasWebsite ?? false,
   );
 
-  /*
-   * Si llegamos desde una URL como:
-   *
-   * /restaurants?cityName=San+Jose&countryCode=CR
-   *
-   * buscamos el destino correspondiente para
-   * reconstruir visualmente el autocomplete.
-   */
-  useEffect(() => {
-    const initialCity =
-      initialValues?.cityName?.trim();
+  const cleanCity =
+    cityName.trim();
 
-    if (!initialCity) {
-      return;
-    }
+  const cleanCountry =
+    countryCode
+      .trim()
+      .toUpperCase();
 
-    let cancelled = false;
+  const isCountryValid =
+    cleanCountry.length === 0 ||
+    /^[A-Z]{2}$/.test(
+      cleanCountry,
+    );
 
-    const resolveInitialDestination =
-      async () => {
-        try {
-          const response =
-            await searchDestinations({
-              q: initialCity,
-              country:
-                initialValues?.countryCode ||
-                undefined,
-              limit: 10,
-            });
-
-          if (cancelled) {
-            return;
-          }
-
-          const normalizedCity =
-            normalizeText(initialCity);
-
-          const normalizedCountry =
-            initialValues?.countryCode
-              ?.trim()
-              .toUpperCase();
-
-          const exactMatch =
-            response.data.find(
-              (destination) =>
-                normalizeText(
-                  destination.cityName,
-                ) ===
-                  normalizedCity &&
-                (!normalizedCountry ||
-                  destination.countryCode ===
-                    normalizedCountry),
-            );
-
-          setSelectedDestination(
-            exactMatch ??
-              response.data[0] ??
-              null,
-          );
-        } catch (error) {
-          if (!cancelled) {
-            console.error(
-              'Error al resolver el destino inicial:',
-              error,
-            );
-          }
-        }
-      };
-
-    void resolveInitialDestination();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    initialValues?.cityName,
-    initialValues?.countryCode,
-  ]);
+  const handleCountryChange = (
+    value: string,
+  ) => {
+    setCountryCode(
+      value
+        .replace(
+          /[^a-zA-Z]/g,
+          '',
+        )
+        .slice(0, 2)
+        .toUpperCase(),
+    );
+  };
 
   const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>,
+    event: FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
-    if (!selectedDestination) {
+    if (
+      cleanCity.length < 2 ||
+      !isCountryValid
+    ) {
       return;
     }
 
     onSearch({
-      cityName:
-        selectedDestination.cityName,
-
+      cityName: cleanCity,
       countryCode:
-        selectedDestination.countryCode,
-
+        cleanCountry,
       type,
-
       cuisine:
         cuisine.trim(),
-
       radius,
-
       hasWebsite,
     });
   };
@@ -173,13 +128,47 @@ function RestaurantSearchForm({
       onSubmit={handleSubmit}
     >
       <div className="restaurant-search-main">
-        <div className="restaurant-destination-field">
-          <DestinationAutocomplete
-            label="Destino"
-            placeholder="Busca una ciudad..."
-            value={selectedDestination}
-            onChange={
-              setSelectedDestination
+        <div className="restaurant-search-field">
+          <label htmlFor="restaurant-city">
+            Ciudad
+          </label>
+
+          <div className="restaurant-search-input-wrapper">
+            <LocationIcon />
+
+            <input
+              id="restaurant-city"
+              type="text"
+              value={cityName}
+              maxLength={80}
+              autoComplete="off"
+              placeholder="Ej. Nicoya"
+              onChange={(event) =>
+                setCityName(
+                  event.target.value,
+                )
+              }
+            />
+          </div>
+        </div>
+
+        <div className="restaurant-search-field">
+          <label htmlFor="restaurant-country">
+            País
+          </label>
+
+          <input
+            id="restaurant-country"
+            type="text"
+            value={countryCode}
+            maxLength={2}
+            autoComplete="off"
+            placeholder="CR"
+            aria-label="Código ISO del país"
+            onChange={(event) =>
+              handleCountryChange(
+                event.target.value,
+              )
             }
           />
         </div>
@@ -189,21 +178,11 @@ function RestaurantSearchForm({
           className="restaurant-search-button"
           disabled={
             isLoading ||
-            !selectedDestination
+            cleanCity.length < 2 ||
+            !isCountryValid
           }
         >
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <circle
-              cx="11"
-              cy="11"
-              r="7"
-            />
-
-            <path d="m16.5 16.5 4 4" />
-          </svg>
+          <SearchIcon />
 
           {isLoading
             ? 'Buscando...'
@@ -222,7 +201,9 @@ function RestaurantSearchForm({
             value={type}
             onChange={(event) =>
               setType(
-                event.target.value,
+                event.target.value as
+                  | RestaurantAmenity
+                  | '',
               )
             }
           >
@@ -231,11 +212,11 @@ function RestaurantSearchForm({
             </option>
 
             <option value="restaurant">
-              Restaurantes
+              Restaurante
             </option>
 
             <option value="cafe">
-              Cafés
+              Café
             </option>
 
             <option value="fast_food">
@@ -320,17 +301,38 @@ function RestaurantSearchForm({
   );
 }
 
-function normalizeText(
-  value: string,
-) {
-  return value
-    .normalize('NFD')
-    .replace(
-      /[\u0300-\u036f]/g,
-      '',
-    )
-    .trim()
-    .toLowerCase();
+function SearchIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="11"
+        cy="11"
+        r="7"
+      />
+
+      <path d="m16.5 16.5 4 4" />
+    </svg>
+  );
+}
+
+function LocationIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+
+      <circle
+        cx="12"
+        cy="10"
+        r="2.5"
+      />
+    </svg>
+  );
 }
 
 export default RestaurantSearchForm;

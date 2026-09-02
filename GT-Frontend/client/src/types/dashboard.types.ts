@@ -3,6 +3,8 @@ export type DashboardSearchType =
   | 'hotel'
   | 'currency'
   | 'destination'
+  | 'restaurant'
+  | 'car'
   | string;
 
 export interface DashboardTypeCount {
@@ -42,6 +44,18 @@ export interface DashboardMonthCount {
   count: number;
 }
 
+export interface DashboardServiceCityCount {
+  cityName: string;
+  countryCode: string | null;
+  iata: string | null;
+  count: number;
+}
+
+export interface DashboardFilterCount {
+  value: string;
+  count: number;
+}
+
 export interface DashboardData {
   generatedAt: string;
 
@@ -62,6 +76,13 @@ export interface DashboardData {
   topOrigins: DashboardIataCount[];
   topCountries: DashboardCountryCount[];
   topRoutes: DashboardRouteCount[];
+
+  topRestaurantCities: DashboardServiceCityCount[];
+  topCarCities: DashboardServiceCityCount[];
+
+  topRestaurantCuisines: DashboardFilterCount[];
+  topRestaurantTypes: DashboardFilterCount[];
+  topCarTypes: DashboardFilterCount[];
 
   volumeByDay: DashboardDayCount[];
   travelMonths: DashboardMonthCount[];
