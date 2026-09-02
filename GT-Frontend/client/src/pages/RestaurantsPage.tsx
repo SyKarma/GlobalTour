@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 
@@ -10,10 +9,8 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
-import RestaurantSearchForm from '../components/restaurants/RestaurantSearchForm';
-
-import type {
-  RestaurantSearchValues,
+import RestaurantSearchForm, {
+  type RestaurantSearchValues,
 } from '../components/restaurants/RestaurantSearchForm';
 
 import {
@@ -21,52 +18,91 @@ import {
 } from '../services/restaurants.service';
 
 import type {
-  Restaurant,
   RestaurantSearchMeta,
-  RestaurantSearchParams,
 } from '../types/restaurant.types';
 
+/*
+ * Usamos directamente el tipo que devuelve
+ * searchRestaurants().
+ *
+ * Así no dependemos de que exista un export
+ * llamado RestaurantSummary.
+ */
+type RestaurantItem =
+  Awaited<
+    ReturnType<
+      typeof searchRestaurants
+    >
+  >['data'][number];
+
 function RestaurantsPage() {
+  const navigate =
+    useNavigate();
+
   const [searchParams] =
     useSearchParams();
 
-  const navigate = useNavigate();
-
-  const [restaurants, setRestaurants] =
-    useState<Restaurant[]>([]);
+  const [
+    restaurants,
+    setRestaurants,
+  ] =
+    useState<
+      RestaurantItem[]
+    >([]);
 
   const [meta, setMeta] =
     useState<RestaurantSearchMeta | null>(
       null,
     );
 
-  const [isLoading, setIsLoading] =
-    useState(false);
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(false);
 
   const [error, setError] =
-    useState<string | null>(null);
+    useState<string | null>(
+      null,
+    );
 
   const cityName =
-    searchParams.get('cityName') ?? '';
+    searchParams.get(
+      'cityName',
+    ) ?? '';
 
   const countryCode =
-    searchParams.get('countryCode') ?? '';
+    searchParams.get(
+      'countryCode',
+    ) ?? '';
 
   const type =
-    searchParams.get('type') ?? '';
+    searchParams.get(
+      'type',
+    ) ?? '';
 
   const cuisine =
-    searchParams.get('cuisine') ?? '';
+    searchParams.get(
+      'cuisine',
+    ) ?? '';
 
   const radius =
     Number(
-      searchParams.get('radius') ?? 4000,
+      searchParams.get(
+        'radius',
+      ),
     ) || 4000;
 
   const hasWebsite =
-    searchParams.get('hasWebsite') ===
-    'true';
+    searchParams.get(
+      'hasWebsite',
+    ) === 'true';
 
+  /*
+   * Restaurantes ya no depende
+   * de DestinationAutocomplete.
+   *
+   * Solo necesitamos cityName.
+   */
   const hasSearch =
     cityName.trim().length >= 2;
 
@@ -77,70 +113,83 @@ function RestaurantsPage() {
 
     let cancelled = false;
 
-    const loadRestaurants = async () => {
-      setIsLoading(true);
-      setError(null);
+    const loadRestaurants =
+      async () => {
+        setIsLoading(true);
 
-      try {
-        const params: RestaurantSearchParams =
-          {
-            cityName,
-            radius,
-            limit: 20,
-          };
+        try {
+          const response =
+            await searchRestaurants({
+              cityName:
+                cityName.trim(),
 
-        if (countryCode) {
-          params.countryCode =
-            countryCode.toUpperCase();
-        }
+              countryCode:
+                countryCode.trim() ||
+                undefined,
 
-        if (
-          type === 'restaurant' ||
-          type === 'cafe' ||
-          type === 'fast_food'
-        ) {
-          params.type = type;
-        }
+              radius,
 
-        if (cuisine) {
-          params.cuisine =
-            normalizeFilter(cuisine);
-        }
+              limit: 20,
 
-        if (hasWebsite) {
-          params.hasWebsite = true;
-        }
+              type:
+                type ===
+                  'restaurant' ||
+                type ===
+                  'cafe' ||
+                type ===
+                  'fast_food'
+                  ? type
+                  : undefined,
 
-        const response =
-          await searchRestaurants(params);
+              cuisine:
+                cuisine.trim() ||
+                undefined,
 
-        if (cancelled) {
-          return;
-        }
+              hasWebsite:
+                hasWebsite ||
+                undefined,
+            });
 
-        setRestaurants(response.data);
-        setMeta(response.meta);
-        setError(null);
-      } catch (requestError) {
-        console.error(
-          'Error searching restaurants:',
-          requestError,
-        );
+          if (cancelled) {
+            return;
+          }
 
-        if (!cancelled) {
-          setRestaurants([]);
-          setMeta(null);
-
-          setError(
-            'No fue posible buscar restaurantes en este momento.',
+          setRestaurants(
+            response.data,
           );
+
+          setMeta(
+            response.meta,
+          );
+
+          setError(null);
+        } catch (
+          requestError
+        ) {
+          console.error(
+            'Error al buscar restaurantes:',
+            requestError,
+          );
+
+          if (!cancelled) {
+            setRestaurants(
+              [],
+            );
+
+            setMeta(null);
+
+            setError(
+              'No fue posible buscar restaurantes en este momento.',
+            );
+          }
+        } finally {
+          if (!cancelled) {
+            setIsLoading(
+              false,
+            );
+          }
         }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
+      };
 
     void loadRestaurants();
 
@@ -150,34 +199,44 @@ function RestaurantsPage() {
   }, [
     cityName,
     countryCode,
-    cuisine,
-    hasSearch,
-    hasWebsite,
-    radius,
     type,
+    cuisine,
+    radius,
+    hasWebsite,
+    hasSearch,
   ]);
 
   const handleSearch = (
-    values: RestaurantSearchValues,
+    values:
+      RestaurantSearchValues,
   ) => {
     const params =
       new URLSearchParams();
 
     params.set(
       'cityName',
-      values.cityName,
+      values.cityName.trim(),
     );
 
-    if (values.countryCode) {
+    /*
+     * countryCode es opcional.
+     */
+    if (
+      values.countryCode.trim()
+    ) {
       params.set(
         'countryCode',
-        values.countryCode,
+        values.countryCode
+          .trim()
+          .toUpperCase(),
       );
     }
 
     params.set(
       'radius',
-      String(values.radius),
+      String(
+        values.radius,
+      ),
     );
 
     if (values.type) {
@@ -187,16 +246,18 @@ function RestaurantsPage() {
       );
     }
 
-    if (values.cuisine) {
+    if (
+      values.cuisine.trim()
+    ) {
       params.set(
         'cuisine',
-        normalizeFilter(
-          values.cuisine,
-        ),
+        values.cuisine.trim(),
       );
     }
 
-    if (values.hasWebsite) {
+    if (
+      values.hasWebsite
+    ) {
       params.set(
         'hasWebsite',
         'true',
@@ -208,48 +269,53 @@ function RestaurantsPage() {
     );
   };
 
-  const pageTitle = useMemo(() => {
-    if (!meta) {
-      return 'Restaurantes';
-    }
-
-    if (meta.countryName) {
-      return `Restaurantes en ${meta.cityName}, ${meta.countryName}`;
-    }
-
-    return `Restaurantes en ${meta.cityName}`;
-  }, [meta]);
-
   return (
     <main className="restaurants-page">
       <section className="restaurants-hero">
         <div className="restaurants-page-container">
           <span className="restaurants-eyebrow">
-            Gastronomía en tu destino
+            GlobalTour Restaurantes
           </span>
 
           <h1>
-            Encuentra dónde comer durante
-            tu viaje
+            Descubre dónde comer en tu
+            destino
           </h1>
 
           <p>
-            Explora restaurantes, cafés y
-            opciones de comida rápida cerca
-            de tu destino.
+            Explora restaurantes,
+            cafeterías y opciones de
+            comida rápida disponibles
+            cerca de la ciudad que
+            visites.
           </p>
 
           <RestaurantSearchForm
+            key={`${cityName}-${countryCode}-${type}-${cuisine}-${radius}-${hasWebsite}`}
             initialValues={{
               cityName,
               countryCode,
-              type,
+
+              type:
+                type ===
+                  'restaurant' ||
+                type ===
+                  'cafe' ||
+                type ===
+                  'fast_food'
+                  ? type
+                  : '',
+
               cuisine,
               radius,
               hasWebsite,
             }}
-            onSearch={handleSearch}
-            isLoading={isLoading}
+            onSearch={
+              handleSearch
+            }
+            isLoading={
+              isLoading
+            }
           />
         </div>
       </section>
@@ -257,90 +323,99 @@ function RestaurantsPage() {
       <section className="restaurants-results-section">
         <div className="restaurants-page-container">
           {!hasSearch ? (
-            <RestaurantWelcomeState />
+            <RestaurantsWelcome />
           ) : error ? (
             <div className="restaurants-error-state">
+              <RestaurantIcon />
+
               <h2>
-                No pudimos cargar los
-                restaurantes
+                No pudimos completar la
+                búsqueda
               </h2>
 
-              <p>{error}</p>
+              <p>
+                {error}
+              </p>
             </div>
+          ) : isLoading ? (
+            <RestaurantsLoading />
+          ) : restaurants.length ===
+            0 ? (
+            <RestaurantsEmpty />
           ) : (
             <>
-              <header className="restaurants-results-header">
+              <div className="restaurants-results-header">
                 <div>
                   <span className="restaurants-results-label">
                     Resultados
                   </span>
 
-                  <h2>{pageTitle}</h2>
+                  <h2>
+                    {meta?.cityName ??
+                      cityName}
+
+                    {meta?.countryName
+                      ? `, ${meta.countryName}`
+                      : ''}
+                  </h2>
 
                   <p>
-                    {isLoading
-                      ? 'Buscando lugares...'
-                      : `${restaurants.length} de ${
-                          meta?.matched ??
-                          restaurants.length
-                        } lugares encontrados`}
+                    Opciones encontradas
+                    dentro de un radio de{' '}
+                    {formatDistance(
+                      meta?.radiusMeters ??
+                        radius,
+                    )}
+                    .
                   </p>
                 </div>
 
-                {meta && (
-                  <div className="restaurants-search-summary">
-                    <span>
-                      Radio
-                    </span>
+                <div className="restaurants-search-summary">
+                  <span>
+                    Encontrados
+                  </span>
 
-                    <strong>
-                      {formatRadius(
-                        meta.radiusMeters,
-                      )}
-                    </strong>
-                  </div>
+                  <strong>
+                    {meta?.matched ??
+                      restaurants.length}
+                  </strong>
+                </div>
+              </div>
+
+              <div className="restaurants-grid">
+                {restaurants.map(
+                  (
+                    restaurant,
+                  ) => (
+                    <RestaurantCard
+                      key={
+                        restaurant.id
+                      }
+                      restaurant={
+                        restaurant
+                      }
+                    />
+                  ),
                 )}
-              </header>
+              </div>
 
-              {isLoading &&
-              restaurants.length === 0 ? (
-                <RestaurantLoading />
-              ) : restaurants.length > 0 ? (
-                <div className="restaurants-grid">
-                  {restaurants.map(
-                    (restaurant) => (
-                      <RestaurantCard
-                        key={restaurant.id}
-                        restaurant={
-                          restaurant
-                        }
-                      />
-                    ),
-                  )}
-                </div>
-              ) : (
-                <div className="restaurants-empty-state">
-                  <div className="restaurants-empty-icon">
-                    <RestaurantIcon />
-                  </div>
+              <div className="restaurants-disclaimer">
+                <p>
+                  GlobalTour muestra
+                  información geográfica
+                  disponible públicamente.
+                  Los horarios, precios,
+                  disponibilidad y
+                  reservas deben
+                  confirmarse directamente
+                  con cada establecimiento.
+                </p>
 
-                  <h3>
-                    No encontramos lugares
-                  </h3>
-
-                  <p>
-                    Prueba aumentando el radio
-                    de búsqueda o quitando
-                    algunos filtros.
-                  </p>
-                </div>
-              )}
-
-              {meta?.attribution && (
-                <div className="restaurants-attribution">
-                  © OpenStreetMap contributors
-                </div>
-              )}
+                <span>
+                  © OpenStreetMap
+                  contributors
+                </span>
+              </div>
             </>
           )}
         </div>
@@ -350,25 +425,13 @@ function RestaurantsPage() {
 }
 
 interface RestaurantCardProps {
-  restaurant: Restaurant;
+  restaurant:
+    RestaurantItem;
 }
 
 function RestaurantCard({
   restaurant,
 }: RestaurantCardProps) {
-  const cuisine =
-    restaurant.cuisine ?? [];
-
-  const cuisineLabel =
-    cuisine.length > 0
-      ? cuisine
-          .slice(0, 3)
-          .map(formatCuisine)
-          .join(' · ')
-      : getCuisineFromTypes(
-          restaurant.types,
-        );
-
   return (
     <article className="restaurant-card">
       <div className="restaurant-card-top">
@@ -389,15 +452,23 @@ function RestaurantCard({
         </div>
       </div>
 
-      {cuisineLabel && (
-        <div className="restaurant-cuisine">
-          <span>Cocina</span>
+      {restaurant.cuisine &&
+        restaurant.cuisine
+          .length > 0 && (
+          <div className="restaurant-cuisine">
+            <span>
+              Cocina
+            </span>
 
-          <strong>
-            {cuisineLabel}
-          </strong>
-        </div>
-      )}
+            <strong>
+              {restaurant.cuisine
+                .map(
+                  formatCuisine,
+                )
+                .join(', ')}
+            </strong>
+          </div>
+        )}
 
       <div className="restaurant-location">
         <LocationIcon />
@@ -411,32 +482,36 @@ function RestaurantCard({
       <div className="restaurant-card-spacer" />
 
       <div className="restaurant-card-actions">
-        {restaurant.links.maps && (
-          <>
-            <a
-              href={restaurant.links.maps}
-              target="_blank"
-              rel="noreferrer"
-              className="restaurant-secondary-button"
-            >
-              <MapIcon />
+        <Link
+          to={`/restaurants/${restaurant.id}`}
+          className="restaurant-detail-button"
+        >
+          Ver detalles
+        </Link>
 
-              Ver mapa
-            </a>
-
-            <Link
-              to={`/restaurants/${restaurant.id}`}
-              className="restaurant-detail-button"
-            >
-              Ver detalles
-            </Link>
-          </>
-        )}
-
-        {restaurant.links.website && (
+        {restaurant.links
+          .maps && (
           <a
             href={
-              restaurant.links.website
+              restaurant.links
+                .maps
+            }
+            target="_blank"
+            rel="noreferrer"
+            className="restaurant-secondary-button"
+          >
+            <MapIcon />
+
+            Ver mapa
+          </a>
+        )}
+
+        {restaurant.links
+          .website && (
+          <a
+            href={
+              restaurant.links
+                .website
             }
             target="_blank"
             rel="noreferrer"
@@ -452,7 +527,7 @@ function RestaurantCard({
   );
 }
 
-function RestaurantWelcomeState() {
+function RestaurantsWelcome() {
   return (
     <div className="restaurants-welcome">
       <div className="restaurants-welcome-icon">
@@ -460,14 +535,13 @@ function RestaurantWelcomeState() {
       </div>
 
       <h2>
-        Descubre la gastronomía de tu
-        próximo destino
+        Busca restaurantes por ciudad
       </h2>
 
       <p>
-        Escribe una ciudad para encontrar
-        restaurantes y otros establecimientos
-        gastronómicos cercanos.
+        Escribe una ciudad o localidad
+        para descubrir opciones
+        gastronómicas cercanas.
       </p>
 
       <div className="restaurants-feature-grid">
@@ -477,30 +551,30 @@ function RestaurantWelcomeState() {
           </strong>
 
           <span>
-            Explora opciones para almorzar
-            o cenar.
+            Encuentra diferentes opciones
+            para comer.
           </span>
         </div>
 
         <div>
           <strong>
-            Cafés
+            Cafeterías
           </strong>
 
           <span>
-            Encuentra cafeterías cerca de
-            tu destino.
+            Descubre cafés disponibles
+            cerca de tu destino.
           </span>
         </div>
 
         <div>
           <strong>
-            Comida rápida
+            Información real
           </strong>
 
           <span>
-            Localiza opciones prácticas y
-            cercanas.
+            Datos geográficos obtenidos
+            desde OpenStreetMap.
           </span>
         </div>
       </div>
@@ -508,109 +582,104 @@ function RestaurantWelcomeState() {
   );
 }
 
-function RestaurantLoading() {
+function RestaurantsEmpty() {
   return (
-    <div className="restaurants-loading-grid">
-      {Array.from({
-        length: 6,
-      }).map((_, index) => (
-        <div
-          key={index}
-          className="restaurant-loading-card"
-        >
-          <div className="restaurant-loading-line restaurant-loading-short" />
+    <div className="restaurants-empty-state">
+      <div className="restaurants-empty-icon">
+        <RestaurantIcon />
+      </div>
 
-          <div className="restaurant-loading-line restaurant-loading-title" />
+      <h3>
+        No encontramos restaurantes
+      </h3>
 
-          <div className="restaurant-loading-line" />
-
-          <div className="restaurant-loading-line" />
-        </div>
-      ))}
+      <p>
+        Prueba aumentando el radio,
+        eliminando filtros o buscando
+        una ciudad cercana.
+      </p>
     </div>
   );
 }
 
-function formatRadius(
-  meters: number,
-) {
-  if (meters >= 1000) {
-    return `${meters / 1000} km`;
-  }
+function RestaurantsLoading() {
+  return (
+    <div className="restaurants-loading-grid">
+      {Array.from({
+        length: 6,
+      }).map(
+        (
+          _,
+          index,
+        ) => (
+          <div
+            key={index}
+            className="restaurant-loading-card"
+          >
+            <div className="restaurant-loading-line restaurant-loading-short" />
 
-  return `${meters} m`;
+            <div className="restaurant-loading-line restaurant-loading-title" />
+
+            <div className="restaurant-loading-line" />
+
+            <div className="restaurant-loading-line" />
+          </div>
+        ),
+      )}
+    </div>
+  );
 }
 
-function normalizeFilter(
-  value: string,
+function formatRestaurantType(
+  value: string | null,
 ) {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/[\s-]+/g, '_');
+  if (!value) {
+    return 'Gastronomía';
+  }
+
+  switch (
+    value.toLowerCase()
+  ) {
+    case 'restaurant':
+      return 'Restaurante';
+
+    case 'cafe':
+      return 'Cafetería';
+
+    case 'fast food':
+    case 'fast_food':
+      return 'Comida rápida';
+
+    default:
+      return value;
+  }
 }
 
 function formatCuisine(
   value: string,
 ) {
   return value
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (character) =>
-      character.toUpperCase(),
+    .replace(
+      /_/g,
+      ' ',
+    )
+    .replace(
+      /\b\w/g,
+      (letter) =>
+        letter.toUpperCase(),
     );
 }
 
-function getCuisineFromTypes(
-  types: string[],
+function formatDistance(
+  meters: number,
 ) {
-  const ignoredTypes = new Set([
-    'restaurant',
-    'cafe',
-    'fast_food',
-  ]);
-
-  const cuisineTypes =
-    types.filter(
-      (type) =>
-        !ignoredTypes.has(type),
-    );
-
-  if (cuisineTypes.length === 0) {
-    return null;
+  if (meters >= 1000) {
+    return `${
+      meters / 1000
+    } km`;
   }
 
-  return cuisineTypes
-    .slice(0, 3)
-    .map(formatCuisine)
-    .join(' · ');
-}
-
-function formatRestaurantType(
-  type: string | null,
-) {
-  if (!type) {
-    return 'Gastronomía';
-  }
-
-  const normalized =
-    type.toLowerCase();
-
-  if (normalized === 'restaurant') {
-    return 'Restaurante';
-  }
-
-  if (normalized === 'cafe') {
-    return 'Café';
-  }
-
-  if (
-    normalized === 'fast food' ||
-    normalized === 'fast_food'
-  ) {
-    return 'Comida rápida';
-  }
-
-  return type;
+  return `${meters} m`;
 }
 
 function RestaurantIcon() {
@@ -619,7 +688,11 @@ function RestaurantIcon() {
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path d="M7 3v7M4 3v5a3 3 0 0 0 6 0V3M7 11v10M15 3v18M15 3c3 0 5 2.5 5 6s-2 5-5 5" />
+      <path d="M7 3v7M10 3v7M7 7h3M8.5 10v11" />
+
+      <path d="M15 3v18" />
+
+      <path d="M15 3c3 2 3 7 0 9" />
     </svg>
   );
 }
