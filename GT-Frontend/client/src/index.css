@@ -7786,3 +7786,5807 @@ button {
     font-size: 0.9rem;
   }
 }
+/* =========================================================
+   GLOBALTOUR REDESIGN 2026
+   PHASE 1 — APP SHELL + NAVBAR + HOME
+   ========================================================= */
+
+
+/* =========================================================
+   APP SHELL
+   ========================================================= */
+
+.gt-app-shell {
+  min-height: 100vh;
+  background:
+    #f5f7fb;
+}
+
+.gt-page-container {
+  width: 100%;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.gt-header {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+
+  width: 100%;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.92
+    );
+
+  border-bottom:
+    1px solid
+    rgba(
+      15,
+      23,
+      42,
+      0.08
+    );
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 1px 0
+    rgba(
+      15,
+      23,
+      42,
+      0.02
+    );
+}
+
+.gt-navbar {
+  width:
+    min(
+      1420px,
+      calc(
+        100% - 56px
+      )
+    );
+
+  min-height:
+    78px;
+
+  margin:
+    0 auto;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    32px;
+}
+
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.gt-brand {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  flex-shrink:
+    0;
+}
+
+.gt-brand-symbol {
+  width:
+    38px;
+
+  height:
+    38px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    12px;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f45d8 0%,
+      #2563eb 55%,
+      #38bdf8 100%
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(
+      37,
+      99,
+      235,
+      0.28
+    );
+}
+
+.gt-brand-symbol svg {
+  width:
+    21px;
+
+  height:
+    21px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    1.7;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+}
+
+.gt-brand-text {
+  color:
+    #0f172a;
+
+  font-size:
+    1.28rem;
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    -0.04em;
+}
+
+.gt-brand-text strong {
+  color:
+    #2563eb;
+
+  font-weight:
+    900;
+}
+
+
+/* =========================================================
+   DESKTOP NAV
+   ========================================================= */
+
+.gt-desktop-nav {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    3px;
+}
+
+.gt-nav-link {
+  position:
+    relative;
+
+  padding:
+    10px
+    12px;
+
+  border-radius:
+    11px;
+
+  color:
+    #566176;
+
+  font-size:
+    0.88rem;
+
+  font-weight:
+    650;
+
+  white-space:
+    nowrap;
+
+  transition:
+    color
+      0.2s ease,
+    background
+      0.2s ease;
+}
+
+.gt-nav-link:hover {
+  color:
+    #0f172a;
+
+  background:
+    #f1f5f9;
+}
+
+.gt-nav-link-active {
+  color:
+    #1746d1;
+
+  background:
+    #eef4ff;
+}
+
+.gt-nav-link-active::after {
+  content:
+    '';
+
+  position:
+    absolute;
+
+  left:
+    50%;
+
+  bottom:
+    -15px;
+
+  width:
+    22px;
+
+  height:
+    3px;
+
+  transform:
+    translateX(-50%);
+
+  border-radius:
+    999px;
+
+  background:
+    #2563eb;
+}
+
+
+/* =========================================================
+   NAV ACTIONS
+   ========================================================= */
+
+.gt-nav-actions {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+}
+
+.gt-currency-wrapper {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  padding:
+    2px;
+
+  border-radius:
+    12px;
+
+  background:
+    #f7f9fc;
+
+  border:
+    1px solid
+    #e8edf5;
+}
+
+.gt-auth-loading {
+  color:
+    #64748b;
+
+  font-size:
+    0.84rem;
+
+  font-weight:
+    600;
+}
+
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+
+.gt-login-button,
+.gt-mobile-login {
+  min-height:
+    44px;
+
+  padding:
+    0
+    16px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    9px;
+
+  border:
+    0;
+
+  border-radius:
+    12px;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #2563eb
+    );
+
+  box-shadow:
+    0 7px 18px
+    rgba(
+      37,
+      99,
+      235,
+      0.22
+    );
+
+  font-size:
+    0.85rem;
+
+  font-weight:
+    750;
+
+  transition:
+    transform
+      0.2s ease,
+    box-shadow
+      0.2s ease;
+}
+
+.gt-login-button:hover,
+.gt-mobile-login:hover {
+  transform:
+    translateY(-1px);
+
+  box-shadow:
+    0 10px 24px
+    rgba(
+      37,
+      99,
+      235,
+      0.3
+    );
+}
+
+.gt-login-button svg,
+.gt-mobile-login svg {
+  width:
+    18px;
+
+  height:
+    18px;
+
+  fill:
+    currentColor;
+}
+
+
+/* =========================================================
+   USER
+   ========================================================= */
+
+.gt-user-menu {
+  position:
+    relative;
+}
+
+.gt-user-trigger {
+  min-height:
+    48px;
+
+  padding:
+    5px
+    9px
+    5px
+    6px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    9px;
+
+  border:
+    1px solid
+    #e5eaf2;
+
+  border-radius:
+    14px;
+
+  background:
+    #ffffff;
+
+  color:
+    #0f172a;
+
+  transition:
+    box-shadow
+      0.2s ease,
+    border-color
+      0.2s ease;
+}
+
+.gt-user-trigger:hover {
+  border-color:
+    #ccd7e7;
+
+  box-shadow:
+    0 7px 20px
+    rgba(
+      15,
+      23,
+      42,
+      0.07
+    );
+}
+
+.gt-user-avatar {
+  width:
+    36px;
+
+  height:
+    36px;
+
+  flex-shrink:
+    0;
+
+  object-fit:
+    cover;
+
+  border-radius:
+    11px;
+
+  background:
+    #dbeafe;
+}
+
+.gt-user-avatar-fallback {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  color:
+    #1d4ed8;
+
+  font-size:
+    0.9rem;
+
+  font-weight:
+    800;
+}
+
+.gt-user-text {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    flex-start;
+
+  max-width:
+    110px;
+}
+
+.gt-user-text small {
+  color:
+    #94a3b8;
+
+  font-size:
+    0.64rem;
+
+  line-height:
+    1;
+}
+
+.gt-user-text strong {
+  max-width:
+    100%;
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  font-size:
+    0.78rem;
+}
+
+.gt-chevron {
+  width:
+    16px;
+
+  height:
+    16px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    2;
+}
+
+.gt-user-dropdown {
+  position:
+    absolute;
+
+  top:
+    calc(
+      100% + 12px
+    );
+
+  right:
+    0;
+
+  width:
+    280px;
+
+  padding:
+    12px;
+
+  border:
+    1px solid
+    #e6ebf2;
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    0 22px 60px
+    rgba(
+      15,
+      23,
+      42,
+      0.16
+    );
+}
+
+.gt-user-dropdown-header {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    11px;
+
+  padding:
+    7px;
+}
+
+.gt-user-dropdown-header img,
+.gt-user-dropdown-avatar {
+  width:
+    42px;
+
+  height:
+    42px;
+
+  flex-shrink:
+    0;
+
+  border-radius:
+    12px;
+
+  object-fit:
+    cover;
+}
+
+.gt-user-dropdown-avatar {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  color:
+    #1d4ed8;
+
+  background:
+    #dbeafe;
+
+  font-weight:
+    800;
+}
+
+.gt-user-dropdown-header div {
+  min-width:
+    0;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+}
+
+.gt-user-dropdown-header strong {
+  color:
+    #172033;
+
+  font-size:
+    0.9rem;
+}
+
+.gt-user-dropdown-header span {
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  color:
+    #8590a3;
+
+  font-size:
+    0.74rem;
+}
+
+.gt-dropdown-divider {
+  height:
+    1px;
+
+  margin:
+    9px 0;
+
+  background:
+    #edf0f5;
+}
+
+.gt-dropdown-link {
+  width:
+    100%;
+
+  min-height:
+    42px;
+
+  padding:
+    0 10px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  border:
+    0;
+
+  border-radius:
+    10px;
+
+  color:
+    #475569;
+
+  background:
+    transparent;
+
+  font-size:
+    0.84rem;
+
+  font-weight:
+    650;
+}
+
+.gt-dropdown-link:hover {
+  color:
+    #172033;
+
+  background:
+    #f4f6fa;
+}
+
+.gt-dropdown-link svg {
+  width:
+    17px;
+
+  height:
+    17px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    1.8;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+}
+
+.gt-dropdown-logout {
+  color:
+    #dc2626;
+}
+
+
+/* =========================================================
+   MOBILE NAV
+   ========================================================= */
+
+.gt-mobile-menu-button {
+  display:
+    none;
+
+  width:
+    44px;
+
+  height:
+    44px;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border:
+    1px solid
+    #e4e9f1;
+
+  border-radius:
+    12px;
+
+  color:
+    #172033;
+
+  background:
+    #ffffff;
+}
+
+.gt-mobile-menu-button svg {
+  width:
+    21px;
+
+  height:
+    21px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    2;
+
+  stroke-linecap:
+    round;
+}
+
+.gt-mobile-panel {
+  display:
+    none;
+}
+
+
+/* =========================================================
+   HOME
+   ========================================================= */
+
+.gt-home {
+  width:
+    100%;
+
+  overflow:
+    hidden;
+
+  background:
+    #f6f8fc;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.gt-home-hero {
+  position:
+    relative;
+
+  min-height:
+    720px;
+
+  padding:
+    86px
+    28px
+    110px;
+
+  color:
+    #ffffff;
+
+  background:
+    #081a44;
+
+  isolation:
+    isolate;
+}
+
+.gt-home-hero-background {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    -4;
+
+  background:
+    radial-gradient(
+      circle at 80% 22%,
+      rgba(
+        56,
+        189,
+        248,
+        0.22
+      ),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 20% 82%,
+      rgba(
+        79,
+        70,
+        229,
+        0.2
+      ),
+      transparent 28%
+    ),
+    linear-gradient(
+      120deg,
+      #071635 0%,
+      #0b2255 48%,
+      #0d3983 100%
+    );
+}
+
+.gt-home-hero::after {
+  content:
+    '';
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  z-index:
+    -3;
+
+  opacity:
+    0.14;
+
+  background-image:
+    linear-gradient(
+      rgba(
+        255,
+        255,
+        255,
+        0.15
+      ) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(
+        255,
+        255,
+        255,
+        0.15
+      ) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    70px
+    70px;
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      black,
+      transparent 80%
+    );
+}
+
+.gt-home-hero-glow {
+  position:
+    absolute;
+
+  z-index:
+    -2;
+
+  border-radius:
+    50%;
+
+  filter:
+    blur(80px);
+
+  pointer-events:
+    none;
+}
+
+.gt-glow-one {
+  top:
+    90px;
+
+  right:
+    10%;
+
+  width:
+    330px;
+
+  height:
+    330px;
+
+  background:
+    rgba(
+      14,
+      165,
+      233,
+      0.18
+    );
+}
+
+.gt-glow-two {
+  left:
+    8%;
+
+  bottom:
+    90px;
+
+  width:
+    250px;
+
+  height:
+    250px;
+
+  background:
+    rgba(
+      99,
+      102,
+      241,
+      0.2
+    );
+}
+
+.gt-home-hero-inner {
+  width:
+    min(
+      1360px,
+      100%
+    );
+
+  margin:
+    0 auto;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1.05fr
+    )
+    minmax(
+      360px,
+      0.75fr
+    );
+
+  align-items:
+    center;
+
+  gap:
+    80px;
+}
+
+.gt-home-copy {
+  max-width:
+    760px;
+}
+
+.gt-home-badge {
+  width:
+    fit-content;
+
+  margin-bottom:
+    20px;
+
+  padding:
+    8px
+    12px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.17
+    );
+
+  border-radius:
+    999px;
+
+  color:
+    #dce9ff;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.07
+    );
+
+  backdrop-filter:
+    blur(10px);
+
+  font-size:
+    0.77rem;
+
+  font-weight:
+    700;
+}
+
+.gt-home-badge-dot {
+  width:
+    7px;
+
+  height:
+    7px;
+
+  border-radius:
+    50%;
+
+  background:
+    #38bdf8;
+
+  box-shadow:
+    0 0 0
+    5px
+    rgba(
+      56,
+      189,
+      248,
+      0.12
+    );
+}
+
+.gt-home-copy h1 {
+  margin:
+    0;
+
+  max-width:
+    780px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    clamp(
+      3rem,
+      6vw,
+      5.8rem
+    );
+
+  line-height:
+    0.96;
+
+  letter-spacing:
+    -0.065em;
+
+  font-weight:
+    850;
+}
+
+.gt-home-copy h1 span {
+  display:
+    block;
+
+  color:
+    #6fd5ff;
+}
+
+.gt-home-copy > p {
+  max-width:
+    650px;
+
+  margin:
+    26px 0 0;
+
+  color:
+    #becce5;
+
+  font-size:
+    1.08rem;
+
+  line-height:
+    1.75;
+}
+
+.gt-home-proof {
+  margin-top:
+    34px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    24px;
+}
+
+.gt-home-proof > div:not(
+  .gt-proof-divider
+) {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+}
+
+.gt-home-proof strong {
+  color:
+    #ffffff;
+
+  font-size:
+    1.35rem;
+}
+
+.gt-home-proof span {
+  color:
+    #8fa4c8;
+
+  font-size:
+    0.72rem;
+}
+
+.gt-proof-divider {
+  width:
+    1px;
+
+  height:
+    36px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.15
+    );
+}
+
+
+/* =========================================================
+   HERO VISUAL
+   ========================================================= */
+
+.gt-hero-visual {
+  position:
+    relative;
+
+  width:
+    100%;
+
+  max-width:
+    500px;
+
+  margin:
+    0 auto;
+}
+
+.gt-hero-image-card {
+  position:
+    relative;
+
+  height:
+    480px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.16
+    );
+
+  border-radius:
+    34px;
+
+  background:
+    url(
+      "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?auto=format&fit=crop&w=1200&q=85"
+    )
+    center /
+    cover;
+
+  box-shadow:
+    0 40px 90px
+    rgba(
+      0,
+      0,
+      0,
+      0.35
+    );
+
+  transform:
+    rotate(2deg);
+}
+
+.gt-hero-image-overlay {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(
+        3,
+        15,
+        38,
+        0.88
+      ),
+      transparent 58%
+    );
+}
+
+.gt-hero-image-content {
+  position:
+    absolute;
+
+  inset:
+    auto
+    0
+    0;
+
+  padding:
+    30px;
+
+  display:
+    flex;
+
+  align-items:
+    flex-end;
+
+  justify-content:
+    space-between;
+}
+
+.gt-hero-image-content > span {
+  padding:
+    7px
+    10px;
+
+  border-radius:
+    999px;
+
+  color:
+    #0f3a72;
+
+  background:
+    #dff6ff;
+
+  font-size:
+    0.7rem;
+
+  font-weight:
+    800;
+}
+
+.gt-hero-image-content div {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    flex-end;
+}
+
+.gt-hero-image-content strong {
+  color:
+    #ffffff;
+
+  font-size:
+    1.8rem;
+}
+
+.gt-hero-image-content small {
+  color:
+    #b8c9e5;
+}
+
+.gt-floating-card {
+  position:
+    absolute;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+  padding:
+    14px
+    16px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.2
+    );
+
+  border-radius:
+    17px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.94
+    );
+
+  color:
+    #172033;
+
+  box-shadow:
+    0 18px 40px
+    rgba(
+      0,
+      0,
+      0,
+      0.23
+    );
+
+  backdrop-filter:
+    blur(12px);
+}
+
+.gt-floating-card small {
+  display:
+    block;
+
+  color:
+    #8793a8;
+
+  font-size:
+    0.68rem;
+}
+
+.gt-floating-card strong {
+  font-size:
+    0.9rem;
+}
+
+.gt-floating-icon {
+  width:
+    38px;
+
+  height:
+    38px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    11px;
+
+  color:
+    #ffffff;
+
+  background:
+    #2563eb;
+}
+
+.gt-floating-flight {
+  left:
+    -56px;
+
+  top:
+    95px;
+}
+
+.gt-floating-saving {
+  right:
+    -35px;
+
+  bottom:
+    75px;
+
+  display:
+    block;
+}
+
+
+/* =========================================================
+   HOME SEARCH
+   ========================================================= */
+
+.gt-home-search-wrapper {
+  position:
+    relative;
+
+  z-index:
+    20;
+
+  width:
+    min(
+      1360px,
+      calc(
+        100% - 56px
+      )
+    );
+
+  margin:
+    78px auto
+    -210px;
+}
+
+.gt-home-search-shell {
+  padding:
+    10px;
+
+  overflow:
+    hidden;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
+
+  border-radius:
+    24px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.97
+    );
+
+  box-shadow:
+    0 28px 70px
+    rgba(
+      2,
+      15,
+      41,
+      0.25
+    );
+}
+
+.gt-home-search-tabs {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  padding:
+    4px
+    4px
+    10px;
+}
+
+.gt-home-search-tab {
+  min-height:
+    46px;
+
+  padding:
+    0 16px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  border:
+    0;
+
+  border-radius:
+    11px;
+
+  color:
+    #6b768a;
+
+  background:
+    transparent;
+
+  font-size:
+    0.86rem;
+
+  font-weight:
+    700;
+
+  transition:
+    color
+      0.2s ease,
+    background
+      0.2s ease;
+}
+
+.gt-home-search-tab svg {
+  width:
+    18px;
+
+  height:
+    18px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    1.8;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+}
+
+.gt-home-search-tab:hover {
+  color:
+    #172033;
+
+  background:
+    #f3f6fa;
+}
+
+.gt-home-search-tab-active {
+  color:
+    #1746d1;
+
+  background:
+    #edf4ff;
+}
+
+.gt-home-search-content {
+  min-height:
+    110px;
+}
+
+
+/*
+ * Reuse existing functional search
+ * components but remove their old
+ * card treatment inside the new shell.
+ */
+
+.gt-home-search-content
+  .trip-search {
+  margin:
+    0;
+
+  border:
+    0;
+
+  border-radius:
+    16px;
+
+  box-shadow:
+    none;
+}
+
+
+/* =========================================================
+   MODULE SHORTCUT
+   ========================================================= */
+
+.gt-module-shortcut {
+  min-height:
+    108px;
+
+  padding:
+    18px
+    22px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    18px;
+
+  border-radius:
+    16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f6f9ff,
+      #eef5ff
+    );
+
+  border:
+    1px solid
+    #e4ecfa;
+}
+
+.gt-module-shortcut-icon {
+  width:
+    52px;
+
+  height:
+    52px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    15px;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #38bdf8
+    );
+
+  box-shadow:
+    0 10px 24px
+    rgba(
+      37,
+      99,
+      235,
+      0.2
+    );
+}
+
+.gt-module-shortcut-icon svg {
+  width:
+    23px;
+
+  height:
+    23px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    1.8;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+}
+
+.gt-module-shortcut-copy span {
+  color:
+    #2563eb;
+
+  font-size:
+    0.7rem;
+
+  font-weight:
+    800;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.08em;
+}
+
+.gt-module-shortcut-copy h3 {
+  margin:
+    3px 0;
+
+  color:
+    #172033;
+
+  font-size:
+    1.12rem;
+}
+
+.gt-module-shortcut-copy p {
+  margin:
+    0;
+
+  color:
+    #7a8699;
+
+  font-size:
+    0.84rem;
+}
+
+.gt-primary-action,
+.gt-light-button {
+  min-height:
+    46px;
+
+  padding:
+    0 17px;
+
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    9px;
+
+  border-radius:
+    12px;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #2563eb
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(
+      37,
+      99,
+      235,
+      0.22
+    );
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    750;
+}
+
+.gt-primary-action svg,
+.gt-light-button svg,
+.gt-text-link svg,
+.gt-destination-cta svg,
+.gt-experience-arrow svg {
+  width:
+    17px;
+
+  height:
+    17px;
+
+  fill:
+    none;
+
+  stroke:
+    currentColor;
+
+  stroke-width:
+    1.9;
+
+  stroke-linecap:
+    round;
+
+  stroke-linejoin:
+    round;
+}
+
+
+/* =========================================================
+   HOME SECTIONS
+   ========================================================= */
+
+.gt-home-section {
+  width:
+    min(
+      1360px,
+      calc(
+        100% - 56px
+      )
+    );
+
+  margin:
+    0 auto;
+
+  padding:
+    96px
+    0;
+}
+
+.gt-destinations-section {
+  padding-top:
+    260px;
+}
+
+.gt-section-heading {
+  margin-bottom:
+    34px;
+
+  display:
+    flex;
+
+  align-items:
+    flex-end;
+
+  justify-content:
+    space-between;
+
+  gap:
+    40px;
+}
+
+.gt-section-heading > div:first-child {
+  max-width:
+    720px;
+}
+
+.gt-section-eyebrow {
+  display:
+    inline-block;
+
+  margin-bottom:
+    8px;
+
+  color:
+    #2563eb;
+
+  font-size:
+    0.72rem;
+
+  font-weight:
+    850;
+
+  letter-spacing:
+    0.1em;
+
+  text-transform:
+    uppercase;
+}
+
+.gt-section-heading h2 {
+  margin:
+    0;
+
+  color:
+    #111827;
+
+  font-size:
+    clamp(
+      2rem,
+      3.4vw,
+      3.3rem
+    );
+
+  line-height:
+    1.05;
+
+  letter-spacing:
+    -0.05em;
+}
+
+.gt-section-heading p,
+.gt-section-heading-side p {
+  max-width:
+    420px;
+
+  margin:
+    0;
+
+  color:
+    #778397;
+
+  line-height:
+    1.7;
+}
+
+.gt-section-heading-side {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  align-items:
+    flex-start;
+
+  gap:
+    13px;
+}
+
+.gt-text-link {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    7px;
+
+  color:
+    #1d4ed8;
+
+  font-size:
+    0.82rem;
+
+  font-weight:
+    800;
+}
+
+
+/* =========================================================
+   DESTINATION CARDS
+   ========================================================= */
+
+.gt-destination-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    1.35fr
+    1fr
+    1fr;
+
+  grid-template-rows:
+    250px
+    250px;
+
+  gap:
+    18px;
+}
+
+.gt-destination-card {
+  position:
+    relative;
+
+  min-height:
+    240px;
+
+  overflow:
+    hidden;
+
+  padding:
+    20px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    space-between;
+
+  border-radius:
+    24px;
+
+  background-position:
+    center;
+
+  background-size:
+    cover;
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 15px 35px
+    rgba(
+      15,
+      23,
+      42,
+      0.13
+    );
+
+  transition:
+    transform
+      0.28s ease,
+    box-shadow
+      0.28s ease;
+}
+
+.gt-destination-card:nth-child(
+  2
+) {
+  grid-column:
+    2;
+}
+
+.gt-destination-card:nth-child(
+  3
+) {
+  grid-column:
+    3;
+}
+
+.gt-destination-card:nth-child(
+  4
+) {
+  grid-column:
+    2 / 4;
+}
+
+.gt-destination-card-large {
+  grid-row:
+    1 / 3;
+}
+
+.gt-destination-card:hover {
+  transform:
+    translateY(-5px);
+
+  box-shadow:
+    0 24px 50px
+    rgba(
+      15,
+      23,
+      42,
+      0.19
+    );
+}
+
+.gt-destination-overlay {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  background:
+    linear-gradient(
+      to top,
+      rgba(
+        3,
+        13,
+        31,
+        0.88
+      ),
+      rgba(
+        3,
+        13,
+        31,
+        0.06
+      )
+    );
+}
+
+.gt-destination-top,
+.gt-destination-content {
+  position:
+    relative;
+
+  z-index:
+    2;
+}
+
+.gt-destination-top {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+}
+
+.gt-destination-iata,
+.gt-destination-price {
+  padding:
+    7px
+    10px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.18
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    rgba(
+      4,
+      13,
+      32,
+      0.33
+    );
+
+  backdrop-filter:
+    blur(10px);
+
+  font-size:
+    0.69rem;
+
+  font-weight:
+    800;
+}
+
+.gt-destination-content > span {
+  color:
+    #d8e1ef;
+
+  font-size:
+    0.74rem;
+
+  font-weight:
+    650;
+}
+
+.gt-destination-content h3 {
+  margin:
+    3px 0 10px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    clamp(
+      1.7rem,
+      3vw,
+      2.7rem
+    );
+
+  letter-spacing:
+    -0.04em;
+}
+
+.gt-destination-cta {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    0.77rem;
+
+  font-weight:
+    750;
+}
+
+
+/* =========================================================
+   EXPERIENCE
+   ========================================================= */
+
+.gt-experience-section {
+  padding-top:
+    48px;
+}
+
+.gt-experience-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      4,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    16px;
+}
+
+.gt-experience-card {
+  position:
+    relative;
+
+  min-height:
+    330px;
+
+  padding:
+    26px;
+
+  overflow:
+    hidden;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  border-radius:
+    24px;
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 14px 35px
+    rgba(
+      15,
+      23,
+      42,
+      0.1
+    );
+
+  transition:
+    transform
+      0.25s ease,
+    box-shadow
+      0.25s ease;
+}
+
+.gt-experience-card::after {
+  content:
+    '';
+
+  position:
+    absolute;
+
+  right:
+    -60px;
+
+  bottom:
+    -80px;
+
+  width:
+    220px;
+
+  height:
+    220px;
+
+  border:
+    34px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+
+  border-radius:
+    50%;
+}
+
+.gt-experience-card:hover {
+  transform:
+    translateY(-6px);
+
+  box-shadow:
+    0 24px 50px
+    rgba(
+      15,
+      23,
+      42,
+      0.18
+    );
+}
+
+.gt-experience-flight {
+  background:
+    linear-gradient(
+      145deg,
+      #1746d1,
+      #2563eb
+    );
+}
+
+.gt-experience-hotel {
+  background:
+    linear-gradient(
+      145deg,
+      #6326c9,
+      #8b5cf6
+    );
+}
+
+.gt-experience-food {
+  background:
+    linear-gradient(
+      145deg,
+      #d85417,
+      #f97316
+    );
+}
+
+.gt-experience-car {
+  background:
+    linear-gradient(
+      145deg,
+      #04746d,
+      #0d9488
+    );
+}
+
+.gt-experience-icon {
+  width:
+    52px;
+
+  height:
+    52px;
+
+  margin-bottom:
+    auto;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    15px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.15
+    );
+
+  font-size:
+    1.25rem;
+
+  font-weight:
+    850;
+
+  backdrop-filter:
+    blur(8px);
+}
+
+.gt-experience-card > span {
+  margin-top:
+    35px;
+
+  opacity:
+    0.75;
+
+  font-size:
+    0.7rem;
+
+  font-weight:
+    750;
+
+  text-transform:
+    uppercase;
+
+  letter-spacing:
+    0.08em;
+}
+
+.gt-experience-card h3 {
+  margin:
+    5px 0 9px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    1.7rem;
+}
+
+.gt-experience-card p {
+  margin:
+    0;
+
+  max-width:
+    260px;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.79
+    );
+
+  font-size:
+    0.86rem;
+
+  line-height:
+    1.6;
+}
+
+.gt-experience-arrow {
+  position:
+    absolute;
+
+  right:
+    24px;
+
+  bottom:
+    24px;
+
+  width:
+    38px;
+
+  height:
+    38px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    50%;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.15
+    );
+}
+
+
+/* =========================================================
+   VALUE BANNER
+   ========================================================= */
+
+.gt-value-banner {
+  padding:
+    60px;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    0.85fr
+    1fr;
+
+  gap:
+    80px;
+
+  border-radius:
+    32px;
+
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #071a43 0%,
+      #0d3479 58%,
+      #1354ba 100%
+    );
+
+  box-shadow:
+    0 28px 70px
+    rgba(
+      15,
+      23,
+      42,
+      0.18
+    );
+}
+
+.gt-section-eyebrow-light {
+  color:
+    #70d6ff;
+}
+
+.gt-value-banner-copy h2 {
+  margin:
+    5px 0
+    18px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    clamp(
+      2.4rem,
+      5vw,
+      4.5rem
+    );
+
+  line-height:
+    0.98;
+
+  letter-spacing:
+    -0.055em;
+}
+
+.gt-value-banner-copy p {
+  max-width:
+    470px;
+
+  margin:
+    0 0
+    26px;
+
+  color:
+    #b9c9e4;
+
+  line-height:
+    1.75;
+}
+
+.gt-light-button {
+  background:
+    #ffffff;
+
+  color:
+    #1746d1;
+
+  box-shadow:
+    none;
+}
+
+.gt-value-features {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+}
+
+.gt-value-feature {
+  padding:
+    22px 0;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    52px
+    1fr;
+
+  gap:
+    20px;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.12
+    );
+}
+
+.gt-value-feature:last-child {
+  border-bottom:
+    0;
+}
+
+.gt-value-feature > span {
+  color:
+    #5fcafa;
+
+  font-size:
+    0.8rem;
+
+  font-weight:
+    800;
+}
+
+.gt-value-feature strong {
+  display:
+    block;
+
+  margin-bottom:
+    6px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    1.05rem;
+}
+
+.gt-value-feature p {
+  margin:
+    0;
+
+  color:
+    #9fb2d2;
+
+  font-size:
+    0.84rem;
+
+  line-height:
+    1.6;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.gt-footer {
+  margin-top:
+    80px;
+
+  padding:
+    64px
+    28px
+    24px;
+
+  color:
+    #b8c3d6;
+
+  background:
+    #07142f;
+}
+
+.gt-footer-inner {
+  width:
+    min(
+      1360px,
+      100%
+    );
+
+  margin:
+    0 auto;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    1.5fr
+    0.6fr
+    0.6fr;
+
+  gap:
+    70px;
+}
+
+.gt-footer-logo
+  .gt-brand-text {
+  color:
+    #ffffff;
+}
+
+.gt-footer-brand p {
+  max-width:
+    390px;
+
+  margin:
+    20px 0 0;
+
+  color:
+    #8294b3;
+
+  line-height:
+    1.7;
+}
+
+.gt-footer-column {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    12px;
+}
+
+.gt-footer-column strong {
+  margin-bottom:
+    4px;
+
+  color:
+    #ffffff;
+
+  font-size:
+    0.87rem;
+}
+
+.gt-footer-column a {
+  color:
+    #8fa0bb;
+
+  font-size:
+    0.83rem;
+}
+
+.gt-footer-column a:hover {
+  color:
+    #ffffff;
+}
+
+.gt-footer-bottom {
+  width:
+    min(
+      1360px,
+      100%
+    );
+
+  margin:
+    48px auto
+    0;
+
+  padding-top:
+    20px;
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  gap:
+    20px;
+
+  border-top:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+
+  color:
+    #60718e;
+
+  font-size:
+    0.72rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE — LAPTOP
+   ========================================================= */
+
+@media (
+  max-width: 1180px
+) {
+  .gt-navbar {
+    width:
+      calc(
+        100% - 36px
+      );
+
+    gap:
+      18px;
+  }
+
+  .gt-desktop-nav {
+    gap:
+      0;
+  }
+
+  .gt-nav-link {
+    padding:
+      9px
+      8px;
+
+    font-size:
+      0.8rem;
+  }
+
+  .gt-user-text {
+    display:
+      none;
+  }
+
+  .gt-home-hero-inner {
+    gap:
+      45px;
+  }
+
+  .gt-floating-flight {
+    left:
+      -25px;
+  }
+
+  .gt-experience-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        1fr
+      );
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (
+  max-width: 980px
+) {
+  .gt-navbar {
+    min-height:
+      70px;
+
+    grid-template-columns:
+      1fr
+      auto;
+  }
+
+  .gt-desktop-nav,
+  .gt-nav-actions {
+    display:
+      none;
+  }
+
+  .gt-mobile-menu-button {
+    display:
+      flex;
+  }
+
+  .gt-mobile-panel {
+    width:
+      100%;
+
+    padding:
+      14px
+      20px
+      20px;
+
+    display:
+      block;
+
+    background:
+      #ffffff;
+
+    border-top:
+      1px solid
+      #edf0f4;
+
+    box-shadow:
+      0 18px 35px
+      rgba(
+        15,
+        23,
+        42,
+        0.08
+      );
+  }
+
+  .gt-mobile-navigation {
+    display:
+      grid;
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(
+          0,
+          1fr
+        )
+      );
+
+    gap:
+      7px;
+  }
+
+  .gt-mobile-link {
+    min-height:
+      47px;
+
+    padding:
+      0 13px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      space-between;
+
+    border-radius:
+      11px;
+
+    color:
+      #475569;
+
+    background:
+      #f7f9fc;
+
+    font-size:
+      0.84rem;
+
+    font-weight:
+      650;
+  }
+
+  .gt-mobile-link svg {
+    width:
+      16px;
+
+    height:
+      16px;
+
+    fill:
+      none;
+
+    stroke:
+      currentColor;
+
+    stroke-width:
+      2;
+  }
+
+  .gt-mobile-link-active {
+    color:
+      #1746d1;
+
+    background:
+      #edf4ff;
+  }
+
+  .gt-mobile-controls {
+    margin-top:
+      13px;
+
+    padding-top:
+      13px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      space-between;
+
+    gap:
+      14px;
+
+    border-top:
+      1px solid
+      #edf0f4;
+  }
+
+  .gt-mobile-currency {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      10px;
+
+    color:
+      #64748b;
+
+    font-size:
+      0.76rem;
+
+    font-weight:
+      650;
+  }
+
+  .gt-mobile-user {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      12px;
+  }
+
+  .gt-mobile-user-info {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    gap:
+      9px;
+  }
+
+  .gt-mobile-user-info img,
+  .gt-mobile-user-info > span {
+    width:
+      36px;
+
+    height:
+      36px;
+
+    border-radius:
+      10px;
+
+    object-fit:
+      cover;
+  }
+
+  .gt-mobile-user-info > span {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    color:
+      #1d4ed8;
+
+    background:
+      #dbeafe;
+
+    font-weight:
+      800;
+  }
+
+  .gt-mobile-user-info div {
+    display:
+      flex;
+
+    flex-direction:
+      column;
+  }
+
+  .gt-mobile-user-info strong {
+    color:
+      #172033;
+
+    font-size:
+      0.78rem;
+  }
+
+  .gt-mobile-user-info small {
+    color:
+      #94a3b8;
+
+    font-size:
+      0.66rem;
+  }
+
+  .gt-mobile-logout {
+    min-height:
+      38px;
+
+    padding:
+      0 12px;
+
+    border:
+      1px solid
+      #fecaca;
+
+    border-radius:
+      9px;
+
+    color:
+      #dc2626;
+
+    background:
+      #fff5f5;
+
+    font-size:
+      0.73rem;
+
+    font-weight:
+      700;
+  }
+
+  .gt-home-hero {
+    min-height:
+      auto;
+
+    padding-top:
+      65px;
+  }
+
+  .gt-home-hero-inner {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gt-home-copy {
+    max-width:
+      800px;
+  }
+
+  .gt-hero-visual {
+    display:
+      none;
+  }
+
+  .gt-home-search-wrapper {
+    margin-top:
+      55px;
+  }
+
+  .gt-destination-grid {
+    grid-template-columns:
+      repeat(
+        2,
+        1fr
+      );
+
+    grid-template-rows:
+      280px
+      240px
+      240px;
+  }
+
+  .gt-destination-card-large {
+    grid-column:
+      1 / 3;
+
+    grid-row:
+      auto;
+  }
+
+  .gt-destination-card:nth-child(
+    2
+  ),
+  .gt-destination-card:nth-child(
+    3
+  ) {
+    grid-column:
+      auto;
+  }
+
+  .gt-destination-card:nth-child(
+    4
+  ) {
+    grid-column:
+      1 / 3;
+  }
+
+  .gt-value-banner {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      35px;
+  }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (
+  max-width: 650px
+) {
+  .gt-navbar {
+    width:
+      calc(
+        100% - 28px
+      );
+
+    min-height:
+      66px;
+  }
+
+  .gt-brand-symbol {
+    width:
+      34px;
+
+    height:
+      34px;
+  }
+
+  .gt-brand-text {
+    font-size:
+      1.13rem;
+  }
+
+  .gt-mobile-panel {
+    padding:
+      10px
+      14px
+      16px;
+  }
+
+  .gt-mobile-navigation {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gt-mobile-controls {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .gt-mobile-user {
+    align-items:
+      stretch;
+
+    flex-direction:
+      column;
+  }
+
+  .gt-mobile-user-info small {
+    max-width:
+      210px;
+
+    overflow:
+      hidden;
+
+    text-overflow:
+      ellipsis;
+
+    white-space:
+      nowrap;
+  }
+
+  .gt-mobile-login {
+    width:
+      100%;
+  }
+
+  .gt-home-hero {
+    padding:
+      48px
+      18px
+      82px;
+  }
+
+  .gt-home-copy h1 {
+    font-size:
+      clamp(
+        2.75rem,
+        14vw,
+        4.15rem
+      );
+  }
+
+  .gt-home-copy > p {
+    font-size:
+      0.96rem;
+  }
+
+  .gt-home-proof {
+    gap:
+      13px;
+  }
+
+  .gt-home-proof strong {
+    font-size:
+      1.05rem;
+  }
+
+  .gt-home-proof span {
+    font-size:
+      0.62rem;
+  }
+
+  .gt-proof-divider {
+    height:
+      29px;
+  }
+
+  .gt-home-search-wrapper {
+    width:
+      calc(
+        100% - 24px
+      );
+
+    margin:
+      45px auto
+      -175px;
+  }
+
+  .gt-home-search-shell {
+    border-radius:
+      19px;
+  }
+
+  .gt-home-search-tabs {
+    overflow-x:
+      auto;
+
+    scrollbar-width:
+      none;
+  }
+
+  .gt-home-search-tabs::-webkit-scrollbar {
+    display:
+      none;
+  }
+
+  .gt-home-search-tab {
+    flex:
+      0 0 auto;
+
+    padding:
+      0 12px;
+  }
+
+  .gt-module-shortcut {
+    grid-template-columns:
+      1fr;
+
+    text-align:
+      left;
+  }
+
+  .gt-module-shortcut-icon {
+    width:
+      44px;
+
+    height:
+      44px;
+  }
+
+  .gt-primary-action {
+    width:
+      100%;
+  }
+
+  .gt-home-section {
+    width:
+      calc(
+        100% - 32px
+      );
+
+    padding:
+      66px
+      0;
+  }
+
+  .gt-destinations-section {
+    padding-top:
+      220px;
+  }
+
+  .gt-section-heading {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    gap:
+      18px;
+  }
+
+  .gt-section-heading h2 {
+    font-size:
+      2.15rem;
+  }
+
+  .gt-destination-grid {
+    display:
+      flex;
+
+    flex-direction:
+      column;
+  }
+
+  .gt-destination-card,
+  .gt-destination-card-large {
+    min-height:
+      310px;
+  }
+
+  .gt-experience-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gt-experience-card {
+    min-height:
+      270px;
+  }
+
+  .gt-value-banner {
+    padding:
+      34px
+      24px;
+
+    border-radius:
+      24px;
+  }
+
+  .gt-value-banner-copy h2 {
+    font-size:
+      2.8rem;
+  }
+
+  .gt-value-feature {
+    grid-template-columns:
+      38px
+      1fr;
+  }
+
+  .gt-footer {
+    padding:
+      50px
+      22px
+      22px;
+  }
+
+  .gt-footer-inner {
+    grid-template-columns:
+      1fr;
+
+    gap:
+      35px;
+  }
+
+  .gt-footer-bottom {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+}
+
+
+/* =========================================================
+   EXTRA SMALL — IPHONE SE ETC.
+   ========================================================= */
+
+@media (
+  max-width: 390px
+) {
+  .gt-navbar {
+    width:
+      calc(
+        100% - 22px
+      );
+  }
+
+  .gt-brand-text {
+    font-size:
+      1rem;
+  }
+
+  .gt-home-hero {
+    padding-left:
+      14px;
+
+    padding-right:
+      14px;
+  }
+
+  .gt-home-search-wrapper {
+    width:
+      calc(
+        100% - 18px
+      );
+  }
+
+  .gt-home-search-tab {
+    min-height:
+      42px;
+
+    font-size:
+      0.78rem;
+  }
+
+  .gt-home-section {
+    width:
+      calc(
+        100% - 24px
+      );
+  }
+}
+/* =========================================================
+   GLOBALTOUR — HOME INTERACTION FIXES
+   ========================================================= */
+
+.gt-destination-card {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.gt-text-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button.gt-experience-card {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   GLOBALTOUR REDESIGN
+   PHASE 2 — FLIGHTS
+   ========================================================= */
+
+.gt-flights-page {
+  width: 100%;
+  min-height: 100vh;
+  background:
+    #f4f7fb;
+}
+
+
+/* =========================================================
+   FLIGHTS HERO
+   ========================================================= */
+
+.gt-flights-hero {
+  position: relative;
+  overflow: hidden;
+
+  padding:
+    72px
+    28px
+    104px;
+
+  color: #ffffff;
+
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(56, 189, 248, 0.22),
+      transparent 26%
+    ),
+    linear-gradient(
+      120deg,
+      #071735 0%,
+      #0b2862 52%,
+      #1254b9 100%
+    );
+}
+
+.gt-flights-hero::after {
+  content: '';
+
+  position: absolute;
+  inset: 0;
+
+  opacity: 0.09;
+
+  background-image:
+    linear-gradient(
+      rgba(255,255,255,.18) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.18) 1px,
+      transparent 1px
+    );
+
+  background-size:
+    66px 66px;
+
+  pointer-events: none;
+}
+
+.gt-flights-hero-inner {
+  position: relative;
+  z-index: 2;
+
+  width:
+    min(
+      1360px,
+      100%
+    );
+
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 60px;
+}
+
+.gt-flights-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 12px;
+
+  color: #6ed7ff;
+
+  font-size: .72rem;
+  font-weight: 850;
+
+  letter-spacing: .12em;
+
+  text-transform: uppercase;
+}
+
+.gt-flights-hero h1 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size:
+    clamp(
+      2.8rem,
+      5vw,
+      5rem
+    );
+
+  line-height: .98;
+
+  letter-spacing: -.055em;
+}
+
+.gt-flights-hero p {
+  max-width: 700px;
+
+  margin:
+    18px 0 0;
+
+  color: #b7c8e4;
+
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.gt-flight-trip-meta {
+  margin-top: 24px;
+
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.gt-flight-trip-meta span {
+  min-height: 38px;
+
+  padding:
+    0 12px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.15);
+
+  border-radius: 999px;
+
+  color: #e8f0ff;
+
+  background:
+    rgba(255,255,255,.07);
+
+  backdrop-filter:
+    blur(10px);
+
+  font-size: .75rem;
+  font-weight: 650;
+}
+
+.gt-flight-trip-meta svg {
+  width: 15px;
+  height: 15px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   HERO ROUTE ART
+   ========================================================= */
+
+.gt-flight-hero-art {
+  min-width: 340px;
+
+  padding:
+    30px
+    35px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.15);
+
+  border-radius: 24px;
+
+  background:
+    rgba(255,255,255,.07);
+
+  backdrop-filter:
+    blur(14px);
+
+  box-shadow:
+    0 24px 60px
+    rgba(0,0,0,.2);
+}
+
+.gt-flight-hero-route {
+  display: grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 18px;
+}
+
+.gt-flight-hero-route > span {
+  color: #ffffff;
+
+  font-size: 1.45rem;
+  font-weight: 850;
+
+  letter-spacing: .04em;
+}
+
+.gt-flight-hero-route > div {
+  position: relative;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.gt-flight-hero-route > div::before {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255,255,255,.2),
+      #60d1ff,
+      rgba(255,255,255,.2)
+    );
+}
+
+.gt-flight-hero-route svg {
+  position: relative;
+  z-index: 2;
+
+  width: 34px;
+  height: 34px;
+
+  padding: 8px;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  background: #2563eb;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* =========================================================
+   SEARCH EDITOR
+   ========================================================= */
+
+.gt-flight-editor-section {
+  position: relative;
+  z-index: 20;
+
+  width:
+    min(
+      1360px,
+      calc(100% - 56px)
+    );
+
+  margin:
+    -52px auto
+    0;
+}
+
+.gt-flight-search-shell {
+  padding: 18px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.95);
+
+  border-radius: 22px;
+
+  background:
+    rgba(255,255,255,.98);
+
+  box-shadow:
+    0 24px 60px
+    rgba(15,23,42,.16);
+}
+
+.gt-flight-search-shell-heading {
+  margin-bottom: 12px;
+}
+
+.gt-flight-search-shell-heading div {
+  display: flex;
+
+  align-items: baseline;
+
+  gap: 10px;
+}
+
+.gt-flight-search-shell-heading span {
+  color: #2563eb;
+
+  font-size: .68rem;
+  font-weight: 850;
+
+  letter-spacing: .08em;
+
+  text-transform: uppercase;
+}
+
+.gt-flight-search-shell-heading strong {
+  color: #64748b;
+
+  font-size: .78rem;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.gt-flights-content {
+  width:
+    min(
+      1360px,
+      calc(100% - 56px)
+    );
+
+  margin: 0 auto;
+
+  padding:
+    58px 0
+    100px;
+}
+
+
+/* =========================================================
+   START STATE
+   ========================================================= */
+
+.gt-flight-start-state {
+  max-width: 900px;
+
+  margin:
+    20px auto;
+
+  padding:
+    65px
+    45px;
+
+  text-align: center;
+
+  border:
+    1px solid #e1e8f1;
+
+  border-radius: 30px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8faff
+    );
+
+  box-shadow:
+    0 24px 65px
+    rgba(15,23,42,.09);
+}
+
+.gt-flight-start-icon,
+.gt-flight-error-icon,
+.gt-flight-empty-icon {
+  width: 68px;
+  height: 68px;
+
+  margin:
+    0 auto
+    20px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 20px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #38bdf8
+    );
+
+  box-shadow:
+    0 14px 30px
+    rgba(37,99,235,.22);
+}
+
+.gt-flight-start-icon svg,
+.gt-flight-empty-icon svg {
+  width: 30px;
+  height: 30px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gt-flight-start-state > span {
+  color: #2563eb;
+
+  font-size: .7rem;
+  font-weight: 850;
+
+  letter-spacing: .12em;
+}
+
+.gt-flight-start-state h2 {
+  margin:
+    8px 0
+    10px;
+
+  color: #101828;
+
+  font-size:
+    clamp(
+      2rem,
+      4vw,
+      3.5rem
+    );
+
+  letter-spacing: -.045em;
+}
+
+.gt-flight-start-state > p {
+  max-width: 570px;
+
+  margin:
+    0 auto
+    25px;
+
+  color: #718096;
+
+  line-height: 1.7;
+}
+
+.gt-flight-primary-button,
+.gt-flight-secondary-button {
+  min-height: 48px;
+
+  padding:
+    0 20px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 9px;
+
+  border-radius: 12px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #2563eb
+    );
+
+  box-shadow:
+    0 10px 24px
+    rgba(37,99,235,.22);
+
+  font-size: .83rem;
+  font-weight: 750;
+}
+
+.gt-flight-primary-button svg {
+  width: 17px;
+  height: 17px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.gt-flight-start-features {
+  max-width: 620px;
+
+  margin:
+    40px auto
+    0;
+
+  padding-top: 28px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 20px;
+
+  border-top:
+    1px solid #e6eaf1;
+}
+
+.gt-flight-start-features div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.gt-flight-start-features strong {
+  color: #172033;
+
+  font-size: .85rem;
+}
+
+.gt-flight-start-features span {
+  margin-top: 3px;
+
+  color: #8c98aa;
+
+  font-size: .7rem;
+}
+
+
+/* =========================================================
+   NOTICES
+   ========================================================= */
+
+.gt-flight-notice {
+  margin-bottom: 28px;
+
+  padding: 18px 20px;
+
+  display: flex;
+
+  align-items: flex-start;
+
+  gap: 14px;
+
+  border:
+    1px solid #fde7ba;
+
+  border-radius: 16px;
+
+  background: #fffaf0;
+}
+
+.gt-flight-notice-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  color: #92400e;
+
+  background: #fef3c7;
+
+  font-weight: 900;
+}
+
+.gt-flight-notice strong {
+  color: #78350f;
+}
+
+.gt-flight-notice p {
+  margin:
+    4px 0 0;
+
+  color: #996515;
+
+  font-size: .8rem;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.gt-flight-loading {
+  padding-top: 15px;
+}
+
+.gt-flight-loading-heading {
+  margin-bottom: 26px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.gt-flight-loader {
+  width: 42px;
+  height: 42px;
+
+  flex-shrink: 0;
+
+  border:
+    4px solid #dbeafe;
+
+  border-top-color:
+    #2563eb;
+
+  border-radius: 50%;
+
+  animation:
+    gtFlightSpin
+    .8s linear
+    infinite;
+}
+
+@keyframes gtFlightSpin {
+  to {
+    transform:
+      rotate(360deg);
+  }
+}
+
+.gt-flight-loading-heading h2 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 1.25rem;
+}
+
+.gt-flight-loading-heading p {
+  margin:
+    3px 0 0;
+
+  color: #8290a5;
+
+  font-size: .8rem;
+}
+
+.gt-flight-skeleton-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.gt-flight-skeleton {
+  min-height: 190px;
+
+  padding: 25px;
+
+  display: grid;
+
+  grid-template-columns:
+    180px
+    1fr
+    180px;
+
+  gap: 30px;
+
+  border:
+    1px solid #e7ebf2;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+}
+
+.gt-flight-skeleton > div {
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #eef2f7 25%,
+      #f8fafc 50%,
+      #eef2f7 75%
+    );
+
+  background-size:
+    200% 100%;
+
+  animation:
+    gtFlightSkeleton
+    1.4s infinite;
+}
+
+@keyframes gtFlightSkeleton {
+  0% {
+    background-position:
+      200% 0;
+  }
+
+  100% {
+    background-position:
+      -200% 0;
+  }
+}
+
+
+/* =========================================================
+   ERROR / EMPTY
+   ========================================================= */
+
+.gt-flight-error-state {
+  max-width: 760px;
+
+  margin:
+    20px auto;
+
+  padding:
+    55px 35px;
+
+  text-align: center;
+
+  border:
+    1px solid #e5e9f0;
+
+  border-radius: 24px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 18px 45px
+    rgba(15,23,42,.07);
+}
+
+.gt-flight-error-icon {
+  color: #b42318;
+
+  background: #fee4e2;
+
+  box-shadow: none;
+
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.gt-flight-error-state h2 {
+  margin:
+    0 0 8px;
+
+  color: #172033;
+
+  font-size: 1.7rem;
+}
+
+.gt-flight-error-state p {
+  margin:
+    0 0 22px;
+
+  color: #7a8698;
+}
+
+.gt-flight-secondary-button {
+  box-shadow: none;
+}
+
+
+/* =========================================================
+   RESULTS SUMMARY
+   ========================================================= */
+
+.gt-flight-summary {
+  margin-bottom: 32px;
+}
+
+.gt-flight-summary-heading {
+  display: flex;
+
+  align-items: flex-end;
+
+  justify-content: space-between;
+
+  gap: 30px;
+}
+
+.gt-flight-section-eyebrow {
+  color: #2563eb;
+
+  font-size: .7rem;
+  font-weight: 850;
+
+  letter-spacing: .11em;
+
+  text-transform: uppercase;
+}
+
+.gt-flight-summary-heading h2 {
+  max-width: 700px;
+
+  margin:
+    7px 0
+    7px;
+
+  color: #101828;
+
+  font-size:
+    clamp(
+      2rem,
+      3.4vw,
+      3.1rem
+    );
+
+  line-height: 1.05;
+
+  letter-spacing: -.045em;
+}
+
+.gt-flight-summary-heading p {
+  margin: 0;
+
+  color: #7d899c;
+
+  font-size: .85rem;
+}
+
+.gt-flight-cache-badge {
+  padding:
+    7px 10px;
+
+  border-radius: 999px;
+
+  color: #475467;
+
+  background: #eef2f6;
+
+  font-size: .69rem;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   INSIGHTS
+   ========================================================= */
+
+.gt-flight-insight-grid {
+  margin-top: 25px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 13px;
+}
+
+.gt-flight-insight-card {
+  padding:
+    18px
+    20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  border:
+    1px solid #e3e9f1;
+
+  border-radius: 16px;
+
+  background:
+    rgba(255,255,255,.88);
+
+  box-shadow:
+    0 10px 25px
+    rgba(15,23,42,.04);
+}
+
+.gt-flight-insight-card span {
+  color: #8390a3;
+
+  font-size: .7rem;
+  font-weight: 650;
+}
+
+.gt-flight-insight-card strong {
+  margin:
+    4px 0
+    2px;
+
+  color: #172033;
+
+  font-size: 1.35rem;
+}
+
+.gt-flight-insight-card small {
+  color: #9aa5b5;
+
+  font-size: .66rem;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.gt-flight-toolbar {
+  margin-bottom: 20px;
+
+  padding:
+    10px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border:
+    1px solid #e3e8ef;
+
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 8px 22px
+    rgba(15,23,42,.04);
+}
+
+.gt-flight-quick-sort {
+  display: flex;
+
+  gap: 5px;
+}
+
+.gt-flight-sort-chip {
+  min-height: 40px;
+
+  padding:
+    0 14px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  color: #68758a;
+
+  background: transparent;
+
+  font-size: .78rem;
+  font-weight: 700;
+}
+
+.gt-flight-sort-chip:hover {
+  color: #172033;
+
+  background: #f3f6fa;
+}
+
+.gt-flight-sort-chip-active {
+  color: #1746d1;
+
+  background: #edf4ff;
+}
+
+.gt-flight-toolbar > span {
+  padding-right: 8px;
+
+  color: #8a96a8;
+
+  font-size: .72rem;
+}
+
+
+/* =========================================================
+   RESULTS LAYOUT
+   ========================================================= */
+
+.gt-flight-results-layout {
+  display: grid;
+
+  grid-template-columns:
+    260px
+    minmax(0, 1fr);
+
+  align-items: start;
+
+  gap: 20px;
+}
+
+
+/* =========================================================
+   FILTERS
+   ========================================================= */
+
+.gt-flight-filter-panel {
+  position: sticky;
+
+  top: 100px;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e2e7ef;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 12px 30px
+    rgba(15,23,42,.05);
+}
+
+.gt-flight-filter-header {
+  padding:
+    18px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 8px;
+
+  border-bottom:
+    1px solid #edf0f4;
+}
+
+.gt-flight-filter-header div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.gt-flight-filter-header span {
+  color: #2563eb;
+
+  font-size: .62rem;
+  font-weight: 850;
+
+  letter-spacing: .1em;
+}
+
+.gt-flight-filter-header strong {
+  margin-top: 2px;
+
+  color: #172033;
+
+  font-size: .82rem;
+}
+
+.gt-flight-filter-header button {
+  align-self: flex-start;
+
+  padding: 0;
+
+  border: 0;
+
+  color: #2563eb;
+
+  background: transparent;
+
+  font-size: .7rem;
+  font-weight: 750;
+}
+
+.gt-flight-filter-section {
+  padding:
+    18px;
+
+  border-bottom:
+    1px solid #edf0f4;
+}
+
+.gt-flight-filter-section > strong,
+.gt-flight-filter-section label > strong {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #344054;
+
+  font-size: .76rem;
+}
+
+.gt-flight-radio-option {
+  min-height: 34px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: #64748b;
+
+  font-size: .77rem;
+
+  cursor: pointer;
+}
+
+.gt-flight-radio-option input {
+  accent-color:
+    #2563eb;
+}
+
+.gt-flight-filter-section select {
+  width: 100%;
+  min-height: 42px;
+
+  padding:
+    0 10px;
+
+  border:
+    1px solid #dce3ec;
+
+  border-radius: 10px;
+
+  color: #475467;
+
+  background: #f9fafc;
+
+  outline: none;
+
+  font-size: .75rem;
+}
+
+.gt-flight-filter-section select:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0
+    3px
+    rgba(37,99,235,.1);
+}
+
+.gt-flight-filter-info {
+  padding:
+    17px;
+
+  display: flex;
+
+  gap: 10px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f7faff,
+      #edf5ff
+    );
+}
+
+.gt-flight-filter-info svg {
+  width: 22px;
+  height: 22px;
+
+  flex-shrink: 0;
+
+  color: #2563eb;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gt-flight-filter-info div {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.gt-flight-filter-info strong {
+  color: #344054;
+
+  font-size: .73rem;
+}
+
+.gt-flight-filter-info span {
+  margin-top: 3px;
+
+  color: #8592a6;
+
+  font-size: .65rem;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   FLIGHT CARDS
+   ========================================================= */
+
+.gt-flight-results-column {
+  min-width: 0;
+}
+
+.gt-flight-results-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+}
+
+.gt-flight-card {
+  position: relative;
+
+  overflow: hidden;
+
+  border:
+    1px solid #e1e7ef;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 10px 28px
+    rgba(15,23,42,.055);
+
+  transition:
+    transform .22s ease,
+    border-color .22s ease,
+    box-shadow .22s ease;
+}
+
+.gt-flight-card:hover {
+  transform:
+    translateY(-3px);
+
+  border-color: #cbd9eb;
+
+  box-shadow:
+    0 20px 42px
+    rgba(15,23,42,.1);
+}
+
+.gt-flight-card-top {
+  min-height: 44px;
+
+  padding:
+    9px
+    18px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom:
+    1px solid #eef1f5;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fafcff,
+      #ffffff
+    );
+}
+
+.gt-flight-badges {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+}
+
+.gt-flight-badge {
+  padding:
+    5px 8px;
+
+  border-radius: 999px;
+
+  font-size: .62rem;
+  font-weight: 800;
+}
+
+.gt-flight-badge-price {
+  color: #166534;
+
+  background: #dcfce7;
+}
+
+.gt-flight-badge-fast {
+  color: #1d4ed8;
+
+  background: #dbeafe;
+}
+
+.gt-flight-badge-direct {
+  color: #7c3aed;
+
+  background: #ede9fe;
+}
+
+.gt-flight-result-index {
+  color: #a0a9b8;
+
+  font-size: .64rem;
+  font-weight: 650;
+}
+
+.gt-flight-card-main {
+  min-height: 165px;
+
+  padding:
+    24px;
+
+  display: grid;
+
+  grid-template-columns:
+    190px
+    minmax(360px, 1fr)
+    170px;
+
+  align-items: center;
+
+  gap: 24px;
+}
+
+
+/* AIRLINE */
+
+.gt-flight-airline {
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.gt-airline-logo {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 14px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #38bdf8
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(37,99,235,.18);
+
+  font-size: .76rem;
+  font-weight: 850;
+}
+
+.gt-flight-airline > div:last-child {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.gt-flight-airline strong {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #172033;
+
+  font-size: .87rem;
+}
+
+.gt-flight-airline span {
+  margin-top: 3px;
+
+  color: #909bad;
+
+  font-size: .67rem;
+}
+
+
+/* ROUTE */
+
+.gt-flight-route {
+  min-width: 0;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(90px, .8fr)
+    minmax(160px, 1.3fr)
+    minmax(90px, .8fr);
+
+  align-items: center;
+
+  gap: 16px;
+}
+
+.gt-flight-route-point {
+  min-width: 0;
+
+  display: flex;
+
+  flex-direction: column;
+}
+
+.gt-flight-route-point > span {
+  color: #2563eb;
+
+  font-size: .68rem;
+  font-weight: 850;
+
+  letter-spacing: .05em;
+}
+
+.gt-flight-route-point > strong {
+  margin:
+    4px 0;
+
+  color: #172033;
+
+  font-size: 1.12rem;
+}
+
+.gt-flight-route-point small {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  color: #8a96a8;
+
+  font-size: .65rem;
+
+  line-height: 1.4;
+}
+
+.gt-flight-route-destination {
+  text-align: right;
+}
+
+.gt-flight-route-middle {
+  min-width: 0;
+
+  text-align: center;
+}
+
+.gt-flight-route-middle > span {
+  color: #8894a7;
+
+  font-size: .66rem;
+}
+
+.gt-flight-route-middle > strong {
+  display: block;
+
+  margin-top: 5px;
+
+  color: #475569;
+
+  font-size: .67rem;
+}
+
+.gt-flight-route-track {
+  margin:
+    8px 0
+    4px;
+
+  display: grid;
+
+  grid-template-columns:
+    auto
+    1fr
+    auto
+    1fr
+    auto;
+
+  align-items: center;
+
+  gap: 5px;
+}
+
+.gt-flight-route-track > div {
+  height: 1px;
+
+  background: #cad5e3;
+}
+
+.gt-flight-route-dot {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #2563eb;
+}
+
+.gt-flight-route-track svg {
+  width: 19px;
+  height: 19px;
+
+  color: #2563eb;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+/* PRICE */
+
+.gt-flight-price {
+  min-width: 0;
+
+  padding-left: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  border-left:
+    1px solid #edf0f4;
+}
+
+.gt-flight-price > span {
+  color: #909aac;
+
+  font-size: .67rem;
+}
+
+.gt-flight-price > strong {
+  margin:
+    2px 0;
+
+  color: #101828;
+
+  font-size: 1.55rem;
+
+  letter-spacing: -.035em;
+}
+
+.gt-flight-price > small {
+  color: #a2abb9;
+
+  font-size: .62rem;
+}
+
+.gt-flight-offer-button {
+  width: 100%;
+
+  min-height: 42px;
+
+  margin-top: 13px;
+
+  padding:
+    0 13px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border: 0;
+
+  border-radius: 10px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1746d1,
+      #2563eb
+    );
+
+  box-shadow:
+    0 8px 18px
+    rgba(37,99,235,.18);
+
+  font-size: .74rem;
+  font-weight: 750;
+}
+
+.gt-flight-offer-button:hover {
+  transform:
+    translateY(-1px);
+}
+
+.gt-flight-offer-button:disabled {
+  color: #8c97a8;
+
+  background: #eef1f5;
+
+  box-shadow: none;
+
+  cursor: not-allowed;
+}
+
+.gt-flight-offer-button svg {
+  width: 15px;
+  height: 15px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+
+/* FOOTER */
+
+.gt-flight-card-footer {
+  min-height: 36px;
+
+  padding:
+    0 18px;
+
+  display: flex;
+
+  align-items: center;
+
+  border-top:
+    1px solid #f0f2f5;
+
+  background: #fafbfc;
+}
+
+.gt-flight-card-footer span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  color: #99a3b2;
+
+  font-size: .62rem;
+}
+
+.gt-flight-card-footer svg {
+  width: 13px;
+  height: 13px;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+
+/* =========================================================
+   FILTER EMPTY
+   ========================================================= */
+
+.gt-flight-no-filter-results {
+  padding:
+    70px
+    30px;
+
+  text-align: center;
+
+  border:
+    1px solid #e3e8ef;
+
+  border-radius: 20px;
+
+  background: #ffffff;
+}
+
+.gt-flight-no-filter-results > svg {
+  width: 36px;
+  height: 36px;
+
+  color: #2563eb;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.7;
+}
+
+.gt-flight-no-filter-results h3 {
+  margin:
+    14px 0 5px;
+
+  color: #172033;
+}
+
+.gt-flight-no-filter-results p {
+  margin:
+    0 0 16px;
+
+  color: #8692a5;
+}
+
+.gt-flight-no-filter-results button {
+  min-height: 40px;
+
+  padding:
+    0 14px;
+
+  border:
+    1px solid #d9e1ec;
+
+  border-radius: 9px;
+
+  color: #2563eb;
+
+  background: #f7faff;
+
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   DISCLAIMER
+   ========================================================= */
+
+.gt-flight-disclaimer {
+  margin:
+    25px 0 0;
+
+  padding:
+    15px 18px;
+
+  border-radius: 12px;
+
+  color: #7e8a9c;
+
+  background: #edf1f6;
+
+  font-size: .68rem;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   RESPONSIVE — FLIGHTS
+   ========================================================= */
+
+@media (max-width: 1180px) {
+  .gt-flight-card-main {
+    grid-template-columns:
+      160px
+      minmax(300px, 1fr)
+      145px;
+
+    gap: 16px;
+  }
+
+  .gt-flight-route {
+    gap: 10px;
+  }
+}
+
+
+@media (max-width: 980px) {
+  .gt-flights-hero {
+    padding:
+      58px
+      22px
+      90px;
+  }
+
+  .gt-flights-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .gt-flight-hero-art {
+    display: none;
+  }
+
+  .gt-flight-editor-section,
+  .gt-flights-content {
+    width:
+      calc(100% - 36px);
+  }
+
+  .gt-flight-insight-grid {
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .gt-flight-results-layout {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gt-flight-filter-panel {
+    position: static;
+
+    display: grid;
+
+    grid-template-columns:
+      repeat(3, 1fr);
+  }
+
+  .gt-flight-filter-header {
+    grid-column:
+      1 / -1;
+  }
+
+  .gt-flight-filter-section {
+    border-bottom: 0;
+    border-right:
+      1px solid #edf0f4;
+  }
+
+  .gt-flight-filter-info {
+    grid-column:
+      1 / -1;
+  }
+
+  .gt-flight-card-main {
+    grid-template-columns:
+      150px
+      minmax(0, 1fr)
+      150px;
+  }
+}
+
+
+@media (max-width: 760px) {
+  .gt-flight-summary-heading {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .gt-flight-insight-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gt-flight-toolbar {
+    align-items: stretch;
+
+    flex-direction: column;
+  }
+
+  .gt-flight-quick-sort {
+    overflow-x: auto;
+
+    scrollbar-width: none;
+  }
+
+  .gt-flight-sort-chip {
+    flex:
+      0 0 auto;
+  }
+
+  .gt-flight-toolbar > span {
+    padding-left: 7px;
+  }
+
+  .gt-flight-filter-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .gt-flight-filter-section {
+    border-right: 0;
+
+    border-bottom:
+      1px solid #edf0f4;
+  }
+
+  .gt-flight-card-main {
+    grid-template-columns: 1fr;
+
+    gap: 22px;
+  }
+
+  .gt-flight-airline {
+    padding-bottom: 16px;
+
+    border-bottom:
+      1px solid #edf0f4;
+  }
+
+  .gt-flight-price {
+    padding:
+      18px 0
+      0;
+
+    align-items: flex-start;
+
+    border-left: 0;
+
+    border-top:
+      1px solid #edf0f4;
+  }
+
+  .gt-flight-offer-button {
+    width: 100%;
+  }
+}
+
+
+@media (max-width: 650px) {
+  .gt-flights-hero {
+    padding:
+      44px
+      16px
+      78px;
+  }
+
+  .gt-flights-hero h1 {
+    font-size:
+      2.7rem;
+  }
+
+  .gt-flight-trip-meta {
+    gap: 6px;
+  }
+
+  .gt-flight-editor-section {
+    width:
+      calc(100% - 22px);
+
+    margin-top:
+      -42px;
+  }
+
+  .gt-flight-search-shell {
+    padding: 10px;
+
+    border-radius: 17px;
+  }
+
+  .gt-flight-search-shell-heading div {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 2px;
+  }
+
+  .gt-flights-content {
+    width:
+      calc(100% - 24px);
+
+    padding:
+      42px 0
+      70px;
+  }
+
+  .gt-flight-start-state {
+    padding:
+      42px
+      20px;
+
+    border-radius: 22px;
+  }
+
+  .gt-flight-start-features {
+    grid-template-columns: 1fr;
+
+    gap: 14px;
+  }
+
+  .gt-flight-summary-heading h2 {
+    font-size: 2rem;
+  }
+
+  .gt-flight-card {
+    border-radius: 16px;
+  }
+
+  .gt-flight-card-main {
+    padding: 18px;
+  }
+
+  .gt-flight-route {
+    grid-template-columns:
+      1fr
+      1.25fr
+      1fr;
+
+    gap: 7px;
+  }
+
+  .gt-flight-route-point > strong {
+    font-size: .95rem;
+  }
+
+  .gt-flight-route-point small {
+    font-size: .58rem;
+  }
+
+  .gt-flight-route-middle > span,
+  .gt-flight-route-middle > strong {
+    font-size: .58rem;
+  }
+
+  .gt-flight-route-track {
+    gap: 3px;
+  }
+
+  .gt-flight-price > strong {
+    font-size: 1.4rem;
+  }
+
+  .gt-flight-skeleton {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 390px) {
+  .gt-flight-route {
+    grid-template-columns:
+      1fr;
+  }
+
+  .gt-flight-route-middle {
+    padding:
+      8px 0;
+
+    text-align: left;
+  }
+
+  .gt-flight-route-destination {
+    text-align: left;
+  }
+
+  .gt-flight-route-track {
+    max-width: 180px;
+  }
+}

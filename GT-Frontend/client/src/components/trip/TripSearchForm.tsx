@@ -1,97 +1,297 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useEffect,
+  useState,
+  type FormEvent,
+} from 'react';
+
+import {
+  useNavigate,
+} from 'react-router-dom';
 
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
-import { useCurrency } from '../../hooks/useCurrency';
 
-import type { Destination } from '../../types/destination.types';
+import {
+  useCurrency,
+} from '../../hooks/useCurrency';
 
-type TripType = 'round-trip' | 'one-way';
+import {
+  searchDestinations,
+} from '../../services/destinations.service';
 
-function TripSearchForm() {
-  const navigate = useNavigate();
+import type {
+  Destination,
+} from '../../types/destination.types';
 
-  const { selectedCurrency } = useCurrency();
+type TripType =
+  | 'round-trip'
+  | 'one-way';
 
-  const [tripType, setTripType] =
-    useState<TripType>('round-trip');
+interface TripSearchFormProps {
+  initialDestinationIata?:
+    | string
+    | null;
+}
 
-  const [origin, setOrigin] =
-    useState<Destination | null>(null);
+function TripSearchForm({
+  initialDestinationIata = null,
+}: TripSearchFormProps) {
+  const navigate =
+    useNavigate();
 
-  const [destination, setDestination] =
-    useState<Destination | null>(null);
+  const {
+    selectedCurrency,
+  } = useCurrency();
 
-  const [departureDate, setDepartureDate] = useState('');
-  const [returnDate, setReturnDate] = useState('');
+  const [
+    tripType,
+    setTripType,
+  ] =
+    useState<TripType>(
+      'round-trip',
+    );
 
-  const handleTripTypeChange = (value: TripType) => {
+  const [
+    origin,
+    setOrigin,
+  ] =
+    useState<Destination | null>(
+      null,
+    );
+
+  const [
+    destination,
+    setDestination,
+  ] =
+    useState<Destination | null>(
+      null,
+    );
+
+  const [
+    departureDate,
+    setDepartureDate,
+  ] =
+    useState('');
+
+  const [
+    returnDate,
+    setReturnDate,
+  ] =
+    useState('');
+
+  /*
+   * =========================================
+   * PRESELECT RECOMMENDED DESTINATION
+   * =========================================
+   */
+
+  useEffect(() => {
+    if (
+      !initialDestinationIata
+    ) {
+      return;
+    }
+
+    let cancelled =
+      false;
+
+    const loadDestination =
+      async () => {
+        try {
+          const response =
+            await searchDestinations(
+              {
+                q:
+                  initialDestinationIata,
+                limit: 10,
+              },
+            );
+
+          if (
+            cancelled
+          ) {
+            return;
+          }
+
+          const exactDestination =
+            response.data.find(
+              (item) =>
+                item.cityIata
+                  .toUpperCase() ===
+                initialDestinationIata
+                  .toUpperCase(),
+            );
+
+          if (
+            exactDestination
+          ) {
+            setDestination(
+              exactDestination,
+            );
+          }
+        } catch (error) {
+          console.error(
+            'Error al cargar el destino recomendado:',
+            error,
+          );
+        }
+      };
+
+    void loadDestination();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    initialDestinationIata,
+  ]);
+
+  /*
+   * =========================================
+   * TRIP TYPE
+   * =========================================
+   */
+
+  const handleTripTypeChange = (
+    value: TripType,
+  ) => {
     setTripType(value);
 
-    if (value === 'one-way') {
+    if (
+      value ===
+      'one-way'
+    ) {
       setReturnDate('');
     }
   };
 
-  const handleSwapLocations = () => {
-    const previousOrigin = origin;
+  /*
+   * =========================================
+   * SWAP
+   * =========================================
+   */
 
-    setOrigin(destination);
-    setDestination(previousOrigin);
-  };
+  const handleSwapLocations =
+    () => {
+      const previousOrigin =
+        origin;
 
-  const handleDepartureDateChange = (value: string) => {
-    setDepartureDate(value);
+      setOrigin(
+        destination,
+      );
 
-    if (returnDate && returnDate < value) {
+      setDestination(
+        previousOrigin,
+      );
+    };
+
+  /*
+   * =========================================
+   * DATE
+   * =========================================
+   */
+
+  const handleDepartureDateChange = (
+    value: string,
+  ) => {
+    setDepartureDate(
+      value,
+    );
+
+    if (
+      returnDate &&
+      returnDate < value
+    ) {
       setReturnDate('');
     }
   };
+
+  /*
+   * =========================================
+   * SUBMIT
+   * =========================================
+   */
 
   const handleSubmit = (
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
-    if (!origin || !destination || !departureDate) {
+    if (
+      !origin ||
+      !destination ||
+      !departureDate
+    ) {
       return;
     }
 
-    if (tripType === 'round-trip' && !returnDate) {
+    if (
+      tripType ===
+        'round-trip' &&
+      !returnDate
+    ) {
       return;
     }
 
-    const params = new URLSearchParams({
-      origin: origin.cityIata,
-      destination: destination.cityIata,
-      departureAt: departureDate,
-      currency: selectedCurrency,
-    });
+    const params =
+      new URLSearchParams({
+        origin:
+          origin.cityIata,
 
-    if (tripType === 'round-trip' && returnDate) {
-      params.set('returnAt', returnDate);
+        destination:
+          destination.cityIata,
+
+        departureAt:
+          departureDate,
+
+        currency:
+          selectedCurrency,
+      });
+
+    if (
+      tripType ===
+        'round-trip' &&
+      returnDate
+    ) {
+      params.set(
+        'returnAt',
+        returnDate,
+      );
     }
 
-    navigate(`/flights?${params.toString()}`);
+    navigate(
+      `/flights?${params.toString()}`,
+    );
   };
 
   const isSearchDisabled =
     !origin ||
     !destination ||
     !departureDate ||
-    (tripType === 'round-trip' && !returnDate);
+    (
+      tripType ===
+        'round-trip' &&
+      !returnDate
+    );
 
   return (
     <form
       className="trip-search"
-      onSubmit={handleSubmit}
+      onSubmit={
+        handleSubmit
+      }
     >
       <div className="search-options">
         <select
-          value={tripType}
-          onChange={(event) =>
+          value={
+            tripType
+          }
+          onChange={(
+            event,
+          ) =>
             handleTripTypeChange(
-              event.target.value as TripType,
+              event.target
+                .value as TripType,
             )
           }
           aria-label="Tipo de viaje"
@@ -131,17 +331,29 @@ function TripSearchForm() {
         <DestinationAutocomplete
           label="Origen"
           placeholder="¿Desde dónde viajas?"
-          value={origin}
-          onChange={setOrigin}
-          excludeIata={destination?.cityIata}
+          value={
+            origin
+          }
+          onChange={
+            setOrigin
+          }
+          excludeIata={
+            destination
+              ?.cityIata
+          }
         />
 
         <button
           type="button"
           className="swap-button"
           aria-label="Intercambiar origen y destino"
-          onClick={handleSwapLocations}
-          disabled={!origin && !destination}
+          onClick={
+            handleSwapLocations
+          }
+          disabled={
+            !origin &&
+            !destination
+          }
         >
           ⇄
         </button>
@@ -149,44 +361,73 @@ function TripSearchForm() {
         <DestinationAutocomplete
           label="Destino"
           placeholder="¿A dónde quieres ir?"
-          value={destination}
-          onChange={setDestination}
-          excludeIata={origin?.cityIata}
+          value={
+            destination
+          }
+          onChange={
+            setDestination
+          }
+          excludeIata={
+            origin
+              ?.cityIata
+          }
         />
 
         <label className="search-box search-date">
-          <span>Salida</span>
+          <span>
+            Salida
+          </span>
 
           <input
             type="date"
             aria-label="Fecha de salida"
-            value={departureDate}
-            onChange={(event) =>
+            value={
+              departureDate
+            }
+            onChange={(
+              event,
+            ) =>
               handleDepartureDateChange(
-                event.target.value,
+                event.target
+                  .value,
               )
             }
           />
         </label>
 
-        {tripType === 'round-trip' && (
+        {tripType ===
+          'round-trip' && (
           <label className="search-box search-date">
-            <span>Regreso</span>
+            <span>
+              Regreso
+            </span>
 
             <input
               type="date"
               aria-label="Fecha de regreso"
-              value={returnDate}
-              min={departureDate || undefined}
-              onChange={(event) =>
-                setReturnDate(event.target.value)
+              value={
+                returnDate
+              }
+              min={
+                departureDate ||
+                undefined
+              }
+              onChange={(
+                event,
+              ) =>
+                setReturnDate(
+                  event.target
+                    .value,
+                )
               }
             />
           </label>
         )}
 
         <label className="search-box search-travelers">
-          <span>Viajeros</span>
+          <span>
+            Viajeros
+          </span>
 
           <select
             defaultValue="1"
@@ -217,7 +458,9 @@ function TripSearchForm() {
         <button
           className="search-button"
           type="submit"
-          disabled={isSearchDisabled}
+          disabled={
+            isSearchDisabled
+          }
         >
           Buscar
         </button>
