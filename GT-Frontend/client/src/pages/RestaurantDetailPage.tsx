@@ -4,7 +4,7 @@ import {
 } from 'react';
 
 import {
-  Link,
+  useNavigate,
   useParams,
 } from 'react-router-dom';
 
@@ -17,143 +17,349 @@ import type {
 } from '../types/restaurant.types';
 
 function RestaurantDetailPage() {
-  const { id } = useParams<{
-    id: string;
-  }>();
+  const navigate =
+    useNavigate();
 
-  const [restaurant, setRestaurant] =
+  const {
+    id,
+  } =
+    useParams<{
+      id: string;
+    }>();
+
+  const [
+    restaurant,
+    setRestaurant,
+  ] =
     useState<RestaurantDetail | null>(
       null,
     );
 
-  const [isLoading, setIsLoading] =
-    useState(true);
+  const [
+    isLoading,
+    setIsLoading,
+  ] =
+    useState(
+      true,
+    );
 
-  const [error, setError] =
-    useState<string | null>(null);
+  const [
+    error,
+    setError,
+  ] =
+    useState<string | null>(
+      null,
+    );
+
+  /*
+   * =========================================
+   * BACK
+   * =========================================
+   */
+
+  const handleBack = () => {
+    if (
+      window.history.length >
+      1
+    ) {
+      navigate(
+        -1,
+      );
+
+      return;
+    }
+
+    navigate(
+      '/restaurants',
+    );
+  };
+
+  /*
+   * =========================================
+   * LOAD RESTAURANT
+   * =========================================
+   */
 
   useEffect(() => {
+    /*
+     * Si no existe ID no modificamos
+     * estado dentro del effect.
+     *
+     * El caso se maneja directamente
+     * en el render.
+     */
     if (!id) {
       return;
     }
 
-    let cancelled = false;
+    let cancelled =
+      false;
 
-    const loadRestaurant = async () => {
-      try {
-        const response =
-          await getRestaurantById(id);
-
-        if (!cancelled) {
-          setRestaurant(response.data);
-          setError(null);
-        }
-      } catch (requestError) {
-        console.error(
-          'Error loading restaurant:',
-          requestError,
-        );
-
-        if (!cancelled) {
-          setError(
-            'No fue posible cargar la información del restaurante.',
+    const loadRestaurant =
+      async () => {
+        try {
+          setIsLoading(
+            true,
           );
+
+          setError(
+            null,
+          );
+
+          const response =
+            await getRestaurantById(
+              id,
+            );
+
+          if (
+            cancelled
+          ) {
+            return;
+          }
+
+          setRestaurant(
+            response.data,
+          );
+
+          setError(
+            null,
+          );
+        } catch (
+          requestError
+        ) {
+          console.error(
+            'Error al cargar restaurante:',
+            requestError,
+          );
+
+          if (
+            !cancelled
+          ) {
+            setRestaurant(
+              null,
+            );
+
+            setError(
+              'No fue posible cargar la información de este restaurante.',
+            );
+          }
+        } finally {
+          if (
+            !cancelled
+          ) {
+            setIsLoading(
+              false,
+            );
+          }
         }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    };
+      };
 
     void loadRestaurant();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
-  }, [id]);
+  }, [
+    id,
+  ]);
 
-  if (isLoading) {
+  /*
+   * =========================================
+   * INVALID ID
+   * =========================================
+   */
+
+  if (!id) {
     return (
-      <main className="restaurant-detail-page">
-        <div className="restaurant-detail-container">
-          <RestaurantDetailLoading />
-        </div>
+      <main className="gt-restaurant-detail-page">
+        <section className="gt-detail-error-state">
+          <div className="gt-detail-error-icon gt-detail-error-orange">
+            <RestaurantIcon />
+          </div>
+
+          <span>
+            RESTAURANTES
+          </span>
+
+          <h1>
+            No encontramos este restaurante
+          </h1>
+
+          <p>
+            No se encontró el identificador del restaurante.
+          </p>
+
+          <button
+            type="button"
+            onClick={
+              handleBack
+            }
+          >
+            <ArrowLeftIcon />
+
+            Volver a resultados
+          </button>
+        </section>
       </main>
     );
   }
 
-  if (error || !restaurant) {
+  /*
+   * =========================================
+   * LOADING
+   * =========================================
+   */
+
+  if (
+    isLoading
+  ) {
     return (
-      <main className="restaurant-detail-page">
-        <div className="restaurant-detail-container">
-          <div className="restaurant-detail-error">
-            <div className="restaurant-detail-error-icon">
-              <RestaurantIcon />
-            </div>
+      <main className="gt-restaurant-detail-page">
+        <div className="gt-detail-loading-shell">
+          <div className="gt-detail-loading-hero" />
 
-            <h1>
-              No encontramos este restaurante
-            </h1>
+          <div className="gt-detail-loading-grid">
+            <div />
 
-            <p>
-              {error ??
-                'El restaurante solicitado no está disponible.'}
-            </p>
-
-            <Link
-              to="/restaurants"
-              className="restaurant-detail-primary-action"
-            >
-              Volver a restaurantes
-            </Link>
+            <div />
           </div>
         </div>
       </main>
     );
   }
 
-  const cuisine =
-    restaurant.cuisine ?? [];
+  /*
+   * =========================================
+   * ERROR
+   * =========================================
+   */
 
-  const cuisineLabel =
-    cuisine.length > 0
-      ? cuisine
-          .map(formatCuisine)
-          .join(' · ')
-      : getCuisineFromTypes(
-          restaurant.types,
-        );
+  if (
+    error ||
+    !restaurant
+  ) {
+    return (
+      <main className="gt-restaurant-detail-page">
+        <section className="gt-detail-error-state">
+          <div className="gt-detail-error-icon gt-detail-error-orange">
+            <RestaurantIcon />
+          </div>
+
+          <span>
+            RESTAURANTES
+          </span>
+
+          <h1>
+            No encontramos este restaurante
+          </h1>
+
+          <p>
+            {error ??
+              'Este lugar no está disponible.'}
+          </p>
+
+          <button
+            type="button"
+            onClick={
+              handleBack
+            }
+          >
+            <ArrowLeftIcon />
+
+            Volver a resultados
+          </button>
+        </section>
+      </main>
+    );
+  }
+
+  /*
+   * =========================================
+   * SAFE DATA
+   * =========================================
+   */
+
+  const cuisines =
+    (
+      restaurant.cuisine ??
+      []
+    ).map(
+      formatCuisine,
+    );
+
+  const hours =
+    restaurant.weekdayHours ??
+    [];
+
+  const types =
+    restaurant.types ??
+    [];
+
+  const mapsUrl =
+    restaurant.links?.maps ??
+    null;
+
+  const websiteUrl =
+    restaurant.links?.website ??
+    null;
 
   const hasContact =
-    Boolean(restaurant.phone) ||
+    Boolean(
+      restaurant.phone,
+    ) ||
     Boolean(
       restaurant.internationalPhone,
     );
 
-  const hasHours =
-    restaurant.weekdayHours.length > 0;
+  const hasCoordinates =
+    typeof restaurant.latitude ===
+      'number' &&
+    typeof restaurant.longitude ===
+      'number';
+
+  const hasExtraInformation =
+    Boolean(
+      restaurant.editorialSummary,
+    ) ||
+    hours.length > 0;
 
   return (
-    <main className="restaurant-detail-page">
-      <div className="restaurant-detail-container">
-        <Link
-          to="/restaurants"
-          className="restaurant-detail-back"
-        >
-          <ArrowLeftIcon />
+    <main className="gt-restaurant-detail-page">
 
-          Volver a restaurantes
-        </Link>
+      {/* =====================================
+          HERO
+      ====================================== */}
 
-        <section className="restaurant-detail-hero">
-          <div className="restaurant-detail-hero-main">
-            <div className="restaurant-detail-icon">
-              <RestaurantIcon />
-            </div>
+      <section className="gt-restaurant-detail-hero">
+        <div className="gt-restaurant-detail-pattern gt-restaurant-detail-pattern-one" />
 
-            <div>
-              <span className="restaurant-detail-type">
+        <div className="gt-restaurant-detail-pattern gt-restaurant-detail-pattern-two" />
+
+        <div className="gt-restaurant-detail-hero-inner">
+          <button
+            type="button"
+            className="gt-detail-back-button gt-detail-back-light"
+            onClick={
+              handleBack
+            }
+          >
+            <ArrowLeftIcon />
+
+            Volver a resultados
+          </button>
+
+          <div className="gt-restaurant-detail-hero-grid">
+            <div className="gt-restaurant-detail-hero-copy">
+              <span className="gt-restaurant-detail-eyebrow">
+                GLOBALTOUR · GASTRONOMÍA
+              </span>
+
+              <div className="gt-restaurant-detail-icon">
+                <RestaurantIcon />
+              </div>
+
+              <span className="gt-restaurant-detail-type">
                 {formatRestaurantType(
                   restaurant.primaryType,
                 )}
@@ -163,159 +369,203 @@ function RestaurantDetailPage() {
                 {restaurant.name}
               </h1>
 
-              {cuisineLabel && (
-                <p className="restaurant-detail-cuisine">
-                  {cuisineLabel}
-                </p>
-              )}
-
-              <div className="restaurant-detail-location">
+              <p>
                 <LocationIcon />
 
-                <span>
-                  {restaurant.address ??
-                    'Dirección no disponible'}
-                </span>
-              </div>
+                {restaurant.address ??
+                  'Dirección no disponible'}
+              </p>
+
+              {cuisines.length >
+                0 && (
+                <div className="gt-restaurant-detail-cuisines">
+                  {cuisines.map(
+                    (
+                      cuisine,
+                    ) => (
+                    <span
+                      key={
+                        cuisine
+                      }
+                    >
+                      {cuisine}
+                    </span>
+                    ),
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="gt-restaurant-detail-hero-actions">
+              {mapsUrl && (
+                <a
+                  href={
+                    mapsUrl
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MapIcon />
+
+                  Ver en mapa
+                </a>
+              )}
+
+              {websiteUrl && (
+                <a
+                  href={
+                    websiteUrl
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalIcon />
+
+                  Sitio web
+                </a>
+              )}
+
+              {restaurant.phone && (
+                <a
+                  href={`tel:${restaurant.phone}`}
+                >
+                  <PhoneIcon />
+
+                  Llamar
+                </a>
+              )}
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="restaurant-detail-actions">
-            {restaurant.links.maps && (
-              <a
-                href={
-                  restaurant.links.maps
-                }
-                target="_blank"
-                rel="noreferrer"
-                className="restaurant-detail-secondary-action"
-              >
-                <MapIcon />
+      {/* =====================================
+          BODY
+      ====================================== */}
 
-                Ver mapa
-              </a>
-            )}
+      <div className="gt-detail-content-shell">
+        <section className="gt-restaurant-detail-layout">
 
-            {restaurant.links.website && (
-              <a
-                href={
-                  restaurant.links.website
-                }
-                target="_blank"
-                rel="noreferrer"
-                className="restaurant-detail-primary-action"
-              >
-                Sitio web
+          {/* MAIN */}
 
-                <ExternalIcon />
-              </a>
-            )}
-          </div>
-        </section>
-
-        <section className="restaurant-detail-grid">
-          <div className="restaurant-detail-main-column">
+          <div className="gt-detail-main-column">
             {restaurant.editorialSummary && (
-              <article className="restaurant-detail-panel">
-                <div className="restaurant-detail-panel-heading">
-                  <InfoIcon />
+              <article className="gt-detail-panel">
+                <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
+                  SOBRE EL LUGAR
+                </span>
 
-                  <div>
-                    <h2>
-                      Acerca del lugar
-                    </h2>
+                <h2>
+                  Acerca de {restaurant.name}
+                </h2>
 
-                    <p>
-                      Información disponible
-                      del establecimiento.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="restaurant-detail-description">
-                  {
-                    restaurant.editorialSummary
-                  }
-                </div>
+                <p className="gt-detail-description">
+                  {restaurant.editorialSummary}
+                </p>
               </article>
             )}
 
-            {hasHours && (
-              <article className="restaurant-detail-panel">
-                <div className="restaurant-detail-panel-heading">
-                  <ClockIcon />
+            {hours.length >
+              0 && (
+              <article className="gt-detail-panel">
+                <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
+                  HORARIO
+                </span>
 
-                  <div>
-                    <h2>
-                      Horario
-                    </h2>
+                <h2>
+                  Horario publicado
+                </h2>
 
-                    <p>
-                      Horario publicado por
-                      el establecimiento.
-                    </p>
-                  </div>
-                </div>
+                <div className="gt-detail-hours-list">
+                  {hours.map(
+                    (
+                      item,
+                      index,
+                    ) => (
+                    <div
+                      key={`${item}-${index}`}
+                    >
+                      <ClockIcon />
 
-                <div className="restaurant-hours-list">
-                  {restaurant.weekdayHours.map(
-                    (hours, index) => (
-                      <div
-                        key={`${hours}-${index}`}
-                        className="restaurant-hours-item"
-                      >
-                        <ClockIcon />
-
-                        <span>
-                          {hours}
-                        </span>
-                      </div>
+                      <span>
+                        {item}
+                      </span>
+                    </div>
                     ),
                   )}
                 </div>
               </article>
             )}
 
-            {!restaurant.editorialSummary &&
-              !hasHours && (
-                <article className="restaurant-detail-panel restaurant-detail-no-info">
-                  <div className="restaurant-detail-no-info-icon">
-                    <InfoIcon />
-                  </div>
+            {!hasExtraInformation && (
+              <article className="gt-detail-panel gt-detail-empty-panel">
+                <InfoIcon />
 
-                  <h2>
-                    Información limitada
-                  </h2>
+                <h2>
+                  Información limitada
+                </h2>
 
-                  <p>
-                    OpenStreetMap todavía no
-                    tiene descripción u horario
-                    adicional para este lugar.
-                  </p>
-                </article>
-              )}
+                <p>
+                  OpenStreetMap todavía no dispone de
+                  descripción u horarios adicionales
+                  para este establecimiento.
+                </p>
+              </article>
+            )}
+
+            {cuisines.length >
+              0 && (
+              <article className="gt-detail-panel">
+                <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
+                  GASTRONOMÍA
+                </span>
+
+                <h2>
+                  Cocina disponible
+                </h2>
+
+                <div className="gt-restaurant-detail-food-grid">
+                  {cuisines.map(
+                    (
+                      cuisine,
+                    ) => (
+                    <div
+                      key={
+                        cuisine
+                      }
+                    >
+                      <FoodIcon />
+
+                      <span>
+                        {cuisine}
+                      </span>
+                    </div>
+                    ),
+                  )}
+                </div>
+              </article>
+            )}
           </div>
 
-          <aside className="restaurant-detail-sidebar">
-            <article className="restaurant-detail-panel">
+          {/* SIDEBAR */}
+
+          <aside className="gt-detail-sidebar">
+            <article className="gt-detail-panel">
+              <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
+                INFORMACIÓN
+              </span>
+
               <h2>
-                Información
+                Datos del establecimiento
               </h2>
 
-              <div className="restaurant-detail-info-list">
+              <div className="gt-detail-info-list">
                 <DetailInfo
                   label="Tipo"
                   value={formatRestaurantType(
                     restaurant.primaryType,
                   )}
                 />
-
-                {cuisineLabel && (
-                  <DetailInfo
-                    label="Cocina"
-                    value={cuisineLabel}
-                  />
-                )}
 
                 <DetailInfo
                   label="Dirección"
@@ -325,29 +575,43 @@ function RestaurantDetailPage() {
                   }
                 />
 
-                {restaurant.latitude !==
-                  null &&
-                  restaurant.longitude !==
-                    null && (
-                    <DetailInfo
-                      label="Coordenadas"
-                      value={`${restaurant.latitude}, ${restaurant.longitude}`}
-                    />
-                  )}
+                {hasCoordinates && (
+                  <DetailInfo
+                    label="Coordenadas"
+                    value={`${restaurant.latitude}, ${restaurant.longitude}`}
+                  />
+                )}
+
+                {types.length >
+                  0 && (
+                  <DetailInfo
+                    label="Clasificación"
+                    value={types
+                      .map(
+                        formatCuisine,
+                      )
+                      .join(
+                        ', ',
+                      )}
+                  />
+                )}
               </div>
             </article>
 
             {hasContact && (
-              <article className="restaurant-detail-panel">
+              <article className="gt-detail-panel">
+                <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
+                  CONTACTO
+                </span>
+
                 <h2>
-                  Contacto
+                  Comunícate con el lugar
                 </h2>
 
-                <div className="restaurant-detail-contact-list">
+                <div className="gt-detail-contact-list">
                   {restaurant.phone && (
                     <a
                       href={`tel:${restaurant.phone}`}
-                      className="restaurant-detail-contact"
                     >
                       <PhoneIcon />
 
@@ -357,9 +621,7 @@ function RestaurantDetailPage() {
                         </span>
 
                         <strong>
-                          {
-                            restaurant.phone
-                          }
+                          {restaurant.phone}
                         </strong>
                       </div>
                     </a>
@@ -368,42 +630,42 @@ function RestaurantDetailPage() {
                   {restaurant.internationalPhone &&
                     restaurant.internationalPhone !==
                       restaurant.phone && (
-                      <a
-                        href={`tel:${restaurant.internationalPhone}`}
-                        className="restaurant-detail-contact"
-                      >
-                        <PhoneIcon />
+                    <a
+                      href={`tel:${restaurant.internationalPhone}`}
+                    >
+                      <PhoneIcon />
 
-                        <div>
-                          <span>
-                            Teléfono
-                            internacional
-                          </span>
+                      <div>
+                        <span>
+                          Teléfono internacional
+                        </span>
 
-                          <strong>
-                            {
-                              restaurant.internationalPhone
-                            }
-                          </strong>
-                        </div>
-                      </a>
-                    )}
+                        <strong>
+                          {restaurant.internationalPhone}
+                        </strong>
+                      </div>
+                    </a>
+                  )}
                 </div>
               </article>
             )}
 
-            <article className="restaurant-detail-source">
-              <span>
-                Fuente de información
-              </span>
+            <article className="gt-detail-source-card gt-detail-source-orange">
+              <GlobeIcon />
 
-              <strong>
-                OpenStreetMap
-              </strong>
+              <div>
+                <span>
+                  Fuente
+                </span>
 
-              <small>
-                © OpenStreetMap contributors
-              </small>
+                <strong>
+                  OpenStreetMap
+                </strong>
+
+                <small>
+                  © OpenStreetMap contributors
+                </small>
+              </div>
             </article>
           </aside>
         </section>
@@ -412,9 +674,18 @@ function RestaurantDetailPage() {
   );
 }
 
+/*
+ * =========================================
+ * DETAIL INFO
+ * =========================================
+ */
+
 interface DetailInfoProps {
-  label: string;
-  value: string;
+  label:
+    string;
+
+  value:
+    string;
 }
 
 function DetailInfo({
@@ -422,112 +693,98 @@ function DetailInfo({
   value,
 }: DetailInfoProps) {
   return (
-    <div className="restaurant-detail-info-item">
-      <span>{label}</span>
+    <div className="gt-detail-info-row">
+      <span>
+        {label}
+      </span>
 
-      <strong>{value}</strong>
+      <strong>
+        {value}
+      </strong>
     </div>
   );
 }
 
-function RestaurantDetailLoading() {
-  return (
-    <div className="restaurant-detail-loading">
-      <div className="restaurant-detail-loading-header">
-        <div className="restaurant-detail-loading-square" />
-
-        <div>
-          <div className="restaurant-detail-loading-line restaurant-detail-loading-small" />
-
-          <div className="restaurant-detail-loading-line restaurant-detail-loading-title" />
-
-          <div className="restaurant-detail-loading-line restaurant-detail-loading-medium" />
-        </div>
-      </div>
-
-      <div className="restaurant-detail-loading-grid">
-        <div className="restaurant-detail-loading-card" />
-
-        <div className="restaurant-detail-loading-card" />
-      </div>
-    </div>
-  );
-}
-
-function formatCuisine(
-  value: string,
-) {
-  return value
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (character) =>
-      character.toUpperCase(),
-    );
-}
-
-function getCuisineFromTypes(
-  types: string[],
-) {
-  const ignoredTypes = new Set([
-    'restaurant',
-    'cafe',
-    'fast_food',
-  ]);
-
-  const cuisines =
-    types.filter(
-      (type) =>
-        !ignoredTypes.has(type),
-    );
-
-  if (cuisines.length === 0) {
-    return null;
-  }
-
-  return cuisines
-    .slice(0, 4)
-    .map(formatCuisine)
-    .join(' · ');
-}
+/*
+ * =========================================
+ * FORMATTERS
+ * =========================================
+ */
 
 function formatRestaurantType(
-  type: string | null,
+  value:
+    string |
+    null |
+    undefined,
 ) {
-  if (!type) {
+  if (!value) {
     return 'Gastronomía';
   }
 
-  const normalized =
-    type.toLowerCase();
-
-  if (normalized === 'restaurant') {
-    return 'Restaurante';
-  }
-
-  if (normalized === 'cafe') {
-    return 'Café';
-  }
-
-  if (
-    normalized === 'fast food' ||
-    normalized === 'fast_food'
+  switch (
+    value
+      .trim()
+      .toLowerCase()
+      .replace(
+        /\s+/g,
+        '_',
+      )
   ) {
-    return 'Comida rápida';
-  }
+    case 'restaurant':
+      return 'Restaurante';
 
-  return type;
+    case 'cafe':
+      return 'Café';
+
+    case 'fast_food':
+      return 'Comida rápida';
+
+    default:
+      return value;
+  }
 }
+
+function formatCuisine(
+  value:
+    string,
+) {
+  return value
+    .replace(
+      /_/g,
+      ' ',
+    )
+    .replace(
+      /\b\w/g,
+      (
+        letter,
+      ) =>
+        letter.toUpperCase(),
+    );
+}
+
+/*
+ * =========================================
+ * ICONS
+ * =========================================
+ */
 
 function RestaurantIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M7 3v7M4 3v5a3 3 0 0 0 6 0V3M7 11v10M15 3v18M15 3c3 0 5 2.5 5 6s-2 5-5 5" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 3c-2 2-3 5-3 8 0 2 1 3 3 3v7M17 3v11" />
     </svg>
   );
 }
 
 function LocationIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
 
       <circle
@@ -541,60 +798,116 @@ function LocationIcon() {
 
 function MapIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" />
-
-      <path d="M9 3v15M15 6v15" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6ZM9 3v15M15 6v15" />
     </svg>
   );
 }
 
 function ExternalIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M14 5h5v5" />
-
-      <path d="m19 5-9 9" />
-
-      <path d="M19 13v6H5V5h6" />
-    </svg>
-  );
-}
-
-function ArrowLeftIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="m15 18-6-6 6-6" />
-    </svg>
-  );
-}
-
-function InfoIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-
-      <path d="M12 11v6" />
-
-      <path d="M12 7h.01" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
-
-      <path d="M12 7v5l3 2" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M14 5h5v5m0-5-9 9M19 13v6H5V5h6" />
     </svg>
   );
 }
 
 function PhoneIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M7 3h3l1.5 5-2 1.5a15 15 0 0 0 5 5l1.5-2L21 14v3c0 2-2 4-4 4C9 20 4 15 3 7c0-2 2-4 4-4Z" />
+    </svg>
+  );
+}
+
+function ClockIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M12 11v6M12 7h.01" />
+    </svg>
+  );
+}
+
+function FoodIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+      />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M3 12h18M12 3c3 3 4 6 4 9s-1 6-4 9M12 3c-3 3-4 6-4 9s1 6 4 9" />
+    </svg>
+  );
+}
+
+function ArrowLeftIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="m15 18-6-6 6-6" />
     </svg>
   );
 }

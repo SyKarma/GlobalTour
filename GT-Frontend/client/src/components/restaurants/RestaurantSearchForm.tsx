@@ -32,43 +32,63 @@ function RestaurantSearchForm({
   onSearch,
   isLoading = false,
 }: RestaurantSearchFormProps) {
-  const [cityName, setCityName] =
+  const [
+    cityName,
+    setCityName,
+  ] =
     useState(
-      initialValues?.cityName ?? '',
+      initialValues?.cityName ??
+        '',
     );
 
   const [
     countryCode,
     setCountryCode,
-  ] = useState(
-    (
-      initialValues?.countryCode ?? ''
-    ).toUpperCase(),
-  );
+  ] =
+    useState(
+      (
+        initialValues?.countryCode ??
+        ''
+      ).toUpperCase(),
+    );
 
-  const [type, setType] =
+  const [
+    type,
+    setType,
+  ] =
     useState<
       RestaurantAmenity | ''
     >(
-      initialValues?.type ?? '',
+      initialValues?.type ??
+        '',
     );
 
-  const [cuisine, setCuisine] =
+  const [
+    cuisine,
+    setCuisine,
+  ] =
     useState(
-      initialValues?.cuisine ?? '',
+      initialValues?.cuisine ??
+        '',
     );
 
-  const [radius, setRadius] =
+  const [
+    radius,
+    setRadius,
+  ] =
     useState(
-      initialValues?.radius ?? 4000,
+      initialValues?.radius ??
+        4000,
     );
 
   const [
     hasWebsite,
     setHasWebsite,
-  ] = useState(
-    initialValues?.hasWebsite ?? false,
-  );
+  ] =
+    useState(
+      initialValues?.hasWebsite ??
+        false,
+    );
 
   const cleanCity =
     cityName.trim();
@@ -93,13 +113,17 @@ function RestaurantSearchForm({
           /[^a-zA-Z]/g,
           '',
         )
-        .slice(0, 2)
+        .slice(
+          0,
+          2,
+        )
         .toUpperCase(),
     );
   };
 
   const handleSubmit = (
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
@@ -111,74 +135,104 @@ function RestaurantSearchForm({
     }
 
     onSearch({
-      cityName: cleanCity,
+      cityName:
+        cleanCity,
+
       countryCode:
         cleanCountry,
+
       type,
+
       cuisine:
         cuisine.trim(),
+
       radius,
+
       hasWebsite,
     });
   };
 
   return (
     <form
-      className="restaurant-search-form"
-      onSubmit={handleSubmit}
+      className="restaurant-search-form gt-restaurant-search-form"
+      onSubmit={
+        handleSubmit
+      }
     >
-      <div className="restaurant-search-main">
-        <div className="restaurant-search-field">
-          <label htmlFor="restaurant-city">
-            Ciudad
-          </label>
+      {/* =====================================
+          MAIN SEARCH
+      ====================================== */}
 
-          <div className="restaurant-search-input-wrapper">
+      <div className="gt-restaurant-search-main">
+        <label className="gt-restaurant-main-field gt-restaurant-city">
+          <span>
+            Ciudad
+          </span>
+
+          <div className="gt-restaurant-input-control">
             <LocationIcon />
 
             <input
-              id="restaurant-city"
               type="text"
-              value={cityName}
-              maxLength={80}
+              value={
+                cityName
+              }
+              maxLength={
+                80
+              }
               autoComplete="off"
               placeholder="Ej. Nicoya"
-              onChange={(event) =>
+              aria-label="Ciudad"
+              onChange={(
+                event,
+              ) =>
                 setCityName(
-                  event.target.value,
+                  event.target
+                    .value,
                 )
               }
             />
           </div>
-        </div>
+        </label>
 
-        <div className="restaurant-search-field">
-          <label htmlFor="restaurant-country">
+        <label className="gt-restaurant-main-field gt-restaurant-country">
+          <span>
             País
-          </label>
+          </span>
 
-          <input
-            id="restaurant-country"
-            type="text"
-            value={countryCode}
-            maxLength={2}
-            autoComplete="off"
-            placeholder="CR"
-            aria-label="Código ISO del país"
-            onChange={(event) =>
-              handleCountryChange(
-                event.target.value,
-              )
-            }
-          />
-        </div>
+          <div className="gt-restaurant-input-control">
+            <GlobeIcon />
+
+            <input
+              type="text"
+              value={
+                countryCode
+              }
+              maxLength={
+                2
+              }
+              autoComplete="off"
+              placeholder="CR"
+              aria-label="Código ISO del país"
+              onChange={(
+                event,
+              ) =>
+                handleCountryChange(
+                  event.target
+                    .value,
+                )
+              }
+            />
+          </div>
+        </label>
 
         <button
           type="submit"
-          className="restaurant-search-button"
+          className="gt-restaurant-search-button"
           disabled={
             isLoading ||
-            cleanCity.length < 2 ||
+            cleanCity.length <
+              2 ||
             !isCountryValid
           }
         >
@@ -190,116 +244,159 @@ function RestaurantSearchForm({
         </button>
       </div>
 
-      <div className="restaurant-search-filters">
-        <div className="restaurant-filter-field">
-          <label htmlFor="restaurant-type">
-            Tipo
-          </label>
+      {/* =====================================
+          FILTERS
+      ====================================== */}
 
-          <select
-            id="restaurant-type"
-            value={type}
-            onChange={(event) =>
-              setType(
-                event.target.value as
-                  | RestaurantAmenity
-                  | '',
-              )
-            }
-          >
-            <option value="">
-              Todos
-            </option>
+      <div className="gt-restaurant-search-filters">
+        <label className="gt-restaurant-filter-field">
+          <span>
+            Tipo de lugar
+          </span>
 
-            <option value="restaurant">
-              Restaurante
-            </option>
+          <div className="gt-restaurant-filter-control">
+            <RestaurantIcon />
 
-            <option value="cafe">
-              Café
-            </option>
+            <select
+              value={
+                type
+              }
+              onChange={(
+                event,
+              ) =>
+                setType(
+                  event.target
+                    .value as
+                    | RestaurantAmenity
+                    | '',
+                )
+              }
+            >
+              <option value="">
+                Todos
+              </option>
 
-            <option value="fast_food">
-              Comida rápida
-            </option>
-          </select>
-        </div>
+              <option value="restaurant">
+                Restaurante
+              </option>
 
-        <div className="restaurant-filter-field">
-          <label htmlFor="restaurant-cuisine">
+              <option value="cafe">
+                Café
+              </option>
+
+              <option value="fast_food">
+                Comida rápida
+              </option>
+            </select>
+          </div>
+        </label>
+
+        <label className="gt-restaurant-filter-field">
+          <span>
             Cocina
-          </label>
+          </span>
 
-          <input
-            id="restaurant-cuisine"
-            type="text"
-            placeholder="Ej. japonesa, italiana..."
-            value={cuisine}
-            onChange={(event) =>
-              setCuisine(
-                event.target.value,
-              )
-            }
-          />
-        </div>
+          <div className="gt-restaurant-filter-control">
+            <FoodIcon />
 
-        <div className="restaurant-filter-field">
-          <label htmlFor="restaurant-radius">
-            Radio
-          </label>
+            <input
+              type="text"
+              placeholder="Ej. italiana, japonesa..."
+              value={
+                cuisine
+              }
+              onChange={(
+                event,
+              ) =>
+                setCuisine(
+                  event.target
+                    .value,
+                )
+              }
+            />
+          </div>
+        </label>
 
-          <select
-            id="restaurant-radius"
-            value={radius}
-            onChange={(event) =>
-              setRadius(
-                Number(
-                  event.target.value,
-                ),
-              )
-            }
-          >
-            <option value={1000}>
-              1 km
-            </option>
+        <label className="gt-restaurant-filter-field">
+          <span>
+            Área de búsqueda
+          </span>
 
-            <option value={2000}>
-              2 km
-            </option>
+          <div className="gt-restaurant-filter-control">
+            <RadiusIcon />
 
-            <option value={4000}>
-              4 km
-            </option>
+            <select
+              value={
+                radius
+              }
+              onChange={(
+                event,
+              ) =>
+                setRadius(
+                  Number(
+                    event.target
+                      .value,
+                  ),
+                )
+              }
+            >
+              <option value={1000}>
+                1 km
+              </option>
 
-            <option value={10000}>
-              10 km
-            </option>
+              <option value={2000}>
+                2 km
+              </option>
 
-            <option value={20000}>
-              20 km
-            </option>
-          </select>
-        </div>
+              <option value={4000}>
+                4 km
+              </option>
 
-        <label className="restaurant-website-filter">
+              <option value={10000}>
+                10 km
+              </option>
+
+              <option value={20000}>
+                20 km
+              </option>
+            </select>
+          </div>
+        </label>
+
+        <label className="gt-restaurant-website-filter">
           <input
             type="checkbox"
-            checked={hasWebsite}
-            onChange={(event) =>
+            checked={
+              hasWebsite
+            }
+            onChange={(
+              event,
+            ) =>
               setHasWebsite(
-                event.target.checked,
+                event.target
+                  .checked,
               )
             }
           />
 
+          <span className="gt-restaurant-checkbox">
+            <CheckIcon />
+          </span>
+
           <span>
-            Solo con sitio web
+            Solo lugares con sitio web
           </span>
         </label>
       </div>
     </form>
   );
 }
+
+/*
+ * =========================================
+ * ICONS
+ * =========================================
+ */
 
 function SearchIcon() {
   return (
@@ -331,6 +428,93 @@ function LocationIcon() {
         cy="10"
         r="2.5"
       />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M3 12h18" />
+
+      <path d="M12 3c3 3 4 6 4 9s-1 6-4 9" />
+
+      <path d="M12 3c-3 3-4 6-4 9s1 6 4 9" />
+    </svg>
+  );
+}
+
+function RestaurantIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10" />
+
+      <path d="M17 3c-2 2-3 5-3 8 0 2 1 3 3 3v7M17 3v11" />
+    </svg>
+  );
+}
+
+function FoodIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+      />
+    </svg>
+  );
+}
+
+function RadiusIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+      />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="m6 12 4 4 8-8" />
     </svg>
   );
 }

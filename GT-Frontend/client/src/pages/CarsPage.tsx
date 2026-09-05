@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 
@@ -9,43 +10,223 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
-import CarSearchForm, {
-  type CarSearchValues,
+import CarSearchForm from '../components/cars/CarSearchForm';
+
+import type {
+  CarSearchValues,
 } from '../components/cars/CarSearchForm';
 
 import {
   searchCars,
 } from '../services/cars.service';
 
-import type {
-  CarSearchMeta,
-  CarSummary,
-} from '../types/car.types';
+type CarItem =
+  Awaited<
+    ReturnType<
+      typeof searchCars
+    >
+  >['data'][number];
+
+type CarMeta =
+  Awaited<
+    ReturnType<
+      typeof searchCars
+    >
+  >['meta'];
+
+type CarSortOption =
+  | 'recommended'
+  | 'name'
+  | 'information';
+
+/*
+ * =========================================
+ * HELPERS
+ * =========================================
+ */
+
+function isCarType(
+  value: string,
+): value is 'car_rental' | 'car_sharing' {
+  return (
+    value ===
+      'car_rental' ||
+    value ===
+      'car_sharing'
+  );
+}
+
+function formatCarType(
+  value:
+    | string
+    | null
+    | undefined,
+) {
+  if (!value) {
+    return 'Movilidad';
+  }
+
+  const normalized =
+    value
+      .trim()
+      .toLowerCase()
+      .replace(
+        /_/g,
+        ' ',
+      );
+
+  if (
+    normalized ===
+    'car rental'
+  ) {
+    return 'Rent a Car';
+  }
+
+  if (
+    normalized ===
+    'car sharing'
+  ) {
+    return 'Car sharing';
+  }
+
+  return value;
+}
+
+function formatDistance(
+  meters:
+    number,
+) {
+  if (
+    meters >= 1000
+  ) {
+    return `${
+      meters / 1000
+    } km`;
+  }
+
+  return `${meters} m`;
+}
+
+function normalize(
+  value:
+    string,
+) {
+  return value
+    .trim()
+    .toLowerCase();
+}
+
+function getCarTypes(
+  car:
+    CarItem,
+) {
+  return (
+    car.types ??
+    []
+  );
+}
+
+function informationScore(
+  car:
+    CarItem,
+) {
+  let score = 0;
+
+  if (
+    car.address
+  ) {
+    score += 1;
+  }
+
+  if (
+    car.brand
+  ) {
+    score += 1;
+  }
+
+  if (
+    car.links?.website
+  ) {
+    score += 2;
+  }
+
+  if (
+    car.links?.maps
+  ) {
+    score += 1;
+  }
+
+  if (
+    getCarTypes(
+      car,
+    ).length > 0
+  ) {
+    score += 1;
+  }
+
+  return score;
+}
+
+/*
+ * =========================================
+ * PAGE
+ * =========================================
+ */
 
 function CarsPage() {
   const navigate =
     useNavigate();
 
-  const [searchParams] =
+  const [
+    searchParams,
+  ] =
     useSearchParams();
 
-  const [cars, setCars] =
-    useState<CarSummary[]>([]);
+  const [
+    cars,
+    setCars,
+  ] =
+    useState<
+      CarItem[]
+    >([]);
 
-  const [meta, setMeta] =
-    useState<CarSearchMeta | null>(
+  const [
+    meta,
+    setMeta,
+  ] =
+    useState<CarMeta | null>(
       null,
     );
 
   const [
     isLoading,
     setIsLoading,
-  ] = useState(false);
-
-  const [error, setError] =
-    useState<string | null>(
-      null,
+  ] =
+    useState(
+      false,
     );
+
+  const [
+    error,
+    setError,
+  ] =
+    useState<
+      string | null
+    >(null);
+
+  const [
+    sortOption,
+    setSortOption,
+  ] =
+    useState<CarSortOption>(
+      'recommended',
+    );
+
+  /*
+   * =========================================
+   * URL PARAMS
+   * =========================================
+   */
 
   const cityName =
     searchParams.get(
@@ -57,7 +238,7 @@ function CarsPage() {
       'countryCode',
     ) ?? '';
 
-  const type =
+  const typeParam =
     searchParams.get(
       'type',
     ) ?? '';
@@ -79,89 +260,121 @@ function CarsPage() {
       'hasWebsite',
     ) === 'true';
 
-  /*
-   * Cars ya no depende de
-   * DestinationAutocomplete ni de IATA.
-   *
-   * La ciudad es suficiente.
-   */
+  const type:
+    CarSearchValues['type'] =
+      isCarType(
+        typeParam,
+      )
+        ? typeParam
+        : '';
+
   const hasSearch =
-    cityName.trim().length >= 2;
+    cityName
+      .trim()
+      .length >= 2;
+
+  /*
+   * =========================================
+   * LOAD CARS
+   * =========================================
+   */
 
   useEffect(() => {
     if (!hasSearch) {
       return;
     }
 
-    let cancelled = false;
+    let cancelled =
+      false;
 
     const loadCars =
       async () => {
-        setIsLoading(true);
-
         try {
+          setIsLoading(
+            true,
+          );
+
+          setError(
+            null,
+          );
+
           const response =
-            await searchCars({
-              cityName:
-                cityName.trim(),
+            await searchCars(
+              {
+                cityName:
+                  cityName.trim(),
 
-              countryCode:
-                countryCode.trim() ||
-                undefined,
+                countryCode:
+                  countryCode.trim() ||
+                  undefined,
 
-              radius,
+                radius,
 
-              limit: 20,
+                limit:
+                  20,
 
-              type:
-                type ===
-                  'car_rental' ||
-                type ===
-                  'car_sharing'
-                  ? type
-                  : undefined,
+                type:
+                  type ||
+                  undefined,
 
-              q:
-                q.trim() ||
-                undefined,
+                q:
+                  q.trim() ||
+                  undefined,
 
-              hasWebsite:
-                hasWebsite ||
-                undefined,
-            });
+                hasWebsite:
+                  hasWebsite ||
+                  undefined,
+              },
+            );
 
-          if (cancelled) {
+          if (
+            cancelled
+          ) {
             return;
           }
 
           setCars(
-            response.data,
+            response.data ??
+              [],
           );
 
           setMeta(
-            response.meta,
+            response.meta ??
+              null,
           );
 
-          setError(null);
+          setSortOption(
+            'recommended',
+          );
         } catch (
           requestError
         ) {
+          if (
+            cancelled
+          ) {
+            return;
+          }
+
           console.error(
             'Error al buscar Rent a Car:',
             requestError,
           );
 
-          if (!cancelled) {
-            setCars([]);
+          setCars(
+            [],
+          );
 
-            setMeta(null);
+          setMeta(
+            null,
+          );
 
-            setError(
-              'No fue posible buscar opciones de Rent a Car en este momento.',
-            );
-          }
+          setError(
+            'No fue posible buscar opciones de movilidad en este momento.',
+          );
         } finally {
-          if (!cancelled) {
+          if (
+            !cancelled
+          ) {
             setIsLoading(
               false,
             );
@@ -172,7 +385,8 @@ function CarsPage() {
     void loadCars();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
   }, [
     cityName,
@@ -184,6 +398,12 @@ function CarsPage() {
     hasSearch,
   ]);
 
+  /*
+   * =========================================
+   * SEARCH
+   * =========================================
+   */
+
   const handleSearch = (
     values:
       CarSearchValues,
@@ -193,21 +413,15 @@ function CarsPage() {
 
     params.set(
       'cityName',
-      values.cityName.trim(),
+      values.cityName,
     );
 
-    /*
-     * El país es opcional.
-     * Si está vacío no lo mandamos.
-     */
     if (
-      values.countryCode.trim()
+      values.countryCode
     ) {
       params.set(
         'countryCode',
-        values.countryCode
-          .trim()
-          .toUpperCase(),
+        values.countryCode,
       );
     }
 
@@ -218,17 +432,21 @@ function CarsPage() {
       ),
     );
 
-    if (values.type) {
+    if (
+      values.type
+    ) {
       params.set(
         'type',
         values.type,
       );
     }
 
-    if (values.q.trim()) {
+    if (
+      values.q
+    ) {
       params.set(
         'q',
-        values.q.trim(),
+        values.q,
       );
     }
 
@@ -246,40 +464,249 @@ function CarsPage() {
     );
   };
 
+  /*
+   * =========================================
+   * SORT
+   * =========================================
+   */
+
+  const sortedCars =
+    useMemo(() => {
+      const result =
+        [
+          ...cars,
+        ];
+
+      if (
+        sortOption ===
+        'name'
+      ) {
+        result.sort(
+          (
+            a,
+            b,
+          ) =>
+            (
+              a.name ??
+              ''
+            ).localeCompare(
+              b.name ??
+                '',
+            ),
+        );
+      }
+
+      if (
+        sortOption ===
+        'information'
+      ) {
+        result.sort(
+          (
+            a,
+            b,
+          ) =>
+            informationScore(
+              b,
+            ) -
+            informationScore(
+              a,
+            ),
+        );
+      }
+
+      return result;
+    }, [
+      cars,
+      sortOption,
+    ]);
+
+  /*
+   * =========================================
+   * INSIGHTS
+   * =========================================
+   */
+
+  const websiteCount =
+    useMemo(
+      () =>
+        cars.filter(
+          (
+            car,
+          ) =>
+            Boolean(
+              car.links
+                ?.website,
+            ),
+        ).length,
+
+      [
+        cars,
+      ],
+    );
+
+  const mapCount =
+    useMemo(
+      () =>
+        cars.filter(
+          (
+            car,
+          ) =>
+            Boolean(
+              car.links
+                ?.maps,
+            ),
+        ).length,
+
+      [
+        cars,
+      ],
+    );
+
+  const brandCount =
+    useMemo(() => {
+      const brands =
+        new Set<
+          string
+        >();
+
+      cars.forEach(
+        (
+          car,
+        ) => {
+          const brand =
+            car.brand
+              ?.trim();
+
+          if (
+            brand
+          ) {
+            brands.add(
+              brand.toLowerCase(),
+            );
+          }
+        },
+      );
+
+      return brands.size;
+    }, [
+      cars,
+    ]);
+
+  const sharingCount =
+    useMemo(
+      () =>
+        cars.filter(
+          (
+            car,
+          ) =>
+            getCarTypes(
+              car,
+            ).includes(
+              'car_sharing',
+            ) ||
+            car.primaryType
+              ?.toLowerCase() ===
+              'car sharing',
+        ).length,
+
+      [
+        cars,
+      ],
+    );
+
+  /*
+   * =========================================
+   * RENDER
+   * =========================================
+   */
+
   return (
-    <main className="cars-page">
-      <section className="cars-hero">
-        <div className="cars-page-container">
-          <span className="cars-eyebrow">
-            GlobalTour Rent a Car
+    <main className="gt-cars-page">
+
+      {/* =====================================
+          HERO
+      ====================================== */}
+
+      <section className="gt-cars-hero">
+        <div className="gt-cars-hero-overlay" />
+
+        <div className="gt-cars-hero-inner">
+          <span className="gt-cars-eyebrow">
+            GLOBALTOUR · RENT A CAR
           </span>
 
           <h1>
-            Encuentra opciones para
-            moverte en tu destino
+            {hasSearch
+              ? `Muévete por ${cityName} a tu manera`
+              : 'Tu destino. Tu ruta. Tu libertad.'}
           </h1>
 
           <p>
-            Explora oficinas de alquiler
-            de vehículos y servicios de
-            car sharing disponibles cerca
-            de tu destino.
+            Encuentra oficinas de alquiler y
+            servicios de movilidad cerca de tu
+            destino para seguir explorando a tu
+            propio ritmo.
           </p>
+
+          <div className="gt-cars-hero-pills">
+            <span>
+              <CarIcon />
+
+              Rent a Car
+            </span>
+
+            <span>
+              <ShareIcon />
+
+              Car sharing
+            </span>
+
+            <span>
+              <MapIcon />
+
+              Ubicaciones reales
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* =====================================
+          SEARCH
+      ====================================== */}
+
+      <section className="gt-cars-search-section">
+        <div className="gt-cars-search-shell">
+          <div className="gt-cars-search-heading">
+            <div>
+              <span>
+                BUSCAR MOVILIDAD
+              </span>
+
+              <strong>
+                Encuentra opciones cerca de tu destino
+              </strong>
+            </div>
+
+            {hasSearch && (
+              <span className="gt-cars-radius-badge">
+                <RadiusIcon />
+
+                Radio de{' '}
+
+                {formatDistance(
+                  meta?.radiusMeters ??
+                    radius,
+                )}
+              </span>
+            )}
+          </div>
 
           <CarSearchForm
             key={`${cityName}-${countryCode}-${type}-${q}-${radius}-${hasWebsite}`}
             initialValues={{
               cityName,
               countryCode,
-
-              type:
-                type ===
-                  'car_rental' ||
-                type ===
-                  'car_sharing'
-                  ? type
-                  : '',
-
+              type,
               q,
               radius,
               hasWebsite,
@@ -294,346 +721,658 @@ function CarsPage() {
         </div>
       </section>
 
-      <section className="cars-results-section">
-        <div className="cars-page-container">
-          {!hasSearch ? (
-            <CarsWelcome />
-          ) : error ? (
-            <div className="cars-error-state">
-              <CarIcon />
+      <div className="gt-cars-content">
+
+        {/* =====================================
+            START
+        ====================================== */}
+
+        {!hasSearch && (
+          <section className="gt-cars-start-state">
+            <div className="gt-cars-start-copy">
+              <span className="gt-cars-section-eyebrow">
+                EXPLORA SIN LÍMITES
+              </span>
 
               <h2>
-                No pudimos completar la
-                búsqueda
+                Encuentra una opción para seguir tu propio camino
               </h2>
 
               <p>
-                {error}
+                Busca una ciudad y descubre oficinas
+                de alquiler y alternativas de movilidad
+                disponibles en sus alrededores.
               </p>
             </div>
-          ) : isLoading ? (
-            <CarsLoading />
-          ) : cars.length ===
-            0 ? (
-            <CarsEmpty />
-          ) : (
-            <>
-              <div className="cars-results-header">
+
+            <div className="gt-cars-start-grid">
+              <article>
+                <div className="gt-cars-start-icon">
+                  <CarIcon />
+                </div>
+
+                <span>
+                  Libertad
+                </span>
+
+                <strong>
+                  Rent a Car
+                </strong>
+
+                <p>
+                  Encuentra empresas y oficinas
+                  de alquiler cerca de tu destino.
+                </p>
+              </article>
+
+              <article>
+                <div className="gt-cars-start-icon">
+                  <ShareIcon />
+                </div>
+
+                <span>
+                  Alternativas
+                </span>
+
+                <strong>
+                  Car sharing
+                </strong>
+
+                <p>
+                  Explora servicios de movilidad
+                  compartida cuando estén disponibles.
+                </p>
+              </article>
+
+              <article>
+                <div className="gt-cars-start-icon">
+                  <MapIcon />
+                </div>
+
+                <span>
+                  Ubicación
+                </span>
+
+                <strong>
+                  Encuentra el punto
+                </strong>
+
+                <p>
+                  Abre directamente la ubicación
+                  del proveedor en el mapa.
+                </p>
+              </article>
+            </div>
+          </section>
+        )}
+
+        {/* =====================================
+            LOADING
+        ====================================== */}
+
+        {hasSearch &&
+          isLoading && (
+          <section className="gt-cars-loading">
+            <div className="gt-cars-loading-heading">
+              <div className="gt-cars-loader" />
+
+              <div>
+                <h2>
+                  Buscando movilidad en {cityName}
+                </h2>
+
+                <p>
+                  Estamos explorando proveedores
+                  alrededor de tu destino.
+                </p>
+              </div>
+            </div>
+
+            <div className="gt-cars-skeleton-list">
+              {[1, 2, 3].map(
+                (
+                  item,
+                ) => (
+                  <div
+                    className="gt-car-skeleton"
+                    key={
+                      item
+                    }
+                  >
+                    <div />
+
+                    <div>
+                      <span />
+                      <span />
+                      <span />
+                    </div>
+
+                    <div />
+                  </div>
+                ),
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* =====================================
+            ERROR
+        ====================================== */}
+
+        {hasSearch &&
+          !isLoading &&
+          error && (
+          <section className="gt-cars-error-state">
+            <div>
+              !
+            </div>
+
+            <h2>
+              No pudimos completar la búsqueda
+            </h2>
+
+            <p>
+              {error}
+            </p>
+          </section>
+        )}
+
+        {/* =====================================
+            EMPTY
+        ====================================== */}
+
+        {hasSearch &&
+          !isLoading &&
+          !error &&
+          cars.length ===
+            0 && (
+          <section className="gt-cars-error-state">
+            <div className="gt-cars-empty-icon">
+              <CarIcon />
+            </div>
+
+            <h2>
+              No encontramos opciones cerca
+            </h2>
+
+            <p>
+              Intenta aumentar el radio,
+              quitar filtros o buscar otra ciudad.
+            </p>
+          </section>
+        )}
+
+        {/* =====================================
+            RESULTS
+        ====================================== */}
+
+        {hasSearch &&
+          !isLoading &&
+          !error &&
+          cars.length >
+            0 && (
+          <>
+            {/* HEADER */}
+
+            <section className="gt-cars-results-heading">
+              <div>
+                <span className="gt-cars-section-eyebrow">
+                  MOVILIDAD ENCONTRADA
+                </span>
+
+                <h2>
+                  {meta?.cityName ??
+                    cityName}
+
+                  {meta?.countryName
+                    ? `, ${meta.countryName}`
+                    : countryCode
+                      ? `, ${countryCode}`
+                      : ''}
+                </h2>
+
+                <p>
+                  Opciones encontradas dentro de
+                  un radio de{' '}
+
+                  {formatDistance(
+                    meta?.radiusMeters ??
+                      radius,
+                  )}
+                </p>
+              </div>
+
+              <div className="gt-cars-results-meta">
+                {meta?.stale && (
+                  <span>
+                    Datos en caché
+                  </span>
+                )}
+
+                <small>
+                  {meta?.matched ??
+                    cars.length}{' '}
+                  coincidencias
+                </small>
+              </div>
+            </section>
+
+            {/* INSIGHTS */}
+
+            <section className="gt-cars-insight-grid">
+              <article>
+                <CarIcon />
+
                 <div>
-                  <span className="cars-results-label">
+                  <span>
                     Resultados
                   </span>
 
-                  <h2>
-                    {meta?.cityName ??
-                      cityName}
-
-                    {meta?.countryName
-                      ? `, ${meta.countryName}`
-                      : ''}
-                  </h2>
-
-                  <p>
-                    Opciones encontradas
-                    dentro de un radio de{' '}
-                    {formatDistance(
-                      meta?.radiusMeters ??
-                        radius,
-                    )}
-                    .
-                  </p>
+                  <strong>
+                    {
+                      cars.length
+                    }
+                  </strong>
                 </div>
+              </article>
 
-                <div className="cars-search-summary">
+              <article>
+                <BuildingIcon />
+
+                <div>
                   <span>
-                    Encontrados
+                    Marcas detectadas
                   </span>
 
                   <strong>
-                    {meta?.matched ??
-                      cars.length}
+                    {
+                      brandCount
+                    }
                   </strong>
                 </div>
+              </article>
+
+              <article>
+                <GlobeIcon />
+
+                <div>
+                  <span>
+                    Con sitio web
+                  </span>
+
+                  <strong>
+                    {
+                      websiteCount
+                    }
+                  </strong>
+                </div>
+              </article>
+
+              <article>
+                <MapIcon />
+
+                <div>
+                  <span>
+                    Con mapa
+                  </span>
+
+                  <strong>
+                    {
+                      mapCount
+                    }
+                  </strong>
+                </div>
+              </article>
+            </section>
+
+            {/* SHARING NOTICE */}
+
+            {sharingCount >
+              0 && (
+              <section className="gt-cars-sharing-notice">
+                <ShareIcon />
+
+                <div>
+                  <strong>
+                    También encontramos car sharing
+                  </strong>
+
+                  <span>
+                    {sharingCount}{' '}
+                    {sharingCount ===
+                    1
+                      ? 'opción corresponde'
+                      : 'opciones corresponden'}{' '}
+                    a movilidad compartida.
+                  </span>
+                </div>
+              </section>
+            )}
+
+            {/* TOOLBAR */}
+
+            <section className="gt-cars-toolbar">
+              <div className="gt-cars-sort">
+                <button
+                  type="button"
+                  className={
+                    sortOption ===
+                    'recommended'
+                      ? 'gt-car-sort-button gt-car-sort-active'
+                      : 'gt-car-sort-button'
+                  }
+                  onClick={() =>
+                    setSortOption(
+                      'recommended',
+                    )
+                  }
+                >
+                  Recomendados
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    sortOption ===
+                    'name'
+                      ? 'gt-car-sort-button gt-car-sort-active'
+                      : 'gt-car-sort-button'
+                  }
+                  onClick={() =>
+                    setSortOption(
+                      'name',
+                    )
+                  }
+                >
+                  A — Z
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    sortOption ===
+                    'information'
+                      ? 'gt-car-sort-button gt-car-sort-active'
+                      : 'gt-car-sort-button'
+                  }
+                  onClick={() =>
+                    setSortOption(
+                      'information',
+                    )
+                  }
+                >
+                  Más información
+                </button>
               </div>
 
-              <div className="cars-grid">
-                {cars.map(
-                  (car) => (
-                    <CarCard
-                      key={
-                        car.id
-                      }
-                      car={car}
-                    />
-                  ),
-                )}
-              </div>
+              <span>
+                {
+                  sortedCars.length
+                }{' '}
+                resultados visibles
+              </span>
+            </section>
 
-              <div className="cars-disclaimer">
+            {/* RESULTS */}
+
+            <section className="gt-cars-results-list">
+              {sortedCars.map(
+                (
+                  car,
+                  index,
+                ) => (
+                <CarCard
+                  key={
+                    car.id
+                  }
+                  car={
+                    car
+                  }
+                  index={
+                    index
+                  }
+                />
+                ),
+              )}
+            </section>
+
+            <div className="gt-cars-disclaimer">
+              <InfoIcon />
+
+              <div>
                 <p>
-                  GlobalTour muestra
-                  ubicaciones de servicios
-                  de alquiler. La
-                  disponibilidad, precios
-                  y reservas se consultan
-                  directamente con cada
-                  proveedor.
+                  GlobalTour muestra ubicaciones de
+                  servicios de alquiler y movilidad.
+                  Los precios, disponibilidad y reservas
+                  se consultan directamente con el proveedor.
                 </p>
 
                 <span>
-                  © OpenStreetMap
-                  contributors
+                  {meta?.attribution ??
+                    '© OpenStreetMap contributors'}
                 </span>
               </div>
-            </>
-          )}
-        </div>
-      </section>
+            </div>
+          </>
+        )}
+      </div>
     </main>
   );
 }
 
+/*
+ * =========================================
+ * CARD
+ * =========================================
+ */
+
 interface CarCardProps {
-  car: CarSummary;
+  car:
+    CarItem;
+
+  index:
+    number;
 }
 
 function CarCard({
   car,
+  index,
 }: CarCardProps) {
+  const brand =
+    car.brand?.trim() ??
+    '';
+
+  const name =
+    car.name?.trim() ||
+    'Servicio de movilidad';
+
+  const showBrand =
+    Boolean(
+      brand,
+    ) &&
+    normalize(
+      brand,
+    ) !==
+      normalize(
+        name,
+      );
+
+  const mapsUrl =
+    car.links?.maps ??
+    null;
+
+  const websiteUrl =
+    car.links?.website ??
+    null;
+
+  const address =
+    car.address?.trim() ||
+    'Dirección no disponible';
+
+  const typeLabel =
+    formatCarType(
+      car.primaryType,
+    );
+
+  const visualClasses = [
+    'gt-car-visual-blue',
+    'gt-car-visual-teal',
+    'gt-car-visual-indigo',
+    'gt-car-visual-cyan',
+  ];
+
+  const visualClass =
+    visualClasses[
+      index %
+        visualClasses.length
+    ];
+
   return (
-    <article className="car-card">
-      <div className="car-card-top">
-        <div className="car-card-icon">
-          <CarIcon />
+    <article className="gt-car-result-card">
+
+      {/* VISUAL */}
+
+      <div className={`gt-car-result-visual ${visualClass}`}>
+        <div className="gt-car-visual-road">
+          <span />
+          <span />
+          <span />
         </div>
 
-        <div className="car-card-heading">
-          <span className="car-type-badge">
-            {formatCarType(
-              car.primaryType,
-            )}
-          </span>
-
-          <h3>
-            {car.name}
-          </h3>
-
-          {car.brand &&
-            normalize(
-              car.brand,
-            ) !==
-              normalize(
-                car.name,
-              ) && (
-              <p className="car-brand">
-                {car.brand}
-              </p>
-            )}
-        </div>
-      </div>
-
-      <div className="car-location">
-        <LocationIcon />
+        <CarIcon />
 
         <span>
-          {car.address ??
-            'Dirección no disponible'}
+          {typeLabel}
         </span>
       </div>
 
-      <div className="car-card-spacer" />
+      {/* CONTENT */}
 
-      <div className="car-card-actions">
-        <Link
-          to={`/cars/${car.id}`}
-          className="car-detail-button"
-        >
-          Ver detalles
-        </Link>
+      <div className="gt-car-result-content">
+        <div className="gt-car-result-copy">
+          <span className="gt-car-result-type">
+            {typeLabel}
+          </span>
 
-        {car.links.maps && (
-          <a
-            href={
-              car.links.maps
-            }
-            target="_blank"
-            rel="noreferrer"
-            className="car-secondary-button"
+          <h3>
+            {name}
+          </h3>
+
+          {showBrand && (
+            <p className="gt-car-result-brand">
+              <BuildingIcon />
+
+              {brand}
+            </p>
+          )}
+
+          <div className="gt-car-result-location">
+            <LocationIcon />
+
+            <span>
+              {address}
+            </span>
+          </div>
+
+          <div className="gt-car-result-tags">
+            {websiteUrl && (
+              <span>
+                <GlobeIcon />
+
+                Sitio web
+              </span>
+            )}
+
+            {mapsUrl && (
+              <span>
+                <MapIcon />
+
+                Ubicación
+              </span>
+            )}
+
+            {getCarTypes(
+              car,
+            ).map(
+              (
+                carType,
+              ) => (
+              <span
+                key={
+                  carType
+                }
+              >
+                {formatCarType(
+                  carType,
+                )}
+              </span>
+              ),
+            )}
+          </div>
+        </div>
+
+        {/* ACTIONS */}
+
+        <div className="gt-car-result-actions">
+          <span className="gt-car-result-action-label">
+            Más información
+          </span>
+
+          <strong>
+            Consulta el proveedor
+          </strong>
+
+          <Link
+            to={`/cars/${car.id}`}
+            className="gt-car-detail-button"
           >
-            <MapIcon />
+            Ver detalles
 
-            Ver mapa
-          </a>
-        )}
+            <ArrowIcon />
+          </Link>
 
-        {car.links
-          .website && (
-          <a
-            href={
-              car.links
-                .website
-            }
-            target="_blank"
-            rel="noreferrer"
-            className="car-primary-button"
-          >
-            Sitio web
+          <div className="gt-car-external-actions">
+            {mapsUrl && (
+              <a
+                href={
+                  mapsUrl
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Ver ubicación en el mapa"
+              >
+                <MapIcon />
 
-            <ExternalIcon />
-          </a>
-        )}
+                Mapa
+              </a>
+            )}
+
+            {websiteUrl && (
+              <a
+                href={
+                  websiteUrl
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Abrir sitio web"
+              >
+                <ExternalIcon />
+
+                Web
+              </a>
+            )}
+          </div>
+        </div>
       </div>
     </article>
   );
 }
 
-function CarsWelcome() {
-  return (
-    <div className="cars-welcome">
-      <div className="cars-welcome-icon">
-        <CarIcon />
-      </div>
-
-      <h2>
-        Busca opciones de Rent a Car
-      </h2>
-
-      <p>
-        Escribe una ciudad para
-        descubrir empresas de alquiler
-        de vehículos y servicios de car
-        sharing cercanos.
-      </p>
-
-      <div className="cars-feature-grid">
-        <div>
-          <strong>
-            Rent a Car
-          </strong>
-
-          <span>
-            Encuentra oficinas de
-            alquiler cercanas.
-          </span>
-        </div>
-
-        <div>
-          <strong>
-            Car sharing
-          </strong>
-
-          <span>
-            Consulta alternativas de
-            movilidad compartida.
-          </span>
-        </div>
-
-        <div>
-          <strong>
-            Información real
-          </strong>
-
-          <span>
-            Datos geográficos obtenidos
-            desde OpenStreetMap.
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function CarsEmpty() {
-  return (
-    <div className="cars-empty-state">
-      <div className="cars-empty-icon">
-        <CarIcon />
-      </div>
-
-      <h3>
-        No encontramos opciones
-      </h3>
-
-      <p>
-        Prueba aumentando el radio o
-        eliminando alguno de los filtros
-        de búsqueda.
-      </p>
-    </div>
-  );
-}
-
-function CarsLoading() {
-  return (
-    <div className="cars-loading-grid">
-      {Array.from({
-        length: 6,
-      }).map(
-        (
-          _,
-          index,
-        ) => (
-          <div
-            key={index}
-            className="car-loading-card"
-          >
-            <div className="car-loading-line car-loading-short" />
-
-            <div className="car-loading-line car-loading-title" />
-
-            <div className="car-loading-line" />
-
-            <div className="car-loading-line" />
-          </div>
-        ),
-      )}
-    </div>
-  );
-}
-
-function formatCarType(
-  value: string | null,
-) {
-  if (!value) {
-    return 'Movilidad';
-  }
-
-  if (
-    value.toLowerCase() ===
-    'car rental'
-  ) {
-    return 'Rent a Car';
-  }
-
-  if (
-    value.toLowerCase() ===
-    'car sharing'
-  ) {
-    return 'Car sharing';
-  }
-
-  return value;
-}
-
-function formatDistance(
-  meters: number,
-) {
-  if (meters >= 1000) {
-    return `${
-      meters / 1000
-    } km`;
-  }
-
-  return `${meters} m`;
-}
-
-function normalize(
-  value: string,
-) {
-  return value
-    .trim()
-    .toLowerCase();
-}
+/*
+ * =========================================
+ * ICONS
+ * =========================================
+ */
 
 function CarIcon() {
   return (
@@ -677,6 +1416,36 @@ function LocationIcon() {
   );
 }
 
+function GlobeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M3 12h18M12 3c3 3 4 6 4 9s-1 6-4 9M12 3c-3 3-4 6-4 9s1 6 4 9" />
+    </svg>
+  );
+}
+
+function BuildingIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M4 21V5h10v16M14 9h6v12M2 21h20" />
+
+      <path d="M8 9h2M8 13h2M8 17h2M17 13h1M17 17h1" />
+    </svg>
+  );
+}
+
 function MapIcon() {
   return (
     <svg
@@ -686,6 +1455,56 @@ function MapIcon() {
       <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" />
 
       <path d="M9 3v15M15 6v15" />
+    </svg>
+  );
+}
+
+function ShareIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="6"
+        cy="12"
+        r="3"
+      />
+
+      <circle
+        cx="18"
+        cy="6"
+        r="3"
+      />
+
+      <circle
+        cx="18"
+        cy="18"
+        r="3"
+      />
+
+      <path d="m9 10.5 6-3M9 13.5l6 3" />
+    </svg>
+  );
+}
+
+function RadiusIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="3"
+      />
+
+      <circle
+        cx="12"
+        cy="12"
+        r="8"
+      />
     </svg>
   );
 }
@@ -701,6 +1520,34 @@ function ExternalIcon() {
       <path d="m19 5-9 9" />
 
       <path d="M19 13v6H5V5h6" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+function InfoIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
+
+      <path d="M12 11v5M12 8h.01" />
     </svg>
   );
 }
