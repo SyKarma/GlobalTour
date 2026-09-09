@@ -1,11 +1,9 @@
 import {
   useEffect,
-  useMemo,
   useState,
 } from 'react';
 
 import {
-  Link,
   useSearchParams,
 } from 'react-router-dom';
 
@@ -16,30 +14,23 @@ import {
 } from '../services/hotels.service';
 
 import {
+  useAuth,
+} from '../hooks/useAuth';
+
+import {
   useCurrency,
 } from '../hooks/useCurrency';
+
+import {
+  useWishlist,
+} from '../hooks/useWishlist';
+
+import hotelHeroImage from '../assets/visuals/hotel-hero.png';
 
 import type {
   HotelSearchMeta,
   HotelSummary,
 } from '../types/hotel.types';
-
-type HotelSortOption =
-  | 'recommended'
-  | 'rating'
-  | 'reviews'
-  | 'stars';
-
-type HotelStarsFilter =
-  | 'all'
-  | '4'
-  | '5';
-
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
 
 function renderStars(
   stars: number | null,
@@ -64,35 +55,6 @@ function renderStars(
   );
 }
 
-function hasValidChain(
-  chain: string | null,
-) {
-  if (!chain) {
-    return false;
-  }
-
-  const value =
-    chain
-      .trim()
-      .toLowerCase();
-
-  return ![
-    'not available',
-    'n/a',
-    'na',
-    'unknown',
-    'none',
-  ].includes(
-    value,
-  );
-}
-
-/*
- * =========================================
- * PAGE
- * =========================================
- */
-
 function HotelsPage() {
   const [
     searchParams,
@@ -105,13 +67,25 @@ function HotelsPage() {
   } =
     useCurrency();
 
+  const {
+    isAuthenticated,
+    login,
+  } =
+    useAuth();
+
+  const {
+    toggle,
+    isSaved,
+  } =
+    useWishlist();
+
   const [
     hotels,
     setHotels,
   ] =
-    useState<
-      HotelSummary[]
-    >([]);
+    useState<HotelSummary[]>(
+      [],
+    );
 
   const [
     meta,
@@ -133,31 +107,9 @@ function HotelsPage() {
     error,
     setError,
   ] =
-    useState<
-      string | null
-    >(null);
-
-  const [
-    sortOption,
-    setSortOption,
-  ] =
-    useState<HotelSortOption>(
-      'recommended',
+    useState<string | null>(
+      null,
     );
-
-  const [
-    starsFilter,
-    setStarsFilter,
-  ] =
-    useState<HotelStarsFilter>(
-      'all',
-    );
-
-  /*
-   * =========================================
-   * SEARCH PARAMS
-   * =========================================
-   */
 
   const cityName =
     searchParams.get(
@@ -192,12 +144,6 @@ function HotelsPage() {
       cityName &&
       countryCode,
     );
-
-  /*
-   * =========================================
-   * CURRENCY SYNC
-   * =========================================
-   */
 
   useEffect(() => {
     if (!hasSearch) {
@@ -239,12 +185,6 @@ function HotelsPage() {
     setSearchParams,
   ]);
 
-  /*
-   * =========================================
-   * LOAD HOTELS
-   * =========================================
-   */
-
   useEffect(() => {
     let isCancelled =
       false;
@@ -284,13 +224,11 @@ function HotelsPage() {
           );
 
           const response =
-            await searchHotels(
-              {
-                cityName,
-                countryCode,
-                limit: 20,
-              },
-            );
+            await searchHotels({
+              cityName,
+              countryCode,
+              limit: 20,
+            });
 
           if (
             isCancelled
@@ -352,183 +290,6 @@ function HotelsPage() {
     countryCode,
   ]);
 
-  /*
-   * =========================================
-   * FILTER + SORT
-   * =========================================
-   */
-
-  const filteredHotels =
-    useMemo(() => {
-      let result =
-        [
-          ...hotels,
-        ];
-
-      if (
-        starsFilter ===
-        '4'
-      ) {
-        result =
-          result.filter(
-            (
-              hotel,
-            ) =>
-              (
-                hotel.starRating ??
-                0
-              ) >= 4,
-          );
-      }
-
-      if (
-        starsFilter ===
-        '5'
-      ) {
-        result =
-          result.filter(
-            (
-              hotel,
-            ) =>
-              Math.round(
-                hotel.starRating ??
-                  0,
-              ) === 5,
-          );
-      }
-
-      switch (
-        sortOption
-      ) {
-        case 'rating':
-          result.sort(
-            (
-              a,
-              b,
-            ) =>
-              (
-                b.rating ??
-                -1
-              ) -
-              (
-                a.rating ??
-                -1
-              ),
-          );
-
-          break;
-
-        case 'reviews':
-          result.sort(
-            (
-              a,
-              b,
-            ) =>
-              (
-                b.reviewCount ??
-                -1
-              ) -
-              (
-                a.reviewCount ??
-                -1
-              ),
-          );
-
-          break;
-
-        case 'stars':
-          result.sort(
-            (
-              a,
-              b,
-            ) =>
-              (
-                b.starRating ??
-                -1
-              ) -
-              (
-                a.starRating ??
-                -1
-              ),
-          );
-
-          break;
-
-        case 'recommended':
-        default:
-          break;
-      }
-
-      return result;
-    }, [
-      hotels,
-      sortOption,
-      starsFilter,
-    ]);
-
-  /*
-   * =========================================
-   * INSIGHTS
-   * =========================================
-   */
-
-  const bestRating =
-    useMemo(() => {
-      const values =
-        hotels
-          .map(
-            (
-              hotel,
-            ) =>
-              hotel.rating,
-          )
-          .filter(
-            (
-              value,
-            ):
-              value is number =>
-                value !==
-                null,
-          );
-
-      if (
-        values.length ===
-        0
-      ) {
-        return null;
-      }
-
-      return Math.max(
-        ...values,
-      );
-    }, [
-      hotels,
-    ]);
-
-  const hotelsWithReviews =
-    useMemo(
-      () =>
-        hotels.filter(
-          (
-            hotel,
-          ) =>
-            (
-              hotel.reviewCount ??
-              0
-            ) > 0,
-        ).length,
-
-      [
-        hotels,
-      ],
-    );
-
-  /*
-   * =========================================
-   * DETAIL URL
-   * =========================================
-   */
-
   const buildHotelDetailUrl = (
     hotelId: string,
   ) => {
@@ -562,37 +323,101 @@ function HotelsPage() {
     return `/hotels/${hotelId}?${params.toString()}`;
   };
 
-  /*
-   * =========================================
-   * RENDER
-   * =========================================
-   */
+  const handleWishlist = (
+    hotel: HotelSummary,
+  ) => {
+    if (!isAuthenticated) {
+      login();
+
+      return;
+    }
+
+    toggle({
+      key:
+        `hotel:${hotel.id}`,
+
+      type:
+        'hotel',
+
+      title:
+        hotel.name,
+
+      subtitle:
+        [
+          hotel.city,
+          hotel.country,
+        ]
+          .filter(
+            Boolean,
+          )
+          .join(
+            ', ',
+          ),
+
+      imageUrl:
+        hotel.mainPhoto ||
+        hotel.thumbnail ||
+        null,
+
+      href:
+        buildHotelDetailUrl(
+          hotel.id,
+        ),
+
+      metadata: {
+        ciudad:
+          hotel.city ??
+          null,
+
+        país:
+          hotel.country ??
+          null,
+
+        estrellas:
+          hotel.starRating ??
+          null,
+
+        valoración:
+          hotel.rating ??
+          null,
+
+        cadena:
+          hotel.chain ??
+          null,
+      },
+    });
+  };
 
   return (
-    <main className="gt-hotels-page">
+    <main className="hotels-page">
 
       {/* =====================================
           HERO
       ====================================== */}
 
-      <section className="gt-hotels-hero">
-        <div className="gt-hotels-hero-overlay" />
+      <section
+        className="hotels-header hotels-header-photo"
+        style={{
+          backgroundImage:
+            `url(${hotelHeroImage})`,
+        }}
+      >
+        <div className="hotels-header-overlay" />
 
-        <div className="gt-hotels-hero-inner">
-          <span className="gt-hotels-eyebrow">
+        <div className="hotels-header-content">
+          <p className="hotels-eyebrow">
             GLOBALTOUR · HOSPEDAJE
-          </span>
+          </p>
 
           <h1>
             {cityName
-              ? `Encuentra tu lugar en ${cityName}`
-              : 'Descubre dónde quedarte'}
+              ? `Encuentra hospedaje en ${cityName}`
+              : 'Encuentra tu hospedaje'}
           </h1>
 
           <p>
-            Hoteles y alojamientos para cada forma
-            de viajar. Busca, compara y encuentra
-            una opción para tu próxima estadía.
+            Busca y compara alojamientos
+            para tu próximo viaje.
           </p>
         </div>
       </section>
@@ -601,172 +426,58 @@ function HotelsPage() {
           SEARCH
       ====================================== */}
 
-      <section className="gt-hotels-search-section">
-        <div className="gt-hotels-search-shell">
-          <div className="gt-hotels-search-heading">
-            <div>
-              <span>
-                BUSCAR HOSPEDAJE
-              </span>
-
-              <strong>
-                ¿Dónde será tu próxima estadía?
-              </strong>
-            </div>
-          </div>
-
-          <HotelSearchForm
-            key={`${cityName}-${countryCode}-${checkin}-${checkout}-${adults}`}
-            initialValues={{
-              cityName:
-                cityName ??
-                '',
-
-              countryCode:
-                countryCode ??
-                '',
-
-              checkin:
-                checkin ??
-                '',
-
-              checkout:
-                checkout ??
-                '',
-
-              adults,
-            }}
-          />
-        </div>
+      <section className="hotels-search-section">
+        <HotelSearchForm />
       </section>
 
-      <div className="gt-hotels-content">
+      {/* =====================================
+          START STATE
+      ====================================== */}
 
-        {/* =====================================
-            START
-        ====================================== */}
+      {!hasSearch && (
+        <section className="hotels-empty-start">
+          <h2>
+            ¿Dónde quieres hospedarte?
+          </h2>
 
-        {!hasSearch && (
-          <section className="gt-hotels-start-state">
-            <div className="gt-hotels-start-icon">
-              <HotelIcon />
-            </div>
+          <p>
+            Selecciona un destino, las
+            fechas de tu estadía y la
+            cantidad de huéspedes para
+            comenzar.
+          </p>
+        </section>
+      )}
 
-            <span>
-              TU PRÓXIMA ESTADÍA
-            </span>
+      {/* =====================================
+          LOADING
+      ====================================== */}
 
+      {hasSearch &&
+        isLoading && (
+          <section className="hotels-status">
             <h2>
-              Encuentra un lugar que se sienta parte del viaje
+              Buscando alojamientos...
             </h2>
 
             <p>
-              Escribe una ciudad, selecciona tus fechas
-              y comienza a explorar alojamientos.
+              Estamos consultando opciones
+              disponibles en{' '}
+              {cityName}.
             </p>
-
-            <div className="gt-hotels-start-grid">
-              <div>
-                <LocationIcon />
-
-                <strong>
-                  Explora por ciudad
-                </strong>
-
-                <span>
-                  Busca hospedaje directamente en tu destino.
-                </span>
-              </div>
-
-              <div>
-                <CalendarIcon />
-
-                <strong>
-                  Define tu estadía
-                </strong>
-
-                <span>
-                  Selecciona check-in y check-out.
-                </span>
-              </div>
-
-              <div>
-                <GuestsIcon />
-
-                <strong>
-                  Viaja acompañado
-                </strong>
-
-                <span>
-                  Indica cuántas personas se hospedarán.
-                </span>
-              </div>
-            </div>
           </section>
         )}
 
-        {/* =====================================
-            LOADING
-        ====================================== */}
+      {/* =====================================
+          ERROR
+      ====================================== */}
 
-        {hasSearch &&
-          isLoading && (
-          <section className="gt-hotels-loading">
-            <div className="gt-hotels-loading-heading">
-              <div className="gt-hotels-loader" />
-
-              <div>
-                <h2>
-                  Buscando alojamientos en {cityName}
-                </h2>
-
-                <p>
-                  Estamos consultando las mejores opciones disponibles.
-                </p>
-              </div>
-            </div>
-
-            <div className="gt-hotel-skeleton-list">
-              {[1, 2, 3].map(
-                (
-                  item,
-                ) => (
-                  <div
-                    key={
-                      item
-                    }
-                    className="gt-hotel-skeleton-card"
-                  >
-                    <div className="gt-hotel-skeleton-image" />
-
-                    <div className="gt-hotel-skeleton-copy">
-                      <div />
-                      <div />
-                      <div />
-                    </div>
-
-                    <div className="gt-hotel-skeleton-action" />
-                  </div>
-                ),
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* =====================================
-            ERROR
-        ====================================== */}
-
-        {hasSearch &&
-          !isLoading &&
-          error && (
-          <section className="gt-hotels-error-state">
-            <div>
-              !
-            </div>
-
+      {hasSearch &&
+        !isLoading &&
+        error && (
+          <section className="hotels-status hotels-error">
             <h2>
-              No pudimos completar la búsqueda
+              No pudimos realizar la búsqueda
             </h2>
 
             <p>
@@ -775,434 +486,96 @@ function HotelsPage() {
           </section>
         )}
 
-        {/* =====================================
-            EMPTY
-        ====================================== */}
+      {/* =====================================
+          EMPTY
+      ====================================== */}
 
-        {hasSearch &&
-          !isLoading &&
-          !error &&
-          hotels.length ===
-            0 && (
-          <section className="gt-hotels-error-state">
-            <div className="gt-hotels-empty-icon">
-              <SearchIcon />
-            </div>
-
+      {hasSearch &&
+        !isLoading &&
+        !error &&
+        hotels.length ===
+          0 && (
+          <section className="hotels-status">
             <h2>
               No encontramos alojamientos
             </h2>
 
             <p>
-              Prueba con otra ciudad o vuelve a intentarlo más tarde.
+              Prueba con otro destino
+              o vuelve a intentarlo más tarde.
             </p>
           </section>
         )}
 
-        {/* =====================================
-            RESULTS
-        ====================================== */}
+      {/* =====================================
+          RESULTS
+      ====================================== */}
 
-        {hasSearch &&
-          !isLoading &&
-          !error &&
-          hotels.length >
-            0 && (
+      {hasSearch &&
+        !isLoading &&
+        !error &&
+        hotels.length >
+          0 && (
           <>
-
-            {/* =================================
-                RESULTS TITLE
-            ================================== */}
-
-            <section className="gt-hotels-results-heading">
+            <section className="hotels-results-heading">
               <div>
-                <span className="gt-hotels-section-eyebrow">
-                  ALOJAMIENTOS ENCONTRADOS
-                </span>
-
                 <h2>
-                  {cityName}
-                  {countryCode
-                    ? `, ${countryCode}`
-                    : ''}
-                </h2>
-
-                <p>
-                  {hotels.length}{' '}
-
+                  {
+                    hotels.length
+                  }{' '}
                   {hotels.length ===
                   1
-                    ? 'alojamiento disponible para explorar'
-                    : 'alojamientos disponibles para explorar'}
-                </p>
+                    ? 'alojamiento encontrado'
+                    : 'alojamientos encontrados'}
+                </h2>
+
+                {checkin &&
+                  checkout && (
+                    <p>
+                      {checkin}
+                      {' — '}
+                      {checkout}
+                      {' · '}
+                      {adults}{' '}
+                      {adults ===
+                      '1'
+                        ? 'adulto'
+                        : 'adultos'}
+                      {' · '}
+                      {currency}
+                    </p>
+                  )}
               </div>
 
               {meta?.stale && (
-                <span className="gt-hotels-cache-badge">
+                <span className="hotel-cache-warning">
                   Datos almacenados temporalmente
                 </span>
               )}
             </section>
 
-            {/* =================================
-                STAY SUMMARY
-            ================================== */}
+            <section className="hotel-results-grid">
+              {hotels.map(
+                (
+                  hotel,
+                ) => {
+                  const wishlistKey =
+                    `hotel:${hotel.id}`;
 
-            {checkin &&
-              checkout && (
-              <section className="gt-hotel-stay-strip">
-                <div>
-                  <CalendarIcon />
+                  const saved =
+                    isSaved(
+                      wishlistKey,
+                    );
 
-                  <span>
-                    Check-in
-                  </span>
-
-                  <strong>
-                    {checkin}
-                  </strong>
-                </div>
-
-                <div>
-                  <CalendarIcon />
-
-                  <span>
-                    Check-out
-                  </span>
-
-                  <strong>
-                    {checkout}
-                  </strong>
-                </div>
-
-                <div>
-                  <GuestsIcon />
-
-                  <span>
-                    Huéspedes
-                  </span>
-
-                  <strong>
-                    {adults}{' '}
-
-                    {adults ===
-                    '1'
-                      ? 'adulto'
-                      : 'adultos'}
-                  </strong>
-                </div>
-
-                <div>
-                  <CurrencyIcon />
-
-                  <span>
-                    Moneda
-                  </span>
-
-                  <strong>
-                    {currency}
-                  </strong>
-                </div>
-              </section>
-            )}
-
-            {/* =================================
-                INSIGHTS
-            ================================== */}
-
-            <section className="gt-hotel-insight-grid">
-              <article>
-                <span>
-                  Encontrados
-                </span>
-
-                <strong>
-                  {hotels.length}
-                </strong>
-
-                <small>
-                  alojamientos
-                </small>
-              </article>
-
-              <article>
-                <span>
-                  Mejor valoración
-                </span>
-
-                <strong>
-                  {bestRating !==
-                  null
-                    ? bestRating.toFixed(
-                        1,
-                      )
-                    : '—'}
-                </strong>
-
-                <small>
-                  según los datos disponibles
-                </small>
-              </article>
-
-              <article>
-                <span>
-                  Con reseñas
-                </span>
-
-                <strong>
-                  {hotelsWithReviews}
-                </strong>
-
-                <small>
-                  opciones con opiniones
-                </small>
-              </article>
-            </section>
-
-            {/* =================================
-                TOOLBAR
-            ================================== */}
-
-            <section className="gt-hotels-toolbar">
-              <div className="gt-hotels-sort-chips">
-                <button
-                  type="button"
-                  className={
-                    sortOption ===
-                    'recommended'
-                      ? 'gt-hotels-sort-chip gt-hotels-sort-chip-active'
-                      : 'gt-hotels-sort-chip'
-                  }
-                  onClick={() =>
-                    setSortOption(
-                      'recommended',
-                    )
-                  }
-                >
-                  Recomendados
-                </button>
-
-                <button
-                  type="button"
-                  className={
-                    sortOption ===
-                    'rating'
-                      ? 'gt-hotels-sort-chip gt-hotels-sort-chip-active'
-                      : 'gt-hotels-sort-chip'
-                  }
-                  onClick={() =>
-                    setSortOption(
-                      'rating',
-                    )
-                  }
-                >
-                  Mejor valorados
-                </button>
-
-                <button
-                  type="button"
-                  className={
-                    sortOption ===
-                    'reviews'
-                      ? 'gt-hotels-sort-chip gt-hotels-sort-chip-active'
-                      : 'gt-hotels-sort-chip'
-                  }
-                  onClick={() =>
-                    setSortOption(
-                      'reviews',
-                    )
-                  }
-                >
-                  Más reseñas
-                </button>
-              </div>
-
-              <span>
-                {filteredHotels.length}{' '}
-                resultados visibles
-              </span>
-            </section>
-
-            {/* =================================
-                RESULTS LAYOUT
-            ================================== */}
-
-            <section className="gt-hotels-results-layout">
-
-              {/* FILTERS */}
-
-              <aside className="gt-hotels-filter-panel">
-                <div className="gt-hotels-filter-heading">
-                  <span>
-                    FILTROS
-                  </span>
-
-                  <strong>
-                    Personaliza los resultados
-                  </strong>
-                </div>
-
-                <div className="gt-hotels-filter-section">
-                  <strong>
-                    Categoría
-                  </strong>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="hotelStars"
-                      checked={
-                        starsFilter ===
-                        'all'
-                      }
-                      onChange={() =>
-                        setStarsFilter(
-                          'all',
-                        )
-                      }
-                    />
-
-                    <span>
-                      Todas
-                    </span>
-                  </label>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="hotelStars"
-                      checked={
-                        starsFilter ===
-                        '4'
-                      }
-                      onChange={() =>
-                        setStarsFilter(
-                          '4',
-                        )
-                      }
-                    />
-
-                    <span>
-                      4 estrellas o más
-                    </span>
-                  </label>
-
-                  <label>
-                    <input
-                      type="radio"
-                      name="hotelStars"
-                      checked={
-                        starsFilter ===
-                        '5'
-                      }
-                      onChange={() =>
-                        setStarsFilter(
-                          '5',
-                        )
-                      }
-                    />
-
-                    <span>
-                      5 estrellas
-                    </span>
-                  </label>
-                </div>
-
-                <div className="gt-hotels-filter-section">
-                  <label>
-                    <strong>
-                      Ordenar por
-                    </strong>
-
-                    <select
-                      value={
-                        sortOption
-                      }
-                      onChange={(
-                        event,
-                      ) =>
-                        setSortOption(
-                          event.target
-                            .value as HotelSortOption,
-                        )
-                      }
-                    >
-                      <option value="recommended">
-                        Recomendados
-                      </option>
-
-                      <option value="rating">
-                        Mejor valoración
-                      </option>
-
-                      <option value="reviews">
-                        Más reseñas
-                      </option>
-
-                      <option value="stars">
-                        Más estrellas
-                      </option>
-                    </select>
-                  </label>
-                </div>
-
-                <div className="gt-hotels-filter-tip">
-                  <HotelIcon />
-
-                  <div>
-                    <strong>
-                      Explora antes de reservar
-                    </strong>
-
-                    <span>
-                      Entra al alojamiento para consultar habitaciones y tarifas.
-                    </span>
-                  </div>
-                </div>
-              </aside>
-
-              {/* HOTEL RESULTS */}
-
-              <div className="gt-hotel-results-list">
-                {filteredHotels.length ===
-                0 ? (
-                  <div className="gt-hotels-filter-empty">
-                    <SearchIcon />
-
-                    <h3>
-                      No hay alojamientos con este filtro
-                    </h3>
-
-                    <p>
-                      Prueba mostrando todas las categorías.
-                    </p>
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setStarsFilter(
-                          'all',
-                        )
-                      }
-                    >
-                      Limpiar filtro
-                    </button>
-                  </div>
-                ) : (
-                  filteredHotels.map(
-                    (
-                      hotel,
-                    ) => (
+                  return (
                     <article
-                      className="gt-hotel-result-card"
+                      className="hotel-card"
                       key={
                         hotel.id
                       }
                     >
+                      <div className="hotel-card-image">
 
-                      {/* IMAGE */}
-
-                      <div className="gt-hotel-result-image">
                         {hotel.mainPhoto ||
                         hotel.thumbnail ? (
                           <img
@@ -1217,302 +590,165 @@ function HotelsPage() {
                             loading="lazy"
                           />
                         ) : (
-                          <div className="gt-hotel-image-placeholder">
-                            <HotelIcon />
-
-                            <span>
-                              Imagen no disponible
-                            </span>
+                          <div className="hotel-image-placeholder">
+                            Sin imagen
                           </div>
                         )}
 
-                        {hotel.starRating && (
-                          <span className="gt-hotel-image-stars">
-                            {renderStars(
-                              hotel.starRating,
-                            )}
-                          </span>
-                        )}
+                        <button
+                          type="button"
+                          className={
+                            saved
+                              ? 'hotel-wishlist-button hotel-wishlist-button-active'
+                              : 'hotel-wishlist-button'
+                          }
+                          onClick={() =>
+                            handleWishlist(
+                              hotel,
+                            )
+                          }
+                          aria-label={
+                            saved
+                              ? `Eliminar ${hotel.name} de Wishlist`
+                              : `Guardar ${hotel.name} en Wishlist`
+                          }
+                          title={
+                            saved
+                              ? 'Eliminar de Wishlist'
+                              : 'Guardar en Wishlist'
+                          }
+                        >
+                          <HeartIcon />
+                        </button>
                       </div>
 
-                      {/* CONTENT */}
+                      <div className="hotel-card-content">
+                        <div className="hotel-card-main">
 
-                      <div className="gt-hotel-result-content">
-                        <div className="gt-hotel-result-copy">
-                          <div className="gt-hotel-result-topline">
-                            <span>
-                              {hotel.city ||
-                                cityName}
+                          {hotel.starRating && (
+                            <span className="hotel-stars">
+                              {renderStars(
+                                hotel.starRating,
+                              )}
                             </span>
-
-                            {hasValidChain(
-                              hotel.chain,
-                            ) && (
-                              <span>
-                                {hotel.chain}
-                              </span>
-                            )}
-                          </div>
+                          )}
 
                           <h3>
-                            {hotel.name}
+                            {
+                              hotel.name
+                            }
                           </h3>
 
-                          <p className="gt-hotel-result-location">
-                            <LocationIcon />
-
-                            <span>
-                              {[
-                                hotel.address,
-                                hotel.city,
-                                hotel.country,
-                              ]
-                                .filter(
-                                  Boolean,
-                                )
-                                .join(
-                                  ', ',
-                                )}
-                            </span>
+                          <p className="hotel-location">
+                            {[
+                              hotel.city,
+                              hotel.country,
+                            ]
+                              .filter(
+                                Boolean,
+                              )
+                              .join(
+                                ', ',
+                              )}
                           </p>
 
-                          <div className="gt-hotel-result-features">
-                            <span>
-                              <BedIcon />
+                          {hotel.address && (
+                            <p className="hotel-address">
+                              {
+                                hotel.address
+                              }
+                            </p>
+                          )}
 
-                              Hospedaje
-                            </span>
+                          <div className="hotel-card-meta">
 
-                            {hotel.links
-                              .map && (
-                              <a
-                                href={
-                                  hotel.links
-                                    .map
-                                }
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                <MapIcon />
-
-                                Ver ubicación
-                              </a>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* ACTION */}
-
-                        <div className="gt-hotel-result-action">
-                          {hotel.rating !==
-                            null && (
-                            <div className="gt-hotel-rating-block">
-                              <div>
-                                <strong>
-                                  Valoración
-                                </strong>
-
-                                {hotel.reviewCount !==
-                                  null && (
-                                  <span>
-                                    {hotel.reviewCount}{' '}
-
-                                    {hotel.reviewCount ===
-                                    1
-                                      ? 'reseña'
-                                      : 'reseñas'}
-                                  </span>
-                                )}
-                              </div>
-
-                              <span>
+                            {hotel.rating !==
+                              null && (
+                              <span className="hotel-rating">
                                 {hotel.rating.toFixed(
                                   1,
                                 )}
                               </span>
-                            </div>
+                            )}
+
+                            {hotel.reviewCount !==
+                              null && (
+                              <span>
+                                {
+                                  hotel.reviewCount
+                                }{' '}
+                                {hotel.reviewCount ===
+                                1
+                                  ? 'reseña'
+                                  : 'reseñas'}
+                              </span>
+                            )}
+
+                            {hotel.chain && (
+                              <span>
+                                {
+                                  hotel.chain
+                                }
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="hotel-card-actions">
+
+                          {hotel.links
+                            .map && (
+                            <a
+                              href={
+                                hotel.links
+                                  .map
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hotel-map-link"
+                            >
+                              Ver en mapa
+                            </a>
                           )}
 
-                          <div className="gt-hotel-availability-copy">
-                            <span>
-                              Consulta
-                            </span>
-
-                            <strong>
-                              habitaciones y tarifas
-                            </strong>
-                          </div>
-
-                          <Link
-                            to={buildHotelDetailUrl(
-                              hotel.id,
-                            )}
-                            className="gt-hotel-detail-button"
+                          <a
+                            href={
+                              buildHotelDetailUrl(
+                                hotel.id,
+                              )
+                            }
+                            className="hotel-detail-button"
                           >
                             Ver disponibilidad
-
-                            <ArrowIcon />
-                          </Link>
+                          </a>
                         </div>
                       </div>
                     </article>
-                    ),
-                  )
-                )}
-              </div>
+                  );
+                },
+              )}
             </section>
 
             {meta?.disclaimer && (
-              <p className="gt-hotels-disclaimer">
-                {meta.disclaimer}
+              <p className="hotel-disclaimer">
+                {
+                  meta.disclaimer
+                }
               </p>
             )}
           </>
         )}
-      </div>
     </main>
   );
 }
 
-/*
- * =========================================
- * ICONS
- * =========================================
- */
-
-function HotelIcon() {
+function HeartIcon() {
   return (
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
     >
-      <path d="M4 20V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13" />
-
-      <path d="M2 20h20" />
-
-      <path d="M8 9h2M14 9h2M8 13h2M14 13h2" />
-    </svg>
-  );
-}
-
-function LocationIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-
-      <circle
-        cx="12"
-        cy="10"
-        r="2.5"
-      />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <rect
-        x="3"
-        y="5"
-        width="18"
-        height="16"
-        rx="2"
-      />
-
-      <path d="M8 3v4M16 3v4M3 10h18" />
-    </svg>
-  );
-}
-
-function GuestsIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="8"
-        r="3"
-      />
-
-      <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
-    </svg>
-  );
-}
-
-function CurrencyIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-      />
-
-      <path d="M12 6v12M16 8.5c-.8-.7-2-1-3.2-1-1.8 0-3.3.8-3.3 2.1 0 3.2 7 1.2 7 4.7 0 1.4-1.5 2.3-3.6 2.3-1.5 0-2.8-.4-3.8-1.2" />
-    </svg>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="11"
-        cy="11"
-        r="7"
-      />
-
-      <path d="m16.5 16.5 4 4" />
-    </svg>
-  );
-}
-
-function BedIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M3 18V8M21 18v-6a2 2 0 0 0-2-2H8a3 3 0 0 0-3 3v5M3 15h18M7 10V7h5v3" />
-    </svg>
-  );
-}
-
-function MapIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z" />
-
-      <path d="M9 3v15M15 6v15" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M5 12h14M13 6l6 6-6 6" />
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
     </svg>
   );
 }

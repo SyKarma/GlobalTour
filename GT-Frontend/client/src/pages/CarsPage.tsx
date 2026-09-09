@@ -16,6 +16,8 @@ import type {
   CarSearchValues,
 } from '../components/cars/CarSearchForm';
 
+import WishlistHeart from '../components/wishlist/WishlistHeart';
+
 import {
   searchCars,
 } from '../services/cars.service';
@@ -38,12 +40,6 @@ type CarSortOption =
   | 'recommended'
   | 'name'
   | 'information';
-
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
 
 function isCarType(
   value: string,
@@ -167,12 +163,6 @@ function informationScore(
   return score;
 }
 
-/*
- * =========================================
- * PAGE
- * =========================================
- */
-
 function CarsPage() {
   const navigate =
     useNavigate();
@@ -222,12 +212,6 @@ function CarsPage() {
       'recommended',
     );
 
-  /*
-   * =========================================
-   * URL PARAMS
-   * =========================================
-   */
-
   const cityName =
     searchParams.get(
       'cityName',
@@ -272,12 +256,6 @@ function CarsPage() {
     cityName
       .trim()
       .length >= 2;
-
-  /*
-   * =========================================
-   * LOAD CARS
-   * =========================================
-   */
 
   useEffect(() => {
     if (!hasSearch) {
@@ -398,12 +376,6 @@ function CarsPage() {
     hasSearch,
   ]);
 
-  /*
-   * =========================================
-   * SEARCH
-   * =========================================
-   */
-
   const handleSearch = (
     values:
       CarSearchValues,
@@ -464,12 +436,6 @@ function CarsPage() {
     );
   };
 
-  /*
-   * =========================================
-   * SORT
-   * =========================================
-   */
-
   const sortedCars =
     useMemo(() => {
       const result =
@@ -519,12 +485,6 @@ function CarsPage() {
       cars,
       sortOption,
     ]);
-
-  /*
-   * =========================================
-   * INSIGHTS
-   * =========================================
-   */
 
   const websiteCount =
     useMemo(
@@ -614,18 +574,8 @@ function CarsPage() {
       ],
     );
 
-  /*
-   * =========================================
-   * RENDER
-   * =========================================
-   */
-
   return (
     <main className="gt-cars-page">
-
-      {/* =====================================
-          HERO
-      ====================================== */}
 
       <section className="gt-cars-hero">
         <div className="gt-cars-hero-overlay" />
@@ -651,28 +601,21 @@ function CarsPage() {
           <div className="gt-cars-hero-pills">
             <span>
               <CarIcon />
-
               Rent a Car
             </span>
 
             <span>
               <ShareIcon />
-
               Car sharing
             </span>
 
             <span>
               <MapIcon />
-
               Ubicaciones reales
             </span>
           </div>
         </div>
       </section>
-
-      {/* =====================================
-          SEARCH
-      ====================================== */}
 
       <section className="gt-cars-search-section">
         <div className="gt-cars-search-shell">
@@ -722,10 +665,6 @@ function CarsPage() {
       </section>
 
       <div className="gt-cars-content">
-
-        {/* =====================================
-            START
-        ====================================== */}
 
         {!hasSearch && (
           <section className="gt-cars-start-state">
@@ -806,10 +745,6 @@ function CarsPage() {
           </section>
         )}
 
-        {/* =====================================
-            LOADING
-        ====================================== */}
-
         {hasSearch &&
           isLoading && (
           <section className="gt-cars-loading">
@@ -855,10 +790,6 @@ function CarsPage() {
           </section>
         )}
 
-        {/* =====================================
-            ERROR
-        ====================================== */}
-
         {hasSearch &&
           !isLoading &&
           error && (
@@ -876,10 +807,6 @@ function CarsPage() {
             </p>
           </section>
         )}
-
-        {/* =====================================
-            EMPTY
-        ====================================== */}
 
         {hasSearch &&
           !isLoading &&
@@ -902,18 +829,12 @@ function CarsPage() {
           </section>
         )}
 
-        {/* =====================================
-            RESULTS
-        ====================================== */}
-
         {hasSearch &&
           !isLoading &&
           !error &&
           cars.length >
             0 && (
           <>
-            {/* HEADER */}
-
             <section className="gt-cars-results-heading">
               <div>
                 <span className="gt-cars-section-eyebrow">
@@ -956,8 +877,6 @@ function CarsPage() {
                 </small>
               </div>
             </section>
-
-            {/* INSIGHTS */}
 
             <section className="gt-cars-insight-grid">
               <article>
@@ -1025,8 +944,6 @@ function CarsPage() {
               </article>
             </section>
 
-            {/* SHARING NOTICE */}
-
             {sharingCount >
               0 && (
               <section className="gt-cars-sharing-notice">
@@ -1039,17 +956,17 @@ function CarsPage() {
 
                   <span>
                     {sharingCount}{' '}
+
                     {sharingCount ===
                     1
                       ? 'opción corresponde'
                       : 'opciones corresponden'}{' '}
+
                     a movilidad compartida.
                   </span>
                 </div>
               </section>
             )}
-
-            {/* TOOLBAR */}
 
             <section className="gt-cars-toolbar">
               <div className="gt-cars-sort">
@@ -1113,8 +1030,6 @@ function CarsPage() {
               </span>
             </section>
 
-            {/* RESULTS */}
-
             <section className="gt-cars-results-list">
               {sortedCars.map(
                 (
@@ -1159,12 +1074,6 @@ function CarsPage() {
     </main>
   );
 }
-
-/*
- * =========================================
- * CARD
- * =========================================
- */
 
 interface CarCardProps {
   car:
@@ -1230,9 +1139,46 @@ function CarCard({
   return (
     <article className="gt-car-result-card">
 
-      {/* VISUAL */}
-
       <div className={`gt-car-result-visual ${visualClass}`}>
+        <WishlistHeart
+          item={{
+            key:
+              `car:${car.id}`,
+
+            type:
+              'car',
+
+            title:
+              name,
+
+            subtitle:
+              address,
+
+            href:
+              `/cars/${car.id}`,
+
+            metadata: {
+              tipo:
+                typeLabel,
+
+              marca:
+                showBrand
+                  ? brand
+                  : null,
+
+              sitioWeb:
+                Boolean(
+                  websiteUrl,
+                ),
+
+              mapa:
+                Boolean(
+                  mapsUrl,
+                ),
+            },
+          }}
+        />
+
         <div className="gt-car-visual-road">
           <span />
           <span />
@@ -1245,8 +1191,6 @@ function CarCard({
           {typeLabel}
         </span>
       </div>
-
-      {/* CONTENT */}
 
       <div className="gt-car-result-content">
         <div className="gt-car-result-copy">
@@ -1311,8 +1255,6 @@ function CarCard({
           </div>
         </div>
 
-        {/* ACTIONS */}
-
         <div className="gt-car-result-actions">
           <span className="gt-car-result-action-label">
             Más información
@@ -1367,12 +1309,6 @@ function CarCard({
     </article>
   );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function CarIcon() {
   return (
