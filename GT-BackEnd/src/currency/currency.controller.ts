@@ -1,5 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SearchHistoryService } from '../search-history/search-history.service';
 import { CurrencyService } from './currency.service';
 import { ConvertQueryDto } from './dto/convert-query.dto';
 import { HistoryQueryDto } from './dto/history-query.dto';
@@ -8,7 +9,10 @@ import { LatestQueryDto } from './dto/latest-query.dto';
 @ApiTags('currency')
 @Controller('currency')
 export class CurrencyController {
-  constructor(private readonly currencyService: CurrencyService) {}
+  constructor(
+    private readonly currencyService: CurrencyService,
+    private readonly searchHistory: SearchHistoryService,
+  ) {}
 
   @Get('currencies')
   @ApiOperation({ summary: 'List supported currencies' })
@@ -26,9 +30,13 @@ export class CurrencyController {
 
   @Get('convert')
   @ApiOperation({ summary: 'Convert an amount between two currencies' })
-  @ApiOkResponse({ description: 'Converted amount using the latest daily rate' })
-  convert(@Query() query: ConvertQueryDto) {
-    return this.currencyService.convert(query);
+  @ApiOkResponse({
+    description: 'Converted amount using the latest daily rate',
+  })
+  async convert(@Query() query: ConvertQueryDto) {
+    const result = await this.currencyService.convert(query);
+    this.searchHistory.recordCurrency(query);
+    return result;
   }
 
   @Get('history')

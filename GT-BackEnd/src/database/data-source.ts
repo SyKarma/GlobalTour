@@ -3,6 +3,11 @@ import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { ALL_ENTITIES } from './entities';
 import { InitialSchema20260821000000 } from './migrations/20260821000000-InitialSchema';
+import { SearchHistoryAnalytics20260828210000 } from './migrations/20260828210000-SearchHistoryAnalytics';
+import { DestinationFlightableSearch20260828220000 } from './migrations/20260828220000-DestinationFlightableSearch';
+import { RestaurantSearchSupport20260831120000 } from './migrations/20260831120000-RestaurantSearchSupport';
+import { OverpassCacheProvider20260831140000 } from './migrations/20260831140000-OverpassCacheProvider';
+import { CarSearchSupport20260831150000 } from './migrations/20260831150000-CarSearchSupport';
 
 config();
 
@@ -14,7 +19,14 @@ const AppDataSource = new DataSource({
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   entities: ALL_ENTITIES,
-  migrations: [InitialSchema20260821000000],
+  migrations: [
+    InitialSchema20260821000000,
+    SearchHistoryAnalytics20260828210000,
+    DestinationFlightableSearch20260828220000,
+    RestaurantSearchSupport20260831120000,
+    OverpassCacheProvider20260831140000,
+    CarSearchSupport20260831150000,
+  ],
   synchronize: false,
   charset: 'utf8mb4',
   timezone: 'Z',

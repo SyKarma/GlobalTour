@@ -3,6 +3,10 @@ import {
 } from 'react';
 
 import {
+  useWishlist,
+} from '../hooks/useWishlist';
+
+import {
   NavLink,
   Outlet,
 } from 'react-router-dom';
@@ -35,6 +39,11 @@ const navigation = [
     label: 'Rent a Car',
     path: '/cars',
   },
+
+  {
+  label: 'Wishlist',
+  path: '/wishlist',
+},
   {
     label: 'Dashboard',
     path: '/dashboard',
@@ -49,6 +58,10 @@ function MainLayout() {
     login,
     logout,
   } = useAuth();
+
+  const {
+  count: wishlistCount,
+} = useWishlist();
 
   const [
     isUserMenuOpen,
@@ -239,6 +252,24 @@ function MainLayout() {
                     </div>
 
                     <div className="gt-dropdown-divider" />
+
+                    <NavLink
+  to="/wishlist"
+  className="gt-dropdown-link"
+  onClick={
+    closeMenus
+  }
+>
+  <HeartIcon />
+
+  Mi Wishlist
+
+  {wishlistCount > 0 && (
+    <span className="gt-wishlist-nav-badge">
+      {wishlistCount}
+    </span>
+  )}
+</NavLink>
 
                     <NavLink
                       to="/dashboard"
@@ -639,6 +670,17 @@ function LogoutIcon() {
       <path d="m14 8 4 4-4 4" />
 
       <path d="M18 12H9" />
+    </svg>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
     </svg>
   );
 }

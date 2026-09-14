@@ -22392,3 +22392,979 @@ button.gt-experience-card {
     padding: 17px;
   }
 }
+
+/* =========================================================
+   GLOBALTOUR — WISHLIST
+   ========================================================= */
+
+.gt-wishlist-page {
+  min-height: 70vh;
+  background: #f6f8fc;
+}
+
+.gt-wishlist-hero {
+  padding: 64px 24px;
+  color: #fff;
+  background:
+    radial-gradient(circle at 80% 10%, rgba(96, 165, 250, .22), transparent 30%),
+    linear-gradient(135deg, #071a3c, #123d87 58%, #2563eb);
+}
+
+.gt-wishlist-hero-inner {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+.gt-wishlist-eyebrow,
+.gt-wishlist-guest > span,
+.gt-wishlist-empty > span {
+  display: inline-block;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.gt-wishlist-eyebrow {
+  color: #93c5fd;
+}
+
+.gt-wishlist-hero h1 {
+  margin: 10px 0 10px;
+  font-size: clamp(2.7rem, 6vw, 4.8rem);
+  line-height: 1;
+  letter-spacing: -.055em;
+}
+
+.gt-wishlist-hero p {
+  max-width: 600px;
+  margin: 0;
+  color: #c9dbf7;
+  line-height: 1.65;
+}
+
+.gt-wishlist-count {
+  width: fit-content;
+  margin-top: 26px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px;
+  background: rgba(255,255,255,.09);
+}
+
+.gt-wishlist-count svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+}
+
+.gt-wishlist-count strong {
+  font-size: 1rem;
+}
+
+.gt-wishlist-count span {
+  color: #dbeafe;
+  font-size: .72rem;
+}
+
+.gt-wishlist-content {
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 38px 0 80px;
+}
+
+.gt-wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.gt-wishlist-card {
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.gt-wishlist-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, .1);
+}
+
+.gt-wishlist-card-media {
+  position: relative;
+  height: 190px;
+  overflow: hidden;
+  background: #edf2f7;
+}
+
+.gt-wishlist-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gt-wishlist-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.gt-wishlist-placeholder-flight {
+  background: linear-gradient(145deg, #dbeafe, #eff6ff);
+}
+
+.gt-wishlist-placeholder-hotel {
+  background: linear-gradient(145deg, #dbeafe, #e0e7ff);
+}
+
+.gt-wishlist-placeholder-restaurant {
+  background: linear-gradient(145deg, #ffedd5, #fff7ed);
+}
+
+.gt-wishlist-placeholder-car {
+  background: linear-gradient(145deg, #ccfbf1, #ecfdf5);
+}
+
+.gt-wishlist-placeholder-destination {
+  background: linear-gradient(145deg, #ede9fe, #f5f3ff);
+}
+
+.gt-wishlist-placeholder svg {
+  width: 58px;
+  height: 58px;
+  fill: none;
+  stroke: #334155;
+  stroke-width: 1.4;
+}
+
+.gt-wishlist-type {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 800;
+  backdrop-filter: blur(10px);
+}
+
+.gt-wishlist-type-flight,
+.gt-wishlist-type-hotel {
+  background: rgba(30, 64, 175, .9);
+}
+
+.gt-wishlist-type-restaurant {
+  background: rgba(194, 65, 12, .9);
+}
+
+.gt-wishlist-type-car {
+  background: rgba(15, 118, 110, .9);
+}
+
+.gt-wishlist-type-destination {
+  background: rgba(109, 40, 217, .9);
+}
+
+.gt-wishlist-remove {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 5px 18px rgba(15,23,42,.12);
+  cursor: pointer;
+}
+
+.gt-wishlist-remove svg {
+  width: 19px;
+  height: 19px;
+  fill: #e11d48;
+  stroke: #e11d48;
+  stroke-width: 1.7;
+}
+
+.gt-wishlist-card-body {
+  padding: 19px;
+}
+
+.gt-wishlist-card-body h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 1.05rem;
+}
+
+.gt-wishlist-card-body > p {
+  margin: 6px 0 0;
+  color: #7c899a;
+  font-size: .72rem;
+  line-height: 1.5;
+}
+
+.gt-wishlist-metadata {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gt-wishlist-metadata > span {
+  min-width: 80px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 10px;
+  background: #f5f7fb;
+}
+
+.gt-wishlist-metadata small {
+  color: #98a2b3;
+  font-size: .55rem;
+}
+
+.gt-wishlist-metadata strong {
+  color: #344054;
+  font-size: .68rem;
+}
+
+.gt-wishlist-card-footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #edf0f5;
+}
+
+.gt-wishlist-card-footer > small {
+  color: #98a2b3;
+  font-size: .58rem;
+}
+
+.gt-wishlist-card-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #2563eb;
+  font-size: .68rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.gt-wishlist-card-footer a svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.gt-wishlist-empty,
+.gt-wishlist-guest {
+  min-height: 500px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.gt-wishlist-empty > div:first-child,
+.gt-wishlist-guest-icon {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 24px;
+  color: #2563eb;
+  background: #eaf2ff;
+}
+
+.gt-wishlist-empty svg,
+.gt-wishlist-guest-icon svg {
+  width: 35px;
+  height: 35px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.gt-wishlist-empty > span,
+.gt-wishlist-guest > span {
+  color: #2563eb;
+}
+
+.gt-wishlist-empty h2,
+.gt-wishlist-guest h1 {
+  margin: 10px 0;
+  color: #172033;
+  font-size: 1.8rem;
+}
+
+.gt-wishlist-empty p,
+.gt-wishlist-guest p {
+  max-width: 500px;
+  margin: 0;
+  color: #7f8b9d;
+  line-height: 1.6;
+}
+
+.gt-wishlist-empty-links {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 9px;
+}
+
+.gt-wishlist-empty-links a,
+.gt-wishlist-guest button {
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 10px;
+  color: #fff;
+  background: #2563eb;
+  font-size: .7rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.gt-wishlist-loading {
+  min-height: 550px;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 15px;
+  color: #64748b;
+}
+
+.gt-wishlist-spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #dbeafe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: gtWishlistSpin .75s linear infinite;
+}
+
+@keyframes gtWishlistSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gt-wishlist-nav-badge {
+  min-width: 21px;
+  height: 21px;
+  margin-left: auto;
+  padding: 0 6px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #fff;
+  background: #2563eb;
+  font-size: .58rem;
+  font-weight: 800;
+}
+
+@media (max-width: 950px) {
+  .gt-wishlist-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .gt-wishlist-hero {
+    padding: 48px 18px;
+  }
+
+  .gt-wishlist-content {
+    width: min(100% - 20px, 1200px);
+  }
+
+  .gt-wishlist-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gt-wishlist-card-media {
+    height: 210px;
+  }
+}
+/* =========================================================
+   WISHLIST — HOTEL HEART
+   ========================================================= */
+
+.hotel-card-image {
+  position: relative;
+}
+
+.hotel-wishlist-button {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.65);
+
+  border-radius: 50%;
+
+  color: #344054;
+
+  background:
+    rgba(255, 255, 255, 0.94);
+
+  box-shadow:
+    0 6px 18px
+    rgba(15, 23, 42, 0.14);
+
+  backdrop-filter:
+    blur(10px);
+
+  cursor: pointer;
+
+  z-index: 5;
+
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.hotel-wishlist-button:hover {
+  transform:
+    scale(1.08);
+
+  color: #e11d48;
+
+  box-shadow:
+    0 9px 24px
+    rgba(15, 23, 42, 0.18);
+}
+
+.hotel-wishlist-button svg {
+  width: 20px;
+  height: 20px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.hotel-wishlist-button-active {
+  color: #e11d48;
+
+  background: #ffffff;
+}
+
+.hotel-wishlist-button-active svg {
+  fill: currentColor;
+}
+/* =========================================================
+   GLOBALTOUR — UNIVERSAL WISHLIST HEART
+   ========================================================= */
+
+.gt-wishlist-heart {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 20;
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+
+  color: #475467;
+  background: rgba(255, 255, 255, 0.95);
+
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 7px 20px
+    rgba(15, 23, 42, 0.14);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.gt-wishlist-heart:hover {
+  transform: scale(1.08);
+  color: #e11d48;
+
+  box-shadow:
+    0 10px 25px
+    rgba(15, 23, 42, 0.18);
+}
+
+.gt-wishlist-heart svg {
+  width: 20px;
+  height: 20px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.gt-wishlist-heart-active {
+  color: #e11d48;
+}
+
+.gt-wishlist-heart-active svg,
+.gt-wishlist-heart .gt-heart-filled {
+  fill: currentColor;
+}
+/* =========================================================
+   GLOBALTOUR — UNIVERSAL WISHLIST HEART
+   ========================================================= */
+
+.gt-wishlist-heart {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
+  z-index: 30;
+
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  padding: 0;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+
+  border-radius: 50%;
+
+  color: #475467;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.96
+    );
+
+  backdrop-filter:
+    blur(10px);
+
+  box-shadow:
+    0 7px 20px
+    rgba(
+      15,
+      23,
+      42,
+      0.15
+    );
+
+  cursor: pointer;
+
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    background 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.gt-wishlist-heart:hover {
+  transform:
+    scale(1.08);
+
+  color: #e11d48;
+
+  box-shadow:
+    0 10px 26px
+    rgba(
+      15,
+      23,
+      42,
+      0.19
+    );
+}
+
+.gt-wishlist-heart svg {
+  width: 20px;
+  height: 20px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+
+  transition:
+    fill 0.18s ease;
+}
+
+.gt-wishlist-heart-active {
+  color: #e11d48;
+  background: #ffffff;
+}
+
+.gt-wishlist-heart-active svg {
+  fill: currentColor;
+}
+
+
+/* =========================================================
+   RESTAURANTS
+   ========================================================= */
+
+.gt-restaurant-card-visual {
+  position: relative;
+}
+
+.gt-restaurant-card-visual
+  .gt-wishlist-heart {
+  top: 13px;
+  right: 13px;
+}
+
+
+/* =========================================================
+   RENT A CAR
+   ========================================================= */
+
+.gt-car-result-visual {
+  position: relative;
+}
+
+.gt-car-result-visual
+  .gt-wishlist-heart {
+  top: 13px;
+  right: 13px;
+}
+
+
+/* =========================================================
+   FLIGHTS
+   ========================================================= */
+
+.gt-flight-card-top-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content:
+    flex-end;
+
+  gap: 10px;
+}
+
+.gt-flight-wishlist-heart {
+  position: static;
+
+  width: 38px;
+  height: 38px;
+
+  flex: 0 0 auto;
+
+  color: #475467;
+
+  border:
+    1px solid #e2e8f0;
+
+  background: #ffffff;
+}
+
+.gt-flight-wishlist-heart:hover {
+  transform:
+    scale(1.05);
+}
+
+.gt-flight-wishlist-heart.gt-wishlist-heart-active {
+  color: #e11d48;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .gt-wishlist-heart {
+    width: 38px;
+    height: 38px;
+  }
+
+  .gt-wishlist-heart svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .gt-flight-card-top-actions {
+    gap: 7px;
+  }
+}
+/* =========================================================
+   GLOBALTOUR — PHOTO HEROES
+   ========================================================= */
+
+/* =========================
+   HOSPEDAJE
+   ========================= */
+
+.gt-hotels-hero-photo {
+  position: relative;
+  min-height: 390px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 70px 48px;
+
+  overflow: hidden;
+
+  color: #ffffff;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.gt-hotels-hero-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 20, 44, 0.88) 0%,
+      rgba(7, 20, 44, 0.7) 42%,
+      rgba(7, 20, 44, 0.28) 72%,
+      rgba(7, 20, 44, 0.08) 100%
+    );
+}
+
+.gt-hotels-hero-inner {
+  position: relative;
+  z-index: 2;
+
+  width: min(1200px, 100%);
+  margin: 0 auto;
+}
+
+.gt-hotels-eyebrow {
+  display: inline-block;
+
+  margin-bottom: 16px;
+
+  color: #93c5fd;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.gt-hotels-hero-photo h1 {
+  max-width: 760px;
+
+  margin: 0;
+
+  font-size: clamp(
+    3rem,
+    6vw,
+    5.3rem
+  );
+
+  line-height: 0.98;
+
+  letter-spacing: -0.055em;
+}
+
+.gt-hotels-hero-photo p {
+  max-width: 620px;
+
+  margin: 22px 0 0;
+
+  color: rgba(
+    255,
+    255,
+    255,
+    0.86
+  );
+
+  font-size: 1.05rem;
+
+  line-height: 1.65;
+}
+
+
+/* =========================
+   VUELOS
+   ========================= */
+
+.gt-flights-hero-photo {
+  position: relative;
+
+  min-height: 400px;
+
+  overflow: hidden;
+
+  color: #ffffff;
+
+  background-size: cover;
+
+  /*
+   * La foto es vertical,
+   * por eso movemos el foco
+   * hacia la ventana y el ala.
+   */
+  background-position:
+    center 55%;
+
+  background-repeat: no-repeat;
+}
+
+.gt-flights-hero-photo-overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(4, 18, 44, 0.92) 0%,
+      rgba(4, 18, 44, 0.75) 40%,
+      rgba(4, 18, 44, 0.34) 72%,
+      rgba(4, 18, 44, 0.14) 100%
+    );
+}
+
+.gt-flights-hero-photo
+  .gt-flights-hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.gt-flights-hero-photo
+  .gt-flights-hero-art {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.09
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.18
+    );
+
+  backdrop-filter:
+    blur(12px);
+}
+
+.gt-flights-hero-photo
+  .gt-flight-hero-route {
+  color: #ffffff;
+}
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+  .gt-hotels-hero-photo {
+    min-height: 340px;
+
+    padding:
+      58px
+      28px;
+  }
+
+  .gt-flights-hero-photo {
+    min-height: 360px;
+
+    background-position:
+      58% center;
+  }
+}
+
+@media (max-width: 600px) {
+  .gt-hotels-hero-photo {
+    min-height: 320px;
+
+    padding:
+      48px
+      20px;
+
+    background-position:
+      58% center;
+  }
+
+  .gt-hotels-hero-overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(7, 20, 44, 0.9),
+        rgba(7, 20, 44, 0.55)
+      );
+  }
+
+  .gt-flights-hero-photo {
+    min-height: 330px;
+
+    background-position:
+      65% center;
+  }
+
+  .gt-flights-hero-photo-overlay {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(4, 18, 44, 0.92),
+        rgba(4, 18, 44, 0.58)
+      );
+  }
+}

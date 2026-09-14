@@ -15,6 +15,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 import RestaurantsPage from '../pages/RestaurantsPage';
 import RestaurantDetailPage from '../pages/RestaurantDetailPage';
 import CarDetailPage from '../pages/CarDetailPage';
+import WishlistPage from '../pages/WishlistPage';
 
 function AppRouter() {
   return (
@@ -26,9 +27,9 @@ function AppRouter() {
         />
 
         <Route
-  path="/restaurants"
-  element={<RestaurantsPage />}
-/>
+          path="/restaurants"
+          element={<RestaurantsPage />}
+        />
 
         <Route
           path="/restaurants/:id"
@@ -56,13 +57,18 @@ function AppRouter() {
         />
 
         <Route
+          path="/cars/:id"
+          element={<CarDetailPage />}
+        />
+
+        <Route
           path="/dashboard"
           element={<DashboardPage />}
         />
 
         <Route
-          path="/cars/:id"
-          element={<CarDetailPage />}
+          path="/wishlist"
+          element={<WishlistPage />}
         />
 
         <Route
