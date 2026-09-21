@@ -48,6 +48,12 @@ const navigation = [
     label: 'Dashboard',
     path: '/dashboard',
   },
+
+   {
+    label: 'Plan de Viaje',
+    path: '/travel-plan',
+  },
+  
 ];
 
 function MainLayout() {
