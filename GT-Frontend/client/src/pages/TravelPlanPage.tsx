@@ -132,7 +132,6 @@ function formatAirlineName(
  */
 function formatPrice(
   price: number,
-  _currency: string,
 ) {
   return `$${Math.round(price)}`;
 }
@@ -1580,7 +1579,6 @@ function TravelPlanPage() {
                                   precio:
                                     formatPrice(
                                       flight.price,
-                                      flight.currency,
                                     ),
 
                                 },
@@ -1760,7 +1758,6 @@ function TravelPlanPage() {
 
                               {formatPrice(
                                 flight.price,
-                                flight.currency,
                               )}
 
                             </strong>

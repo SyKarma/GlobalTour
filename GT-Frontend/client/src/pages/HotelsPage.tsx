@@ -4,33 +4,33 @@ import {
 } from 'react';
 
 import {
+  Link,
   useSearchParams,
 } from 'react-router-dom';
 
 import HotelSearchForm from '../components/hotels/HotelSearchForm';
+import WishlistHeart from '../components/wishlist/WishlistHeart';
 
 import {
   searchHotels,
 } from '../services/hotels.service';
 
 import {
-  useAuth,
-} from '../hooks/useAuth';
-
-import {
   useCurrency,
 } from '../hooks/useCurrency';
 
-import {
-  useWishlist,
-} from '../hooks/useWishlist';
-
-import hotelHeroImage from '../assets/visuals/hotel-hero.png';
+import hotelHeroImage from '../assets/visuals/hotel.jpg';
 
 import type {
   HotelSearchMeta,
   HotelSummary,
 } from '../types/hotel.types';
+
+/*
+ * =========================================
+ * HELPERS
+ * =========================================
+ */
 
 function renderStars(
   stars: number | null,
@@ -55,6 +55,12 @@ function renderStars(
   );
 }
 
+/*
+ * =========================================
+ * PAGE
+ * =========================================
+ */
+
 function HotelsPage() {
   const [
     searchParams,
@@ -67,33 +73,21 @@ function HotelsPage() {
   } =
     useCurrency();
 
-  const {
-    isAuthenticated,
-    login,
-  } =
-    useAuth();
-
-  const {
-    toggle,
-    isSaved,
-  } =
-    useWishlist();
-
   const [
     hotels,
     setHotels,
   ] =
-    useState<HotelSummary[]>(
-      [],
-    );
+    useState<
+      HotelSummary[]
+    >([]);
 
   const [
     meta,
     setMeta,
   ] =
-    useState<HotelSearchMeta | null>(
-      null,
-    );
+    useState<
+      HotelSearchMeta | null
+    >(null);
 
   const [
     isLoading,
@@ -107,9 +101,15 @@ function HotelsPage() {
     error,
     setError,
   ] =
-    useState<string | null>(
-      null,
-    );
+    useState<
+      string | null
+    >(null);
+
+  /*
+   * =========================================
+   * URL PARAMS
+   * =========================================
+   */
 
   const cityName =
     searchParams.get(
@@ -145,6 +145,12 @@ function HotelsPage() {
       countryCode,
     );
 
+  /*
+   * =========================================
+   * CURRENCY SYNC
+   * =========================================
+   */
+
   useEffect(() => {
     if (!hasSearch) {
       return;
@@ -175,7 +181,8 @@ function HotelsPage() {
     setSearchParams(
       updatedParams,
       {
-        replace: true,
+        replace:
+          true,
       },
     );
   }, [
@@ -184,6 +191,12 @@ function HotelsPage() {
     selectedCurrency,
     setSearchParams,
   ]);
+
+  /*
+   * =========================================
+   * LOAD HOTELS
+   * =========================================
+   */
 
   useEffect(() => {
     let isCancelled =
@@ -224,11 +237,14 @@ function HotelsPage() {
           );
 
           const response =
-            await searchHotels({
-              cityName,
-              countryCode,
-              limit: 20,
-            });
+            await searchHotels(
+              {
+                cityName,
+                countryCode,
+                limit:
+                  20,
+              },
+            );
 
           if (
             isCancelled
@@ -290,8 +306,15 @@ function HotelsPage() {
     countryCode,
   ]);
 
+  /*
+   * =========================================
+   * DETAIL URL
+   * =========================================
+   */
+
   const buildHotelDetailUrl = (
-    hotelId: string,
+    hotelId:
+      string,
   ) => {
     const params =
       new URLSearchParams();
@@ -323,70 +346,11 @@ function HotelsPage() {
     return `/hotels/${hotelId}?${params.toString()}`;
   };
 
-  const handleWishlist = (
-    hotel: HotelSummary,
-  ) => {
-    if (!isAuthenticated) {
-      login();
-
-      return;
-    }
-
-    toggle({
-      key:
-        `hotel:${hotel.id}`,
-
-      type:
-        'hotel',
-
-      title:
-        hotel.name,
-
-      subtitle:
-        [
-          hotel.city,
-          hotel.country,
-        ]
-          .filter(
-            Boolean,
-          )
-          .join(
-            ', ',
-          ),
-
-      imageUrl:
-        hotel.mainPhoto ||
-        hotel.thumbnail ||
-        null,
-
-      href:
-        buildHotelDetailUrl(
-          hotel.id,
-        ),
-
-      metadata: {
-        ciudad:
-          hotel.city ??
-          null,
-
-        país:
-          hotel.country ??
-          null,
-
-        estrellas:
-          hotel.starRating ??
-          null,
-
-        valoración:
-          hotel.rating ??
-          null,
-
-        cadena:
-          hotel.chain ??
-          null,
-      },
-    });
-  };
+  /*
+   * =========================================
+   * RENDER
+   * =========================================
+   */
 
   return (
     <main className="hotels-page">
@@ -396,18 +360,20 @@ function HotelsPage() {
       ====================================== */}
 
       <section
-        className="hotels-header hotels-header-photo"
+        className="gt-hotel-photo-hero"
         style={{
           backgroundImage:
             `url(${hotelHeroImage})`,
         }}
       >
-        <div className="hotels-header-overlay" />
+        <div className="gt-hotel-photo-overlay" />
 
-        <div className="hotels-header-content">
-          <p className="hotels-eyebrow">
+        <div className="gt-hotel-photo-glow" />
+
+        <div className="gt-hotel-photo-content">
+          <span className="gt-hotel-photo-eyebrow">
             GLOBALTOUR · HOSPEDAJE
-          </p>
+          </span>
 
           <h1>
             {cityName
@@ -417,8 +383,23 @@ function HotelsPage() {
 
           <p>
             Busca y compara alojamientos
+            para encontrar el lugar ideal
             para tu próximo viaje.
           </p>
+
+          <div className="gt-hotel-hero-badges">
+            <span>
+              Hospedajes
+            </span>
+
+            <span>
+              Destinos
+            </span>
+
+            <span>
+              Explora opciones
+            </span>
+          </div>
         </div>
       </section>
 
@@ -431,20 +412,24 @@ function HotelsPage() {
       </section>
 
       {/* =====================================
-          START STATE
+          START
       ====================================== */}
 
       {!hasSearch && (
         <section className="hotels-empty-start">
+          <span className="gt-hotel-empty-eyebrow">
+            PLANEA TU ESTADÍA
+          </span>
+
           <h2>
             ¿Dónde quieres hospedarte?
           </h2>
 
           <p>
-            Selecciona un destino, las
-            fechas de tu estadía y la
-            cantidad de huéspedes para
-            comenzar.
+            Selecciona un destino,
+            las fechas de tu estadía y
+            la cantidad de huéspedes
+            para comenzar.
           </p>
         </section>
       )}
@@ -456,6 +441,8 @@ function HotelsPage() {
       {hasSearch &&
         isLoading && (
           <section className="hotels-status">
+            <div className="gt-hotel-loader" />
+
             <h2>
               Buscando alojamientos...
             </h2>
@@ -463,6 +450,7 @@ function HotelsPage() {
             <p>
               Estamos consultando opciones
               disponibles en{' '}
+
               {cityName}.
             </p>
           </section>
@@ -519,10 +507,15 @@ function HotelsPage() {
           <>
             <section className="hotels-results-heading">
               <div>
+                <span className="gt-hotel-results-eyebrow">
+                  HOSPEDAJES ENCONTRADOS
+                </span>
+
                 <h2>
                   {
                     hotels.length
                   }{' '}
+
                   {hotels.length ===
                   1
                     ? 'alojamiento encontrado'
@@ -533,15 +526,22 @@ function HotelsPage() {
                   checkout && (
                     <p>
                       {checkin}
+
                       {' — '}
+
                       {checkout}
+
                       {' · '}
+
                       {adults}{' '}
+
                       {adults ===
                       '1'
                         ? 'adulto'
                         : 'adultos'}
+
                       {' · '}
+
                       {currency}
                     </p>
                   )}
@@ -554,17 +554,18 @@ function HotelsPage() {
               )}
             </section>
 
+            {/* =================================
+                HOTEL GRID
+            ================================== */}
+
             <section className="hotel-results-grid">
               {hotels.map(
                 (
                   hotel,
                 ) => {
-                  const wishlistKey =
-                    `hotel:${hotel.id}`;
-
-                  const saved =
-                    isSaved(
-                      wishlistKey,
+                  const detailUrl =
+                    buildHotelDetailUrl(
+                      hotel.id,
                     );
 
                   return (
@@ -574,8 +575,12 @@ function HotelsPage() {
                         hotel.id
                       }
                     >
-                      <div className="hotel-card-image">
 
+                      {/* =========================
+                          IMAGE
+                      ========================== */}
+
+                      <div className="hotel-card-image">
                         {hotel.mainPhoto ||
                         hotel.thumbnail ? (
                           <img
@@ -591,39 +596,80 @@ function HotelsPage() {
                           />
                         ) : (
                           <div className="hotel-image-placeholder">
-                            Sin imagen
+                            <span>
+                              Sin imagen disponible
+                            </span>
                           </div>
                         )}
 
-                        <button
-                          type="button"
-                          className={
-                            saved
-                              ? 'hotel-wishlist-button hotel-wishlist-button-active'
-                              : 'hotel-wishlist-button'
-                          }
-                          onClick={() =>
-                            handleWishlist(
-                              hotel,
-                            )
-                          }
-                          aria-label={
-                            saved
-                              ? `Eliminar ${hotel.name} de Wishlist`
-                              : `Guardar ${hotel.name} en Wishlist`
-                          }
-                          title={
-                            saved
-                              ? 'Eliminar de Wishlist'
-                              : 'Guardar en Wishlist'
-                          }
-                        >
-                          <HeartIcon />
-                        </button>
+                        {/* =========================
+                            WISHLIST
+                        ========================== */}
+
+                        <WishlistHeart
+                          item={{
+                            key:
+                              `hotel:${hotel.id}`,
+
+                            type:
+                              'hotel',
+
+                            title:
+                              hotel.name,
+
+                            subtitle:
+                              [
+                                hotel.city,
+                                hotel.country,
+                              ]
+                                .filter(
+                                  Boolean,
+                                )
+                                .join(
+                                  ', ',
+                                ),
+
+                            imageUrl:
+                              hotel.mainPhoto ||
+                              hotel.thumbnail ||
+                              null,
+
+                            href:
+                              detailUrl,
+
+                            metadata: {
+                              ciudad:
+                                hotel.city ??
+                                null,
+
+                              país:
+                                hotel.country ??
+                                null,
+
+                              estrellas:
+                                hotel.starRating ??
+                                null,
+
+                              valoración:
+                                hotel.rating ??
+                                null,
+
+                              cadena:
+                                hotel.chain ??
+                                null,
+                            },
+                          }}
+                        />
                       </div>
+
+                      {/* =========================
+                          CONTENT
+                      ========================== */}
 
                       <div className="hotel-card-content">
                         <div className="hotel-card-main">
+
+                          {/* STARS */}
 
                           {hotel.starRating && (
                             <span className="hotel-stars">
@@ -633,11 +679,15 @@ function HotelsPage() {
                             </span>
                           )}
 
+                          {/* NAME */}
+
                           <h3>
                             {
                               hotel.name
                             }
                           </h3>
+
+                          {/* LOCATION */}
 
                           <p className="hotel-location">
                             {[
@@ -652,6 +702,8 @@ function HotelsPage() {
                               )}
                           </p>
 
+                          {/* ADDRESS */}
+
                           {hotel.address && (
                             <p className="hotel-address">
                               {
@@ -659,6 +711,8 @@ function HotelsPage() {
                               }
                             </p>
                           )}
+
+                          {/* META */}
 
                           <div className="hotel-card-meta">
 
@@ -677,6 +731,7 @@ function HotelsPage() {
                                 {
                                   hotel.reviewCount
                                 }{' '}
+
                                 {hotel.reviewCount ===
                                 1
                                   ? 'reseña'
@@ -691,8 +746,13 @@ function HotelsPage() {
                                 }
                               </span>
                             )}
+
                           </div>
                         </div>
+
+                        {/* =========================
+                            ACTIONS
+                        ========================== */}
 
                         <div className="hotel-card-actions">
 
@@ -711,23 +771,27 @@ function HotelsPage() {
                             </a>
                           )}
 
-                          <a
-                            href={
-                              buildHotelDetailUrl(
-                                hotel.id,
-                              )
+                          <Link
+                            to={
+                              detailUrl
                             }
                             className="hotel-detail-button"
                           >
-                            Ver disponibilidad
-                          </a>
+                            Ver detalles
+                          </Link>
+
                         </div>
                       </div>
+
                     </article>
                   );
                 },
               )}
             </section>
+
+            {/* =================================
+                DISCLAIMER
+            ================================== */}
 
             {meta?.disclaimer && (
               <p className="hotel-disclaimer">
@@ -736,20 +800,11 @@ function HotelsPage() {
                 }
               </p>
             )}
+
           </>
         )}
-    </main>
-  );
-}
 
-function HeartIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 1 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" />
-    </svg>
+    </main>
   );
 }
 

@@ -1,6 +1,3 @@
-
-import flightHeroImage from '../assets/visuals/flight-hero.png';
-
 import {
   useEffect,
   useMemo,
@@ -24,6 +21,8 @@ import {
   useCurrency,
 } from '../hooks/useCurrency';
 
+import flightHeroImage from '../assets/visuals/flight-hero.png';
+
 import type {
   FlightOffer,
   FlightResponseMeta,
@@ -39,6 +38,12 @@ type SortOption =
   | 'price-asc'
   | 'price-desc'
   | 'duration-asc';
+
+/*
+ * =========================================
+ * FORMATTERS
+ * =========================================
+ */
 
 function formatTime(
   date:
@@ -358,6 +363,12 @@ function getFallbackMessage(
   }
 }
 
+/*
+ * =========================================
+ * PAGE
+ * =========================================
+ */
+
 function FlightsPage() {
   const [
     searchParams,
@@ -455,6 +466,12 @@ function FlightsPage() {
       destination,
     );
 
+  /*
+   * =========================================
+   * CURRENCY SYNC
+   * =========================================
+   */
+
   useEffect(() => {
     const urlCurrency =
       searchParams.get(
@@ -490,6 +507,12 @@ function FlightsPage() {
     selectedCurrency,
     setSearchParams,
   ]);
+
+  /*
+   * =========================================
+   * LOAD FLIGHTS
+   * =========================================
+   */
 
   useEffect(() => {
     let isCancelled =
@@ -625,6 +648,12 @@ function FlightsPage() {
     currency,
   ]);
 
+  /*
+   * =========================================
+   * AIRLINES
+   * =========================================
+   */
+
   const airlines =
     useMemo(() => {
       const airlineMap =
@@ -667,6 +696,12 @@ function FlightsPage() {
     }, [
       flights,
     ]);
+
+  /*
+   * =========================================
+   * FILTERING
+   * =========================================
+   */
 
   const filteredFlights =
     useMemo(() => {
@@ -773,6 +808,12 @@ function FlightsPage() {
       sortOption,
     ]);
 
+  /*
+   * =========================================
+   * INSIGHTS
+   * =========================================
+   */
+
   const lowestPrice =
     useMemo(() => {
       if (
@@ -876,86 +917,100 @@ function FlightsPage() {
   return (
     <main className="gt-flights-page">
 
-      <section
-  className="gt-flights-hero gt-flights-hero-photo"
-  style={{
-    backgroundImage:
-      `url(${flightHeroImage})`,
-  }}
->
-  <div className="gt-flights-hero-photo-overlay" />
+      {/* =====================================
+          HERO
+      ====================================== */}
 
-  <div className="gt-flights-hero-inner">
-    <div className="gt-flights-hero-copy">
-      <span className="gt-flights-eyebrow">
-        GLOBALTOUR · VUELOS
-      </span>
+      <section className="gt-flight-split-hero">
 
-      <h1>
-        {hasRoute
-          ? `${origin} → ${destination}`
-          : 'Encuentra tu próximo vuelo'}
-      </h1>
-
-      <p>
-        {hasRoute
-          ? 'Compara opciones, duración, escalas y precios para elegir el vuelo que mejor se adapte a tu viaje.'
-          : 'Busca rutas, compara alternativas y encuentra la mejor forma de llegar a tu próximo destino.'}
-      </p>
-
-      {hasRoute && (
-        <div className="gt-flight-trip-meta">
-
-          {departureAt && (
-            <span>
-              <CalendarIcon />
-
-              {formatDate(
-                departureAt,
-              )}
-            </span>
-          )}
-
-          {returnAt && (
-            <span>
-              <ReturnIcon />
-
-              Regreso{' '}
-
-              {formatDate(
-                returnAt,
-              )}
-            </span>
-          )}
-
-          <span>
-            <CurrencyIcon />
-
-            {currency}
+        <div className="gt-flight-split-copy">
+          <span className="gt-flights-eyebrow">
+            GLOBALTOUR · VUELOS
           </span>
+
+          <h1>
+            {hasRoute
+              ? `${origin} → ${destination}`
+              : 'Encuentra tu próximo vuelo'}
+          </h1>
+
+          <p>
+            {hasRoute
+              ? 'Compara opciones, duración, escalas y precios para elegir el vuelo que mejor se adapte a tu viaje.'
+              : 'Busca rutas, compara alternativas y encuentra la mejor forma de llegar a tu próximo destino.'}
+          </p>
+
+          {hasRoute && (
+            <div className="gt-flight-trip-meta">
+
+              {departureAt && (
+                <span>
+                  <CalendarIcon />
+
+                  {formatDate(
+                    departureAt,
+                  )}
+                </span>
+              )}
+
+              {returnAt && (
+                <span>
+                  <ReturnIcon />
+
+                  Regreso{' '}
+
+                  {formatDate(
+                    returnAt,
+                  )}
+                </span>
+              )}
+
+              <span>
+                <CurrencyIcon />
+
+                {currency}
+              </span>
+            </div>
+          )}
+
+          <div className="gt-flight-split-route">
+            <span>
+              {origin ||
+                'SJO'}
+            </span>
+
+            <div className="gt-flight-split-line">
+              <span />
+
+              <div>
+                <PlaneIcon />
+              </div>
+
+              <span />
+            </div>
+
+            <span>
+              {destination ||
+                'MAD'}
+            </span>
+          </div>
         </div>
-      )}
-    </div>
 
-    <div className="gt-flight-hero-art">
-      <div className="gt-flight-hero-route">
-        <span>
-          {origin ||
-            'SJO'}
-        </span>
+        <div className="gt-flight-split-image">
+          <img
+            src={
+              flightHeroImage
+            }
+            alt="Vista desde la ventana de un avión"
+          />
 
-        <div>
-          <PlaneIcon />
+          <div className="gt-flight-image-overlay" />
         </div>
+      </section>
 
-        <span>
-          {destination ||
-            'MAD'}
-        </span>
-      </div>
-    </div>
-  </div>
-</section>
+      {/* =====================================
+          SEARCH EDITOR
+      ====================================== */}
 
       {origin &&
         destination && (
@@ -993,6 +1048,10 @@ function FlightsPage() {
         )}
 
       <div className="gt-flights-content">
+
+        {/* =====================================
+            NO SEARCH
+        ====================================== */}
 
         {!hasRoute && (
           <section className="gt-flight-start-state">
@@ -1058,6 +1117,10 @@ function FlightsPage() {
           </section>
         )}
 
+        {/* =====================================
+            FALLBACK
+        ====================================== */}
+
         {hasRoute &&
           !isLoading &&
           !error &&
@@ -1082,6 +1145,10 @@ function FlightsPage() {
               </div>
             </section>
           )}
+
+        {/* =====================================
+            LOADING
+        ====================================== */}
 
         {hasRoute &&
           isLoading && (
@@ -1121,6 +1188,10 @@ function FlightsPage() {
             </section>
           )}
 
+        {/* =====================================
+            ERROR
+        ====================================== */}
+
         {hasRoute &&
           !isLoading &&
           error && (
@@ -1145,6 +1216,10 @@ function FlightsPage() {
               </Link>
             </section>
           )}
+
+        {/* =====================================
+            EMPTY
+        ====================================== */}
 
         {hasRoute &&
           !isLoading &&
@@ -1172,6 +1247,10 @@ function FlightsPage() {
               </Link>
             </section>
           )}
+
+        {/* =====================================
+            RESULTS
+        ====================================== */}
 
         {hasRoute &&
           !isLoading &&
@@ -1267,6 +1346,10 @@ function FlightsPage() {
                 </div>
               </section>
 
+              {/* =================================
+                  QUICK SORT
+              ================================== */}
+
               <section className="gt-flight-toolbar">
                 <div className="gt-flight-quick-sort">
                   <button
@@ -1328,6 +1411,10 @@ function FlightsPage() {
                   resultados visibles
                 </span>
               </section>
+
+              {/* =================================
+                  RESULTS + FILTERS
+              ================================== */}
 
               <section className="gt-flight-results-layout">
                 <aside className="gt-flight-filter-panel">
@@ -1545,6 +1632,7 @@ function FlightsPage() {
                     </section>
                   ) : (
                     <div className="gt-flight-results-list">
+
                       {filteredFlights.map(
                         (
                           flight,
@@ -1565,14 +1653,20 @@ function FlightsPage() {
                           const flightWishlistKey =
                             [
                               'flight',
+
                               flight.airline ||
                                 'airline',
+
                               flight.flightNumber ||
                                 'flight',
+
                               flight.origin,
+
                               flight.destination,
+
                               flight.departureAt ||
                                 'departure',
+
                               flight.returnAt ||
                                 'one-way',
                             ].join(
@@ -1586,6 +1680,7 @@ function FlightsPage() {
                             >
                               <div className="gt-flight-card-top">
                                 <div className="gt-flight-badges">
+
                                   {isBestPrice && (
                                     <span className="gt-flight-badge gt-flight-badge-price">
                                       Mejor precio
@@ -1673,6 +1768,7 @@ function FlightsPage() {
                               </div>
 
                               <div className="gt-flight-card-main">
+
                                 <div className="gt-flight-airline">
                                   <div className="gt-airline-logo">
                                     {flight.airline
@@ -1703,6 +1799,7 @@ function FlightsPage() {
                                 </div>
 
                                 <div className="gt-flight-route">
+
                                   <div className="gt-flight-route-point">
                                     <span>
                                       {
@@ -1854,6 +1951,12 @@ function FlightsPage() {
     </main>
   );
 }
+
+/*
+ * =========================================
+ * ICONS
+ * =========================================
+ */
 
 function PlaneIcon() {
   return (
