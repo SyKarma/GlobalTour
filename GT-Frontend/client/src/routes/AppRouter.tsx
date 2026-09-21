@@ -16,11 +16,13 @@ import RestaurantsPage from '../pages/RestaurantsPage';
 import RestaurantDetailPage from '../pages/RestaurantDetailPage';
 import CarDetailPage from '../pages/CarDetailPage';
 import WishlistPage from '../pages/WishlistPage';
+import TravelPlanPage from '../pages/TravelPlanPage';
 
 function AppRouter() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
+
         <Route
           path="/"
           element={<HomePage />}
@@ -72,9 +74,15 @@ function AppRouter() {
         />
 
         <Route
+          path="/travel-plan"
+          element={<TravelPlanPage />}
+        />
+
+        <Route
           path="*"
           element={<NotFoundPage />}
         />
+
       </Route>
     </Routes>
   );
