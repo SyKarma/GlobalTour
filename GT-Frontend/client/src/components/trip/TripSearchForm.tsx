@@ -8,23 +8,23 @@ import {
   useNavigate,
 } from 'react-router-dom';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
+
+import {
+  getDestinationByIata,
+} from '../../services/destinations.service';
 
 import {
   useCurrency,
 } from '../../hooks/useCurrency';
 
-import {
-  searchDestinations,
-} from '../../services/destinations.service';
-
 import type {
   Destination,
 } from '../../types/destination.types';
-
-type TripType =
-  | 'round-trip'
-  | 'one-way';
 
 interface TripSearchFormProps {
   initialDestinationIata?:
@@ -33,22 +33,21 @@ interface TripSearchFormProps {
 }
 
 function TripSearchForm({
-  initialDestinationIata = null,
+  initialDestinationIata =
+    null,
 }: TripSearchFormProps) {
   const navigate =
     useNavigate();
 
   const {
-    selectedCurrency,
-  } = useCurrency();
+    t,
+  } =
+    useTranslation();
 
-  const [
-    tripType,
-    setTripType,
-  ] =
-    useState<TripType>(
-      'round-trip',
-    );
+  const {
+    selectedCurrency,
+  } =
+    useCurrency();
 
   const [
     origin,
@@ -67,14 +66,14 @@ function TripSearchForm({
     );
 
   const [
-    departureDate,
-    setDepartureDate,
+    departureAt,
+    setDepartureAt,
   ] =
     useState('');
 
   const [
-    returnDate,
-    setReturnDate,
+    returnAt,
+    setReturnAt,
   ] =
     useState('');
 
@@ -97,13 +96,9 @@ function TripSearchForm({
     const loadDestination =
       async () => {
         try {
-          const response =
-            await searchDestinations(
-              {
-                q:
-                  initialDestinationIata,
-                limit: 10,
-              },
+          const result =
+            await getDestinationByIata(
+              initialDestinationIata,
             );
 
           if (
@@ -112,34 +107,28 @@ function TripSearchForm({
             return;
           }
 
-          const exactDestination =
-            response.data.find(
-              (item) =>
-                item.cityIata
-                  .toUpperCase() ===
-                initialDestinationIata
-                  .toUpperCase(),
-            );
-
+          setDestination(
+            result,
+          );
+        } catch (
+          error
+        ) {
           if (
-            exactDestination
+            !cancelled
           ) {
-            setDestination(
-              exactDestination,
+            console.error(
+              'Error loading destination:',
+              error,
             );
           }
-        } catch (error) {
-          console.error(
-            'Error al cargar el destino recomendado:',
-            error,
-          );
         }
       };
 
     void loadDestination();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
   }, [
     initialDestinationIata,
@@ -147,63 +136,28 @@ function TripSearchForm({
 
   /*
    * =========================================
-   * TRIP TYPE
+   * DATES
    * =========================================
    */
 
-  const handleTripTypeChange = (
-    value: TripType,
-  ) => {
-    setTripType(value);
-
-    if (
-      value ===
-      'one-way'
-    ) {
-      setReturnDate('');
-    }
-  };
-
-  /*
-   * =========================================
-   * SWAP
-   * =========================================
-   */
-
-  const handleSwapLocations =
-    () => {
-      const previousOrigin =
-        origin;
-
-      setOrigin(
-        destination,
+  const handleDepartureChange =
+    (
+      value: string,
+    ) => {
+      setDepartureAt(
+        value,
       );
 
-      setDestination(
-        previousOrigin,
-      );
+      if (
+        returnAt &&
+        returnAt <
+          value
+      ) {
+        setReturnAt(
+          '',
+        );
+      }
     };
-
-  /*
-   * =========================================
-   * DATE
-   * =========================================
-   */
-
-  const handleDepartureDateChange = (
-    value: string,
-  ) => {
-    setDepartureDate(
-      value,
-    );
-
-    if (
-      returnDate &&
-      returnDate < value
-    ) {
-      setReturnDate('');
-    }
-  };
 
   /*
    * =========================================
@@ -220,15 +174,7 @@ function TripSearchForm({
     if (
       !origin ||
       !destination ||
-      !departureDate
-    ) {
-      return;
-    }
-
-    if (
-      tripType ===
-        'round-trip' &&
-      !returnDate
+      !departureAt
     ) {
       return;
     }
@@ -241,21 +187,18 @@ function TripSearchForm({
         destination:
           destination.cityIata,
 
-        departureAt:
-          departureDate,
+        departureAt,
 
         currency:
           selectedCurrency,
       });
 
     if (
-      tripType ===
-        'round-trip' &&
-      returnDate
+      returnAt
     ) {
       params.set(
         'returnAt',
-        returnDate,
+        returnAt,
       );
     }
 
@@ -267,12 +210,7 @@ function TripSearchForm({
   const isSearchDisabled =
     !origin ||
     !destination ||
-    !departureDate ||
-    (
-      tripType ===
-        'round-trip' &&
-      !returnDate
-    );
+    !departureAt;
 
   return (
     <form
@@ -281,189 +219,110 @@ function TripSearchForm({
         handleSubmit
       }
     >
-      <div className="search-options">
-        <select
-          value={
-            tripType
-          }
-          onChange={(
-            event,
-          ) =>
-            handleTripTypeChange(
-              event.target
-                .value as TripType,
-            )
-          }
-          aria-label="Tipo de viaje"
-        >
-          <option value="round-trip">
-            Ida y vuelta
-          </option>
+      <div className="trip-search-row">
 
-          <option value="one-way">
-            Solo ida
-          </option>
-        </select>
-
-        <select
-          defaultValue="economy"
-          aria-label="Clase"
-        >
-          <option value="economy">
-            Económica
-          </option>
-
-          <option value="premium">
-            Premium Economy
-          </option>
-
-          <option value="business">
-            Business
-          </option>
-
-          <option value="first">
-            Primera clase
-          </option>
-        </select>
-      </div>
-
-      <div className="main-search-row">
         <DestinationAutocomplete
-          label="Origen"
-          placeholder="¿Desde dónde viajas?"
+          label={t(
+            'forms.flights.origin',
+          )}
+          placeholder={t(
+            'forms.flights.originPlaceholder',
+          )}
           value={
             origin
           }
           onChange={
             setOrigin
           }
-          excludeIata={
-            destination
-              ?.cityIata
-          }
         />
 
-        <button
-          type="button"
-          className="swap-button"
-          aria-label="Intercambiar origen y destino"
-          onClick={
-            handleSwapLocations
-          }
-          disabled={
-            !origin &&
-            !destination
-          }
-        >
-          ⇄
-        </button>
-
         <DestinationAutocomplete
-          label="Destino"
-          placeholder="¿A dónde quieres ir?"
+          label={t(
+            'forms.flights.destination',
+          )}
+          placeholder={t(
+            'forms.flights.destinationPlaceholder',
+          )}
           value={
             destination
           }
           onChange={
             setDestination
           }
-          excludeIata={
-            origin
-              ?.cityIata
-          }
         />
 
         <label className="search-box search-date">
+
           <span>
-            Salida
+            {t(
+              'forms.flights.departure',
+            )}
           </span>
 
           <input
             type="date"
-            aria-label="Fecha de salida"
+            aria-label={t(
+              'forms.flights.departureAria',
+            )}
             value={
-              departureDate
+              departureAt
             }
             onChange={(
               event,
             ) =>
-              handleDepartureDateChange(
+              handleDepartureChange(
                 event.target
                   .value,
               )
             }
           />
+
         </label>
 
-        {tripType ===
-          'round-trip' && (
-          <label className="search-box search-date">
-            <span>
-              Regreso
-            </span>
+        <label className="search-box search-date">
 
-            <input
-              type="date"
-              aria-label="Fecha de regreso"
-              value={
-                returnDate
-              }
-              min={
-                departureDate ||
-                undefined
-              }
-              onChange={(
-                event,
-              ) =>
-                setReturnDate(
-                  event.target
-                    .value,
-                )
-              }
-            />
-          </label>
-        )}
-
-        <label className="search-box search-travelers">
           <span>
-            Viajeros
+            {t(
+              'forms.flights.return',
+            )}
           </span>
 
-          <select
-            defaultValue="1"
-            aria-label="Cantidad de viajeros"
-          >
-            <option value="1">
-              1 viajero
-            </option>
+          <input
+            type="date"
+            aria-label={t(
+              'forms.flights.returnAria',
+            )}
+            value={
+              returnAt
+            }
+            min={
+              departureAt ||
+              undefined
+            }
+            onChange={(
+              event,
+            ) =>
+              setReturnAt(
+                event.target
+                  .value,
+              )
+            }
+          />
 
-            <option value="2">
-              2 viajeros
-            </option>
-
-            <option value="3">
-              3 viajeros
-            </option>
-
-            <option value="4">
-              4 viajeros
-            </option>
-
-            <option value="5">
-              5 viajeros
-            </option>
-          </select>
         </label>
 
         <button
-          className="search-button"
           type="submit"
+          className="search-button"
           disabled={
             isSearchDisabled
           }
         >
-          Buscar
+          {t(
+            'forms.flights.search',
+          )}
         </button>
+
       </div>
     </form>
   );

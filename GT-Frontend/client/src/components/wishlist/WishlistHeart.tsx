@@ -3,6 +3,10 @@ import type {
 } from 'react';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
   useAuth,
 } from '../../hooks/useAuth';
 
@@ -15,8 +19,11 @@ import type {
 } from '../../types/wishlist.types';
 
 interface WishlistHeartProps {
-  item: CreateWishlistItemInput;
-  className?: string;
+  item:
+    CreateWishlistItemInput;
+
+  className?:
+    string;
 }
 
 function WishlistHeart({
@@ -24,14 +31,21 @@ function WishlistHeart({
   className = '',
 }: WishlistHeartProps) {
   const {
+    t,
+  } =
+    useTranslation();
+
+  const {
     isAuthenticated,
     login,
-  } = useAuth();
+  } =
+    useAuth();
 
   const {
     toggle,
     isSaved,
-  } = useWishlist();
+  } =
+    useWishlist();
 
   const saved =
     isSaved(
@@ -45,7 +59,9 @@ function WishlistHeart({
     event.preventDefault();
     event.stopPropagation();
 
-    if (!isAuthenticated) {
+    if (
+      !isAuthenticated
+    ) {
       login();
 
       return;
@@ -72,13 +88,29 @@ function WishlistHeart({
       }
       aria-label={
         saved
-          ? `Eliminar ${item.title} de Wishlist`
-          : `Guardar ${item.title} en Wishlist`
+          ? t(
+              'wishlist.heart.removeAria',
+              {
+                title:
+                  item.title,
+              },
+            )
+          : t(
+              'wishlist.heart.saveAria',
+              {
+                title:
+                  item.title,
+              },
+            )
       }
       title={
         saved
-          ? 'Eliminar de Wishlist'
-          : 'Guardar en Wishlist'
+          ? t(
+              'wishlist.heart.remove',
+            )
+          : t(
+              'wishlist.heart.save',
+            )
       }
     >
       <HeartIcon
@@ -93,7 +125,8 @@ function WishlistHeart({
 function HeartIcon({
   filled,
 }: {
-  filled: boolean;
+  filled:
+    boolean;
 }) {
   return (
     <svg

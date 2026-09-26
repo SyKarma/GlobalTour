@@ -2,210 +2,550 @@ import {
   useEffect,
   useRef,
   useState,
-  type FocusEvent,
 } from 'react';
-import { searchDestinations } from '../../services/destinations.service';
-import type { Destination } from '../../types/destination.types';
+
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
+  searchDestinations,
+} from '../../services/destinations.service';
+
+import type {
+  Destination,
+} from '../../types/destination.types';
 
 interface DestinationAutocompleteProps {
   label: string;
-  placeholder: string;
-  value: Destination | null;
-  onChange: (destination: Destination | null) => void;
+
+  placeholder?: string;
+
+  value:
+    | Destination
+    | null;
+
+  onChange: (
+    destination:
+      | Destination
+      | null,
+  ) => void;
+
+  /*
+   * Permite excluir un destino.
+   *
+   * Ejemplo:
+   * Si SJO está seleccionado como origen,
+   * no debe aparecer como opción de destino.
+   */
   excludeIata?: string;
 }
 
-const DEBOUNCE_DELAY = 300;
-const RESULT_LIMIT = 6;
-
 function DestinationAutocomplete({
   label,
-  placeholder,
+  placeholder = '',
   value,
   onChange,
   excludeIata,
 }: DestinationAutocompleteProps) {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Destination[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    t,
+  } = useTranslation();
 
-  const debounceRef = useRef<number | null>(null);
-  const requestIdRef = useRef(0);
+  const [
+    query,
+    setQuery,
+  ] = useState('');
 
-  const selectedText = value
-    ? `${value.cityName}, ${value.countryName}`
-    : '';
+  const [
+    results,
+    setResults,
+  ] = useState<
+    Destination[]
+  >([]);
+
+  const [
+    isLoading,
+    setIsLoading,
+  ] = useState(false);
+
+  const [
+    isOpen,
+    setIsOpen,
+  ] = useState(false);
+
+  const [
+    error,
+    setError,
+  ] = useState(false);
+
+  const blurTimer =
+    useRef<
+      ReturnType<
+        typeof setTimeout
+      > | null
+    >(null);
+
+  /*
+   * =========================================
+   * NORMALIZED EXCLUDED IATA
+   * =========================================
+   */
+
+  const normalizedExcludeIata =
+    excludeIata
+      ?.trim()
+      .toUpperCase();
+
+  /*
+   * =========================================
+   * DISPLAY VALUE
+   * =========================================
+   *
+   * No necesitamos sincronizar value con
+   * query mediante useEffect.
+   *
+   * Si existe un destino seleccionado,
+   * mostramos directamente la información
+   * proveniente de la prop value.
+   */
 
   const inputValue =
-    value && !isEditing ? selectedText : query;
+    value
+      ? `${value.cityName} (${value.cityIata})`
+      : query;
 
-  const scheduleSearch = (searchTerm: string) => {
-    if (debounceRef.current !== null) {
-      window.clearTimeout(debounceRef.current);
-    }
-
-    setIsLoading(true);
-
-    const requestId = ++requestIdRef.current;
-
-    debounceRef.current = window.setTimeout(async () => {
-      try {
-        const response = await searchDestinations({
-          q: searchTerm.trim() || undefined,
-          limit: RESULT_LIMIT,
-        });
-
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        const filteredResults = response.data.filter(
-          (destination) =>
-            destination.cityIata !== excludeIata,
-        );
-
-        setResults(filteredResults);
-      } catch (error) {
-        if (requestId !== requestIdRef.current) {
-          return;
-        }
-
-        console.error(
-          'Error al buscar destinos:',
-          error,
-        );
-
-        setResults([]);
-      } finally {
-        if (requestId === requestIdRef.current) {
-          setIsLoading(false);
-        }
-      }
-    }, DEBOUNCE_DELAY);
-  };
-
-  const handleFocus = (
-    event: FocusEvent<HTMLInputElement>,
-  ) => {
-    setIsOpen(true);
-
-    // Muestra destinos destacados al abrir.
-    scheduleSearch('');
-
-    // Si ya había un destino seleccionado,
-    // escribir reemplazará fácilmente el texto.
-    event.currentTarget.select();
-  };
-
-  const handleInputChange = (text: string) => {
-    setQuery(text);
-    setIsEditing(true);
-    setIsOpen(true);
-
-    if (value) {
-      onChange(null);
-    }
-
-    scheduleSearch(text);
-  };
-
-  const handleSelect = (destination: Destination) => {
-    if (debounceRef.current !== null) {
-      window.clearTimeout(debounceRef.current);
-    }
-
-    requestIdRef.current += 1;
-
-    onChange(destination);
-    setQuery('');
-    setResults([]);
-    setIsEditing(false);
-    setIsLoading(false);
-    setIsOpen(false);
-  };
-
-  const handleBlur = () => {
-    window.setTimeout(() => {
-      setIsOpen(false);
-      setIsEditing(false);
-    }, 150);
-  };
+  /*
+   * =========================================
+   * SEARCH DESTINATIONS
+   * =========================================
+   */
 
   useEffect(() => {
+    const cleanQuery =
+      query.trim();
+
+    /*
+     * Si ya existe un destino seleccionado,
+     * no necesitamos realizar una búsqueda.
+     */
+    if (value) {
+      return;
+    }
+
+    /*
+     * Para menos de dos caracteres no
+     * realizamos solicitudes.
+     *
+     * La limpieza visual se realiza desde
+     * handleInputChange para evitar setState
+     * síncrono dentro del efecto.
+     */
+    if (
+      cleanQuery.length <
+      2
+    ) {
+      return;
+    }
+
+    let cancelled =
+      false;
+
+    const timeout =
+      window.setTimeout(
+        async () => {
+          try {
+            setIsLoading(
+              true,
+            );
+
+            setError(
+              false,
+            );
+
+            const response =
+              await searchDestinations(
+                {
+                  q:
+                    cleanQuery,
+
+                  limit:
+                    10,
+                },
+              );
+
+            if (
+              cancelled
+            ) {
+              return;
+            }
+
+            /*
+             * Excluimos el IATA que ya está
+             * utilizado en el otro campo.
+             *
+             * Ejemplo:
+             * Origen = SJO
+             * Destino no mostrará SJO.
+             */
+            const filteredResults =
+              response.data.filter(
+                (
+                  destination,
+                ) =>
+                  !normalizedExcludeIata ||
+                  destination.cityIata
+                    .trim()
+                    .toUpperCase() !==
+                    normalizedExcludeIata,
+              );
+
+            setResults(
+              filteredResults,
+            );
+
+            setIsOpen(
+              true,
+            );
+          } catch (
+            requestError
+          ) {
+            if (
+              cancelled
+            ) {
+              return;
+            }
+
+            console.error(
+              'Error searching destinations:',
+              requestError,
+            );
+
+            setResults(
+              [],
+            );
+
+            setError(
+              true,
+            );
+
+            setIsOpen(
+              true,
+            );
+          } finally {
+            if (
+              !cancelled
+            ) {
+              setIsLoading(
+                false,
+              );
+            }
+          }
+        },
+        250,
+      );
+
     return () => {
-      if (debounceRef.current !== null) {
-        window.clearTimeout(debounceRef.current);
+      cancelled =
+        true;
+
+      window.clearTimeout(
+        timeout,
+      );
+    };
+  }, [
+    query,
+    value,
+    normalizedExcludeIata,
+  ]);
+
+  /*
+   * =========================================
+   * INPUT CHANGE
+   * =========================================
+   */
+
+  const handleInputChange = (
+    newValue: string,
+  ) => {
+    /*
+     * Si había un destino seleccionado
+     * y el usuario comienza a escribir,
+     * quitamos esa selección.
+     */
+    if (value) {
+      onChange(
+        null,
+      );
+    }
+
+    setQuery(
+      newValue,
+    );
+
+    setError(
+      false,
+    );
+
+    const cleanValue =
+      newValue.trim();
+
+    /*
+     * No mostramos resultados para
+     * búsquedas demasiado cortas.
+     */
+    if (
+      cleanValue.length <
+      2
+    ) {
+      setResults(
+        [],
+      );
+
+      setIsLoading(
+        false,
+      );
+
+      setIsOpen(
+        false,
+      );
+
+      return;
+    }
+
+    setIsOpen(
+      true,
+    );
+  };
+
+  /*
+   * =========================================
+   * SELECT DESTINATION
+   * =========================================
+   */
+
+  const handleSelect = (
+    destination:
+      Destination,
+  ) => {
+    /*
+     * Protección adicional por si una opción
+     * excluida llegara a entrar en la lista.
+     */
+    if (
+      normalizedExcludeIata &&
+      destination.cityIata
+        .trim()
+        .toUpperCase() ===
+        normalizedExcludeIata
+    ) {
+      return;
+    }
+
+    onChange(
+      destination,
+    );
+
+    /*
+     * query puede limpiarse porque el texto
+     * visible se deriva directamente de value.
+     */
+    setQuery(
+      '',
+    );
+
+    setResults(
+      [],
+    );
+
+    setError(
+      false,
+    );
+
+    setIsLoading(
+      false,
+    );
+
+    setIsOpen(
+      false,
+    );
+  };
+
+  /*
+   * =========================================
+   * FOCUS / BLUR
+   * =========================================
+   */
+
+  const handleBlur =
+    () => {
+      blurTimer.current =
+        setTimeout(
+          () => {
+            setIsOpen(
+              false,
+            );
+          },
+          150,
+        );
+    };
+
+  const handleFocus =
+    () => {
+      if (
+        blurTimer.current
+      ) {
+        clearTimeout(
+          blurTimer.current,
+        );
+      }
+
+      if (
+        results.length >
+          0 ||
+        isLoading ||
+        error
+      ) {
+        setIsOpen(
+          true,
+        );
       }
     };
-  }, []);
+
+  /*
+   * =========================================
+   * RENDER
+   * =========================================
+   */
 
   return (
     <div className="destination-autocomplete">
-      <label className="search-box search-location">
-        <span>{label}</span>
 
-        <div className="search-value">
-          {value && !isEditing && (
-            <strong>{value.cityIata}</strong>
-          )}
+      <label className="search-box destination-search-box">
 
-          <input
-            type="text"
-            value={inputValue}
-            placeholder={placeholder}
-            autoComplete="off"
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChange={(event) =>
-              handleInputChange(event.target.value)
-            }
-          />
-        </div>
+        <span>
+          {label}
+        </span>
+
+        <input
+          type="text"
+          value={
+            inputValue
+          }
+          placeholder={
+            placeholder
+          }
+          autoComplete="off"
+          onChange={(
+            event,
+          ) =>
+            handleInputChange(
+              event.target
+                .value,
+            )
+          }
+          onFocus={
+            handleFocus
+          }
+          onBlur={
+            handleBlur
+          }
+        />
+
       </label>
 
       {isOpen && (
-        <div className="destination-dropdown">
-          {isLoading ? (
-            <div className="destination-empty">
-              Buscando destinos...
-            </div>
-          ) : results.length > 0 ? (
-            results.map((destination) => (
-              <button
-                key={destination.id}
-                type="button"
-                className="destination-option"
-                onMouseDown={(event) =>
-                  event.preventDefault()
-                }
-                onClick={() =>
-                  handleSelect(destination)
-                }
-              >
-                <span className="destination-option-iata">
-                  {destination.cityIata}
-                </span>
+        <div className="destination-autocomplete-dropdown">
 
-                <span className="destination-option-info">
-                  <strong>
-                    {destination.cityName}
-                  </strong>
-
-                  <small>
-                    {destination.countryName}
-                  </small>
-                </span>
-              </button>
-            ))
-          ) : (
-            <div className="destination-empty">
-              No se encontraron destinos.
+          {isLoading && (
+            <div className="destination-autocomplete-status">
+              {t(
+                'forms.autocomplete.searching',
+              )}
             </div>
           )}
+
+          {!isLoading &&
+            error && (
+              <div className="destination-autocomplete-status destination-autocomplete-error">
+                {t(
+                  'forms.autocomplete.error',
+                )}
+              </div>
+            )}
+
+          {!isLoading &&
+            !error &&
+            query
+              .trim()
+              .length >=
+              2 &&
+            results.length ===
+              0 && (
+              <div className="destination-autocomplete-status">
+                {t(
+                  'forms.autocomplete.empty',
+                )}
+              </div>
+            )}
+
+          {!isLoading &&
+            !error &&
+            results.map(
+              (
+                destination,
+              ) => (
+                <button
+                  type="button"
+                  className="destination-autocomplete-option"
+                  key={
+                    destination.id ??
+                    destination.cityIata
+                  }
+                  onMouseDown={(
+                    event,
+                  ) => {
+                    /*
+                     * Evitamos que blur cierre la lista
+                     * antes de registrar el clic.
+                     */
+                    event.preventDefault();
+
+                    handleSelect(
+                      destination,
+                    );
+                  }}
+                >
+
+                  <span className="destination-autocomplete-city">
+
+                    <strong>
+                      {
+                        destination.cityName
+                      }
+                    </strong>
+
+                    <small>
+                      {
+                        destination.countryName
+                      }
+                    </small>
+
+                  </span>
+
+                  <span className="destination-autocomplete-iata">
+                    {
+                      destination.cityIata
+                    }
+                  </span>
+
+                </button>
+              ),
+            )}
+
         </div>
       )}
+
     </div>
   );
 }

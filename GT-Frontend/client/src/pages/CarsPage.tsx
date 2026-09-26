@@ -10,6 +10,12 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
+
 import CarSearchForm from '../components/cars/CarSearchForm';
 
 import type {
@@ -43,7 +49,9 @@ type CarSortOption =
 
 function isCarType(
   value: string,
-): value is 'car_rental' | 'car_sharing' {
+): value is
+  | 'car_rental'
+  | 'car_sharing' {
   return (
     value ===
       'car_rental' ||
@@ -59,7 +67,9 @@ function formatCarType(
     | undefined,
 ) {
   if (!value) {
-    return 'Movilidad';
+    return i18n.t(
+      'cars.common.types.mobility',
+    );
   }
 
   const normalized =
@@ -75,22 +85,25 @@ function formatCarType(
     normalized ===
     'car rental'
   ) {
-    return 'Rent a Car';
+    return i18n.t(
+      'cars.common.types.carRental',
+    );
   }
 
   if (
     normalized ===
     'car sharing'
   ) {
-    return 'Car sharing';
+    return i18n.t(
+      'cars.common.types.carSharing',
+    );
   }
 
   return value;
 }
 
 function formatDistance(
-  meters:
-    number,
+  meters: number,
 ) {
   if (
     meters >= 1000
@@ -104,8 +117,7 @@ function formatDistance(
 }
 
 function normalize(
-  value:
-    string,
+  value: string,
 ) {
   return value
     .trim()
@@ -164,6 +176,11 @@ function informationScore(
 }
 
 function CarsPage() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const navigate =
     useNavigate();
 
@@ -184,9 +201,9 @@ function CarsPage() {
     meta,
     setMeta,
   ] =
-    useState<CarMeta | null>(
-      null,
-    );
+    useState<
+      CarMeta | null
+    >(null);
 
   const [
     isLoading,
@@ -208,7 +225,9 @@ function CarsPage() {
     sortOption,
     setSortOption,
   ] =
-    useState<CarSortOption>(
+    useState<
+      CarSortOption
+    >(
       'recommended',
     );
 
@@ -334,7 +353,7 @@ function CarsPage() {
           }
 
           console.error(
-            'Error al buscar Rent a Car:',
+            'Error searching rental cars:',
             requestError,
           );
 
@@ -347,7 +366,7 @@ function CarsPage() {
           );
 
           setError(
-            'No fue posible buscar opciones de movilidad en este momento.',
+            'cars.list.errors.loadMessage',
           );
         } finally {
           if (
@@ -498,7 +517,6 @@ function CarsPage() {
                 ?.website,
             ),
         ).length,
-
       [
         cars,
       ],
@@ -516,7 +534,6 @@ function CarsPage() {
                 ?.maps,
             ),
         ).length,
-
       [
         cars,
       ],
@@ -568,7 +585,6 @@ function CarsPage() {
               ?.toLowerCase() ===
               'car sharing',
         ).length,
-
       [
         cars,
       ],
@@ -578,70 +594,108 @@ function CarsPage() {
     <main className="gt-cars-page">
 
       <section className="gt-cars-hero">
+
         <div className="gt-cars-hero-overlay" />
 
         <div className="gt-cars-hero-inner">
+
           <span className="gt-cars-eyebrow">
-            GLOBALTOUR · RENT A CAR
+            {t(
+              'cars.list.hero.eyebrow',
+            )}
           </span>
 
           <h1>
             {hasSearch
-              ? `Muévete por ${cityName} a tu manera`
-              : 'Tu destino. Tu ruta. Tu libertad.'}
+              ? t(
+                  'cars.list.hero.cityTitle',
+                  {
+                    city:
+                      cityName,
+                  },
+                )
+              : t(
+                  'cars.list.hero.title',
+                )}
           </h1>
 
           <p>
-            Encuentra oficinas de alquiler y
-            servicios de movilidad cerca de tu
-            destino para seguir explorando a tu
-            propio ritmo.
+            {t(
+              'cars.list.hero.description',
+            )}
           </p>
 
           <div className="gt-cars-hero-pills">
+
             <span>
               <CarIcon />
-              Rent a Car
+
+              {t(
+                'cars.common.types.carRental',
+              )}
             </span>
 
             <span>
               <ShareIcon />
-              Car sharing
+
+              {t(
+                'cars.common.types.carSharing',
+              )}
             </span>
 
             <span>
               <MapIcon />
-              Ubicaciones reales
+
+              {t(
+                'cars.list.hero.realLocations',
+              )}
             </span>
+
           </div>
+
         </div>
+
       </section>
 
       <section className="gt-cars-search-section">
+
         <div className="gt-cars-search-shell">
+
           <div className="gt-cars-search-heading">
+
             <div>
+
               <span>
-                BUSCAR MOVILIDAD
+                {t(
+                  'cars.list.search.eyebrow',
+                )}
               </span>
 
               <strong>
-                Encuentra opciones cerca de tu destino
+                {t(
+                  'cars.list.search.title',
+                )}
               </strong>
+
             </div>
 
             {hasSearch && (
               <span className="gt-cars-radius-badge">
+
                 <RadiusIcon />
 
-                Radio de{' '}
+                {t(
+                  'cars.list.search.radius',
+                )}{' '}
 
                 {formatDistance(
                   meta?.radiusMeters ??
                     radius,
                 )}
+
               </span>
             )}
+
           </div>
 
           <CarSearchForm
@@ -661,110 +715,160 @@ function CarsPage() {
               isLoading
             }
           />
+
         </div>
+
       </section>
 
       <div className="gt-cars-content">
 
         {!hasSearch && (
           <section className="gt-cars-start-state">
+
             <div className="gt-cars-start-copy">
+
               <span className="gt-cars-section-eyebrow">
-                EXPLORA SIN LÍMITES
+                {t(
+                  'cars.list.start.eyebrow',
+                )}
               </span>
 
               <h2>
-                Encuentra una opción para seguir tu propio camino
+                {t(
+                  'cars.list.start.title',
+                )}
               </h2>
 
               <p>
-                Busca una ciudad y descubre oficinas
-                de alquiler y alternativas de movilidad
-                disponibles en sus alrededores.
+                {t(
+                  'cars.list.start.description',
+                )}
               </p>
+
             </div>
 
             <div className="gt-cars-start-grid">
+
               <article>
+
                 <div className="gt-cars-start-icon">
                   <CarIcon />
                 </div>
 
                 <span>
-                  Libertad
+                  {t(
+                    'cars.list.start.cards.rental.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Rent a Car
+                  {t(
+                    'cars.common.types.carRental',
+                  )}
                 </strong>
 
                 <p>
-                  Encuentra empresas y oficinas
-                  de alquiler cerca de tu destino.
+                  {t(
+                    'cars.list.start.cards.rental.description',
+                  )}
                 </p>
+
               </article>
 
               <article>
+
                 <div className="gt-cars-start-icon">
                   <ShareIcon />
                 </div>
 
                 <span>
-                  Alternativas
+                  {t(
+                    'cars.list.start.cards.sharing.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Car sharing
+                  {t(
+                    'cars.common.types.carSharing',
+                  )}
                 </strong>
 
                 <p>
-                  Explora servicios de movilidad
-                  compartida cuando estén disponibles.
+                  {t(
+                    'cars.list.start.cards.sharing.description',
+                  )}
                 </p>
+
               </article>
 
               <article>
+
                 <div className="gt-cars-start-icon">
                   <MapIcon />
                 </div>
 
                 <span>
-                  Ubicación
+                  {t(
+                    'cars.list.start.cards.location.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Encuentra el punto
+                  {t(
+                    'cars.list.start.cards.location.title',
+                  )}
                 </strong>
 
                 <p>
-                  Abre directamente la ubicación
-                  del proveedor en el mapa.
+                  {t(
+                    'cars.list.start.cards.location.description',
+                  )}
                 </p>
+
               </article>
+
             </div>
+
           </section>
         )}
 
         {hasSearch &&
           isLoading && (
           <section className="gt-cars-loading">
+
             <div className="gt-cars-loading-heading">
+
               <div className="gt-cars-loader" />
 
               <div>
+
                 <h2>
-                  Buscando movilidad en {cityName}
+                  {t(
+                    'cars.list.loading.title',
+                    {
+                      city:
+                        cityName,
+                    },
+                  )}
                 </h2>
 
                 <p>
-                  Estamos explorando proveedores
-                  alrededor de tu destino.
+                  {t(
+                    'cars.list.loading.description',
+                  )}
                 </p>
+
               </div>
+
             </div>
 
             <div className="gt-cars-skeleton-list">
-              {[1, 2, 3].map(
+
+              {[
+                1,
+                2,
+                3,
+              ].map(
                 (
                   item,
                 ) => (
@@ -786,7 +890,9 @@ function CarsPage() {
                   </div>
                 ),
               )}
+
             </div>
+
           </section>
         )}
 
@@ -794,17 +900,23 @@ function CarsPage() {
           !isLoading &&
           error && (
           <section className="gt-cars-error-state">
+
             <div>
               !
             </div>
 
             <h2>
-              No pudimos completar la búsqueda
+              {t(
+                'cars.list.errors.title',
+              )}
             </h2>
 
             <p>
-              {error}
+              {t(
+                error,
+              )}
             </p>
+
           </section>
         )}
 
@@ -814,18 +926,23 @@ function CarsPage() {
           cars.length ===
             0 && (
           <section className="gt-cars-error-state">
+
             <div className="gt-cars-empty-icon">
               <CarIcon />
             </div>
 
             <h2>
-              No encontramos opciones cerca
+              {t(
+                'cars.list.empty.title',
+              )}
             </h2>
 
             <p>
-              Intenta aumentar el radio,
-              quitar filtros o buscar otra ciudad.
+              {t(
+                'cars.list.empty.description',
+              )}
             </p>
+
           </section>
         )}
 
@@ -835,10 +952,15 @@ function CarsPage() {
           cars.length >
             0 && (
           <>
+
             <section className="gt-cars-results-heading">
+
               <div>
+
                 <span className="gt-cars-section-eyebrow">
-                  MOVILIDAD ENCONTRADA
+                  {t(
+                    'cars.list.results.eyebrow',
+                  )}
                 </span>
 
                 <h2>
@@ -853,38 +975,54 @@ function CarsPage() {
                 </h2>
 
                 <p>
-                  Opciones encontradas dentro de
-                  un radio de{' '}
-
-                  {formatDistance(
-                    meta?.radiusMeters ??
-                      radius,
+                  {t(
+                    'cars.list.results.radiusDescription',
+                    {
+                      radius:
+                        formatDistance(
+                          meta?.radiusMeters ??
+                            radius,
+                        ),
+                    },
                   )}
                 </p>
+
               </div>
 
               <div className="gt-cars-results-meta">
+
                 {meta?.stale && (
                   <span>
-                    Datos en caché
+                    {t(
+                      'cars.list.results.cached',
+                    )}
                   </span>
                 )}
 
                 <small>
                   {meta?.matched ??
                     cars.length}{' '}
-                  coincidencias
+
+                  {t(
+                    'cars.list.results.matches',
+                  )}
                 </small>
+
               </div>
+
             </section>
 
             <section className="gt-cars-insight-grid">
+
               <article>
+
                 <CarIcon />
 
                 <div>
                   <span>
-                    Resultados
+                    {t(
+                      'cars.list.insights.results',
+                    )}
                   </span>
 
                   <strong>
@@ -893,14 +1031,18 @@ function CarsPage() {
                     }
                   </strong>
                 </div>
+
               </article>
 
               <article>
+
                 <BuildingIcon />
 
                 <div>
                   <span>
-                    Marcas detectadas
+                    {t(
+                      'cars.list.insights.brands',
+                    )}
                   </span>
 
                   <strong>
@@ -909,14 +1051,18 @@ function CarsPage() {
                     }
                   </strong>
                 </div>
+
               </article>
 
               <article>
+
                 <GlobeIcon />
 
                 <div>
                   <span>
-                    Con sitio web
+                    {t(
+                      'cars.list.insights.website',
+                    )}
                   </span>
 
                   <strong>
@@ -925,14 +1071,18 @@ function CarsPage() {
                     }
                   </strong>
                 </div>
+
               </article>
 
               <article>
+
                 <MapIcon />
 
                 <div>
                   <span>
-                    Con mapa
+                    {t(
+                      'cars.list.insights.map',
+                    )}
                   </span>
 
                   <strong>
@@ -941,17 +1091,23 @@ function CarsPage() {
                     }
                   </strong>
                 </div>
+
               </article>
+
             </section>
 
             {sharingCount >
               0 && (
               <section className="gt-cars-sharing-notice">
+
                 <ShareIcon />
 
                 <div>
+
                   <strong>
-                    También encontramos car sharing
+                    {t(
+                      'cars.list.sharing.title',
+                    )}
                   </strong>
 
                   <span>
@@ -959,17 +1115,23 @@ function CarsPage() {
 
                     {sharingCount ===
                     1
-                      ? 'opción corresponde'
-                      : 'opciones corresponden'}{' '}
-
-                    a movilidad compartida.
+                      ? t(
+                          'cars.list.sharing.one',
+                        )
+                      : t(
+                          'cars.list.sharing.many',
+                        )}
                   </span>
+
                 </div>
+
               </section>
             )}
 
             <section className="gt-cars-toolbar">
+
               <div className="gt-cars-sort">
+
                 <button
                   type="button"
                   className={
@@ -984,7 +1146,9 @@ function CarsPage() {
                     )
                   }
                 >
-                  Recomendados
+                  {t(
+                    'cars.list.sort.recommended',
+                  )}
                 </button>
 
                 <button
@@ -1018,59 +1182,74 @@ function CarsPage() {
                     )
                   }
                 >
-                  Más información
+                  {t(
+                    'cars.list.sort.information',
+                  )}
                 </button>
+
               </div>
 
               <span>
                 {
                   sortedCars.length
                 }{' '}
-                resultados visibles
+
+                {t(
+                  'cars.list.results.visibleResults',
+                )}
               </span>
+
             </section>
 
             <section className="gt-cars-results-list">
+
               {sortedCars.map(
                 (
                   car,
                   index,
                 ) => (
-                <CarCard
-                  key={
-                    car.id
-                  }
-                  car={
-                    car
-                  }
-                  index={
-                    index
-                  }
-                />
+                  <CarCard
+                    key={
+                      car.id
+                    }
+                    car={
+                      car
+                    }
+                    index={
+                      index
+                    }
+                  />
                 ),
               )}
+
             </section>
 
             <div className="gt-cars-disclaimer">
+
               <InfoIcon />
 
               <div>
+
                 <p>
-                  GlobalTour muestra ubicaciones de
-                  servicios de alquiler y movilidad.
-                  Los precios, disponibilidad y reservas
-                  se consultan directamente con el proveedor.
+                  {t(
+                    'cars.list.disclaimer.text',
+                  )}
                 </p>
 
                 <span>
                   {meta?.attribution ??
                     '© OpenStreetMap contributors'}
                 </span>
+
               </div>
+
             </div>
+
           </>
         )}
+
       </div>
+
     </main>
   );
 }
@@ -1087,13 +1266,20 @@ function CarCard({
   car,
   index,
 }: CarCardProps) {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const brand =
     car.brand?.trim() ??
     '';
 
   const name =
     car.name?.trim() ||
-    'Servicio de movilidad';
+    t(
+      'cars.list.card.serviceFallback',
+    );
 
   const showBrand =
     Boolean(
@@ -1116,7 +1302,9 @@ function CarCard({
 
   const address =
     car.address?.trim() ||
-    'Dirección no disponible';
+    t(
+      'cars.list.card.addressUnavailable',
+    );
 
   const typeLabel =
     formatCarType(
@@ -1140,6 +1328,7 @@ function CarCard({
     <article className="gt-car-result-card">
 
       <div className={`gt-car-result-visual ${visualClass}`}>
+
         <WishlistHeart
           item={{
             key:
@@ -1190,10 +1379,13 @@ function CarCard({
         <span>
           {typeLabel}
         </span>
+
       </div>
 
       <div className="gt-car-result-content">
+
         <div className="gt-car-result-copy">
+
           <span className="gt-car-result-type">
             {typeLabel}
           </span>
@@ -1204,26 +1396,33 @@ function CarCard({
 
           {showBrand && (
             <p className="gt-car-result-brand">
+
               <BuildingIcon />
 
               {brand}
+
             </p>
           )}
 
           <div className="gt-car-result-location">
+
             <LocationIcon />
 
             <span>
               {address}
             </span>
+
           </div>
 
           <div className="gt-car-result-tags">
+
             {websiteUrl && (
               <span>
                 <GlobeIcon />
 
-                Sitio web
+                {t(
+                  'cars.list.card.website',
+                )}
               </span>
             )}
 
@@ -1231,7 +1430,9 @@ function CarCard({
               <span>
                 <MapIcon />
 
-                Ubicación
+                {t(
+                  'cars.list.card.location',
+                )}
               </span>
             )}
 
@@ -1241,39 +1442,49 @@ function CarCard({
               (
                 carType,
               ) => (
-              <span
-                key={
-                  carType
-                }
-              >
-                {formatCarType(
-                  carType,
-                )}
-              </span>
+                <span
+                  key={
+                    carType
+                  }
+                >
+                  {formatCarType(
+                    carType,
+                  )}
+                </span>
               ),
             )}
+
           </div>
+
         </div>
 
         <div className="gt-car-result-actions">
+
           <span className="gt-car-result-action-label">
-            Más información
+            {t(
+              'cars.list.card.moreInformation',
+            )}
           </span>
 
           <strong>
-            Consulta el proveedor
+            {t(
+              'cars.list.card.checkProvider',
+            )}
           </strong>
 
           <Link
             to={`/cars/${car.id}`}
             className="gt-car-detail-button"
           >
-            Ver detalles
+            {t(
+              'cars.list.card.viewDetails',
+            )}
 
             <ArrowIcon />
           </Link>
 
           <div className="gt-car-external-actions">
+
             {mapsUrl && (
               <a
                 href={
@@ -1281,11 +1492,15 @@ function CarCard({
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Ver ubicación en el mapa"
+                aria-label={t(
+                  'cars.list.card.viewMapAria',
+                )}
               >
                 <MapIcon />
 
-                Mapa
+                {t(
+                  'cars.list.card.map',
+                )}
               </a>
             )}
 
@@ -1296,16 +1511,24 @@ function CarCard({
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Abrir sitio web"
+                aria-label={t(
+                  'cars.list.card.openWebsiteAria',
+                )}
               >
                 <ExternalIcon />
 
-                Web
+                {t(
+                  'cars.list.card.web',
+                )}
               </a>
             )}
+
           </div>
+
         </div>
+
       </div>
+
     </article>
   );
 }

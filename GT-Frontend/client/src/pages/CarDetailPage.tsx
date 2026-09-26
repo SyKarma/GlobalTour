@@ -9,6 +9,12 @@ import {
 } from 'react-router-dom';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
+
+import {
   getCarById,
 } from '../services/cars.service';
 
@@ -17,6 +23,11 @@ import type {
 } from '../types/car.types';
 
 function CarDetailPage() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const navigate =
     useNavigate();
 
@@ -31,9 +42,9 @@ function CarDetailPage() {
     car,
     setCar,
   ] =
-    useState<CarDetail | null>(
-      null,
-    );
+    useState<
+      CarDetail | null
+    >(null);
 
   const [
     isLoading,
@@ -47,45 +58,29 @@ function CarDetailPage() {
     error,
     setError,
   ] =
-    useState<string | null>(
-      null,
-    );
+    useState<
+      string | null
+    >(null);
 
-  /*
-   * =========================================
-   * BACK
-   * =========================================
-   */
+  const handleBack =
+    () => {
+      if (
+        window.history.length >
+        1
+      ) {
+        navigate(
+          -1,
+        );
 
-  const handleBack = () => {
-    if (
-      window.history.length >
-      1
-    ) {
+        return;
+      }
+
       navigate(
-        -1,
+        '/cars',
       );
-
-      return;
-    }
-
-    navigate(
-      '/cars',
-    );
-  };
-
-  /*
-   * =========================================
-   * LOAD CAR
-   * =========================================
-   */
+    };
 
   useEffect(() => {
-    /*
-     * El ID inexistente se resuelve
-     * desde el render, no modificando
-     * estado sincrónicamente aquí.
-     */
     if (!id) {
       return;
     }
@@ -126,7 +121,7 @@ function CarDetailPage() {
           requestError
         ) {
           console.error(
-            'Error al cargar Rent a Car:',
+            'Error loading rental car location:',
             requestError,
           );
 
@@ -138,7 +133,7 @@ function CarDetailPage() {
             );
 
             setError(
-              'No fue posible cargar la información de esta ubicación.',
+              'cars.detail.errors.loadMessage',
             );
           }
         } finally {
@@ -162,30 +157,32 @@ function CarDetailPage() {
     id,
   ]);
 
-  /*
-   * =========================================
-   * INVALID ID
-   * =========================================
-   */
-
   if (!id) {
     return (
       <main className="gt-car-detail-page">
+
         <section className="gt-detail-error-state">
+
           <div className="gt-detail-error-icon gt-detail-error-teal">
             <CarIcon />
           </div>
 
           <span>
-            RENT A CAR
+            {t(
+              'cars.detail.common.eyebrow',
+            )}
           </span>
 
           <h1>
-            No encontramos esta ubicación
+            {t(
+              'cars.detail.errors.title',
+            )}
           </h1>
 
           <p>
-            No se encontró el identificador de esta ubicación.
+            {t(
+              'cars.detail.errors.missingId',
+            )}
           </p>
 
           <button
@@ -196,42 +193,37 @@ function CarDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'cars.detail.common.back',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * LOADING
-   * =========================================
-   */
 
   if (
     isLoading
   ) {
     return (
       <main className="gt-car-detail-page">
+
         <div className="gt-detail-loading-shell">
+
           <div className="gt-detail-loading-hero" />
 
           <div className="gt-detail-loading-grid">
             <div />
-
             <div />
           </div>
+
         </div>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * ERROR
-   * =========================================
-   */
 
   if (
     error ||
@@ -239,22 +231,33 @@ function CarDetailPage() {
   ) {
     return (
       <main className="gt-car-detail-page">
+
         <section className="gt-detail-error-state">
+
           <div className="gt-detail-error-icon gt-detail-error-teal">
             <CarIcon />
           </div>
 
           <span>
-            RENT A CAR
+            {t(
+              'cars.detail.common.eyebrow',
+            )}
           </span>
 
           <h1>
-            No encontramos esta ubicación
+            {t(
+              'cars.detail.errors.title',
+            )}
           </h1>
 
           <p>
-            {error ??
-              'La ubicación solicitada no está disponible.'}
+            {error
+              ? t(
+                  error,
+                )
+              : t(
+                  'cars.detail.errors.unavailable',
+                )}
           </p>
 
           <button
@@ -265,22 +268,22 @@ function CarDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'cars.detail.common.back',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
 
-  /*
-   * =========================================
-   * SAFE DATA
-   * =========================================
-   */
-
   const name =
     car.name?.trim() ||
-    'Servicio de movilidad';
+    t(
+      'cars.detail.common.serviceFallback',
+    );
 
   const brand =
     car.brand?.trim() ??
@@ -330,20 +333,16 @@ function CarDetailPage() {
   return (
     <main className="gt-car-detail-page">
 
-      {/* =====================================
-          HERO
-      ====================================== */}
-
       <section className="gt-car-detail-hero">
+
         <div className="gt-car-detail-road">
           <span />
-
           <span />
-
           <span />
         </div>
 
         <div className="gt-car-detail-hero-inner">
+
           <button
             type="button"
             className="gt-detail-back-button gt-detail-back-light"
@@ -353,13 +352,19 @@ function CarDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'cars.detail.common.back',
+            )}
           </button>
 
           <div className="gt-car-detail-hero-grid">
+
             <div>
+
               <span className="gt-car-detail-eyebrow">
-                GLOBALTOUR · MOVILIDAD
+                {t(
+                  'cars.detail.hero.eyebrow',
+                )}
               </span>
 
               <div className="gt-car-detail-icon">
@@ -378,21 +383,28 @@ function CarDetailPage() {
 
               {showBrand && (
                 <p className="gt-car-detail-brand">
+
                   <BuildingIcon />
 
                   {brand}
+
                 </p>
               )}
 
               <p className="gt-car-detail-address">
+
                 <LocationIcon />
 
                 {car.address ??
-                  'Dirección no disponible'}
+                  t(
+                    'cars.detail.hero.addressUnavailable',
+                  )}
               </p>
+
             </div>
 
             <div className="gt-car-detail-hero-actions">
+
               {mapsUrl && (
                 <a
                   href={
@@ -403,7 +415,9 @@ function CarDetailPage() {
                 >
                   <MapIcon />
 
-                  Ver mapa
+                  {t(
+                    'cars.detail.hero.viewMap',
+                  )}
                 </a>
               )}
 
@@ -417,7 +431,9 @@ function CarDetailPage() {
                 >
                   <ExternalIcon />
 
-                  Sitio web
+                  {t(
+                    'cars.detail.hero.website',
+                  )}
                 </a>
               )}
 
@@ -427,110 +443,142 @@ function CarDetailPage() {
                 >
                   <PhoneIcon />
 
-                  Llamar
+                  {t(
+                    'cars.detail.hero.call',
+                  )}
                 </a>
               )}
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* =====================================
-          BODY
-      ====================================== */}
-
       <div className="gt-detail-content-shell">
+
         <section className="gt-car-detail-layout">
 
-          {/* MAIN */}
-
           <div className="gt-detail-main-column">
+
             {car.editorialSummary && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-teal">
-                  EL PROVEEDOR
+                  {t(
+                    'cars.detail.about.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Acerca de esta ubicación
+                  {t(
+                    'cars.detail.about.title',
+                  )}
                 </h2>
 
                 <p className="gt-detail-description">
-                  {car.editorialSummary}
+                  {
+                    car.editorialSummary
+                  }
                 </p>
+
               </article>
             )}
 
             {hours.length >
               0 && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-teal">
-                  HORARIO
+                  {t(
+                    'cars.detail.hours.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Horario publicado
+                  {t(
+                    'cars.detail.hours.title',
+                  )}
                 </h2>
 
                 <div className="gt-detail-hours-list">
+
                   {hours.map(
                     (
                       item,
                       index,
                     ) => (
-                    <div
-                      key={`${item}-${index}`}
-                    >
-                      <ClockIcon />
+                      <div
+                        key={`${item}-${index}`}
+                      >
+                        <ClockIcon />
 
-                      <span>
-                        {item}
-                      </span>
-                    </div>
+                        <span>
+                          {item}
+                        </span>
+                      </div>
                     ),
                   )}
+
                 </div>
+
               </article>
             )}
 
             <article className="gt-car-provider-notice">
+
               <InfoIcon />
 
               <div>
+
                 <span>
-                  IMPORTANTE
+                  {t(
+                    'cars.detail.notice.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Consulta directamente con el proveedor
+                  {t(
+                    'cars.detail.notice.title',
+                  )}
                 </h2>
 
                 <p>
-                  GlobalTour muestra ubicaciones de
-                  alquiler y movilidad. Los precios,
-                  vehículos disponibles y reservas
-                  deben verificarse directamente con
-                  la empresa.
+                  {t(
+                    'cars.detail.notice.description',
+                  )}
                 </p>
+
               </div>
+
             </article>
+
           </div>
 
-          {/* SIDEBAR */}
-
           <aside className="gt-detail-sidebar">
+
             <article className="gt-detail-panel">
+
               <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-teal">
-                INFORMACIÓN
+                {t(
+                  'cars.detail.info.eyebrow',
+                )}
               </span>
 
               <h2>
-                Datos del proveedor
+                {t(
+                  'cars.detail.info.title',
+                )}
               </h2>
 
               <div className="gt-detail-info-list">
+
                 <DetailInfo
-                  label="Servicio"
+                  label={t(
+                    'cars.detail.info.service',
+                  )}
                   value={formatCarType(
                     car.primaryType,
                   )}
@@ -538,7 +586,9 @@ function CarDetailPage() {
 
                 {brand && (
                   <DetailInfo
-                    label="Empresa / Marca"
+                    label={t(
+                      'cars.detail.info.brand',
+                    )}
                     value={
                       brand
                     }
@@ -546,17 +596,23 @@ function CarDetailPage() {
                 )}
 
                 <DetailInfo
-                  label="Dirección"
+                  label={t(
+                    'cars.detail.info.address',
+                  )}
                   value={
                     car.address ??
-                    'No disponible'
+                    t(
+                      'cars.detail.info.unavailable',
+                    )
                   }
                 />
 
                 {types.length >
                   0 && (
                   <DetailInfo
-                    label="Clasificación"
+                    label={t(
+                      'cars.detail.info.classification',
+                    )}
                     value={types
                       .map(
                         formatCarType,
@@ -569,24 +625,34 @@ function CarDetailPage() {
 
                 {hasCoordinates && (
                   <DetailInfo
-                    label="Coordenadas"
+                    label={t(
+                      'cars.detail.info.coordinates',
+                    )}
                     value={`${car.latitude}, ${car.longitude}`}
                   />
                 )}
+
               </div>
+
             </article>
 
             {hasContact && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-teal">
-                  CONTACTO
+                  {t(
+                    'cars.detail.contact.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Contacta al proveedor
+                  {t(
+                    'cars.detail.contact.title',
+                  )}
                 </h2>
 
                 <div className="gt-detail-contact-list">
+
                   {car.phone && (
                     <a
                       href={`tel:${car.phone}`}
@@ -594,14 +660,21 @@ function CarDetailPage() {
                       <PhoneIcon />
 
                       <div>
+
                         <span>
-                          Teléfono
+                          {t(
+                            'cars.detail.contact.phone',
+                          )}
                         </span>
 
                         <strong>
-                          {car.phone}
+                          {
+                            car.phone
+                          }
                         </strong>
+
                       </div>
+
                     </a>
                   )}
 
@@ -614,26 +687,39 @@ function CarDetailPage() {
                       <PhoneIcon />
 
                       <div>
+
                         <span>
-                          Teléfono internacional
+                          {t(
+                            'cars.detail.contact.internationalPhone',
+                          )}
                         </span>
 
                         <strong>
-                          {car.internationalPhone}
+                          {
+                            car.internationalPhone
+                          }
                         </strong>
+
                       </div>
+
                     </a>
                   )}
+
                 </div>
+
               </article>
             )}
 
             <article className="gt-detail-source-card gt-detail-source-teal">
+
               <GlobeIcon />
 
               <div>
+
                 <span>
-                  Fuente
+                  {t(
+                    'cars.detail.source.label',
+                  )}
                 </span>
 
                 <strong>
@@ -643,20 +729,20 @@ function CarDetailPage() {
                 <small>
                   © OpenStreetMap contributors
                 </small>
+
               </div>
+
             </article>
+
           </aside>
+
         </section>
+
       </div>
+
     </main>
   );
 }
-
-/*
- * =========================================
- * DETAIL INFO
- * =========================================
- */
 
 interface DetailInfoProps {
   label:
@@ -672,6 +758,7 @@ function DetailInfo({
 }: DetailInfoProps) {
   return (
     <div className="gt-detail-info-row">
+
       <span>
         {label}
       </span>
@@ -679,24 +766,21 @@ function DetailInfo({
       <strong>
         {value}
       </strong>
+
     </div>
   );
 }
 
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
-
 function formatCarType(
   value:
-    string |
-    null |
-    undefined,
+    | string
+    | null
+    | undefined,
 ) {
   if (!value) {
-    return 'Movilidad';
+    return i18n.t(
+      'cars.common.types.mobility',
+    );
   }
 
   const normalized =
@@ -712,14 +796,18 @@ function formatCarType(
     normalized ===
     'car rental'
   ) {
-    return 'Rent a Car';
+    return i18n.t(
+      'cars.common.types.carRental',
+    );
   }
 
   if (
     normalized ===
     'car sharing'
   ) {
-    return 'Car sharing';
+    return i18n.t(
+      'cars.common.types.carSharing',
+    );
   }
 
   return value;
@@ -733,12 +821,6 @@ function normalize(
     .trim()
     .toLowerCase();
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function CarIcon() {
   return (

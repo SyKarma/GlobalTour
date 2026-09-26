@@ -3,6 +3,10 @@ import {
   type FormEvent,
 } from 'react';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 export type RestaurantAmenity =
   | 'restaurant'
   | 'cafe'
@@ -32,6 +36,11 @@ function RestaurantSearchForm({
   onSearch,
   isLoading = false,
 }: RestaurantSearchFormProps) {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const [
     cityName,
     setCityName,
@@ -159,17 +168,18 @@ function RestaurantSearchForm({
         handleSubmit
       }
     >
-      {/* =====================================
-          MAIN SEARCH
-      ====================================== */}
-
       <div className="gt-restaurant-search-main">
+
         <label className="gt-restaurant-main-field gt-restaurant-city">
+
           <span>
-            Ciudad
+            {t(
+              'restaurants.search.city',
+            )}
           </span>
 
           <div className="gt-restaurant-input-control">
+
             <LocationIcon />
 
             <input
@@ -181,8 +191,12 @@ function RestaurantSearchForm({
                 80
               }
               autoComplete="off"
-              placeholder="Ej. Nicoya"
-              aria-label="Ciudad"
+              placeholder={t(
+                'restaurants.search.cityPlaceholder',
+              )}
+              aria-label={t(
+                'restaurants.search.city',
+              )}
               onChange={(
                 event,
               ) =>
@@ -192,15 +206,21 @@ function RestaurantSearchForm({
                 )
               }
             />
+
           </div>
+
         </label>
 
         <label className="gt-restaurant-main-field gt-restaurant-country">
+
           <span>
-            País
+            {t(
+              'restaurants.search.country',
+            )}
           </span>
 
           <div className="gt-restaurant-input-control">
+
             <GlobeIcon />
 
             <input
@@ -213,7 +233,9 @@ function RestaurantSearchForm({
               }
               autoComplete="off"
               placeholder="CR"
-              aria-label="Código ISO del país"
+              aria-label={t(
+                'restaurants.search.countryAria',
+              )}
               onChange={(
                 event,
               ) =>
@@ -223,7 +245,9 @@ function RestaurantSearchForm({
                 )
               }
             />
+
           </div>
+
         </label>
 
         <button
@@ -239,22 +263,28 @@ function RestaurantSearchForm({
           <SearchIcon />
 
           {isLoading
-            ? 'Buscando...'
-            : 'Buscar restaurantes'}
+            ? t(
+                'restaurants.search.searching',
+              )
+            : t(
+                'restaurants.search.button',
+              )}
         </button>
+
       </div>
 
-      {/* =====================================
-          FILTERS
-      ====================================== */}
-
       <div className="gt-restaurant-search-filters">
+
         <label className="gt-restaurant-filter-field">
+
           <span>
-            Tipo de lugar
+            {t(
+              'restaurants.search.placeType',
+            )}
           </span>
 
           <div className="gt-restaurant-filter-control">
+
             <RestaurantIcon />
 
             <select
@@ -273,35 +303,51 @@ function RestaurantSearchForm({
               }
             >
               <option value="">
-                Todos
+                {t(
+                  'restaurants.search.types.all',
+                )}
               </option>
 
               <option value="restaurant">
-                Restaurante
+                {t(
+                  'restaurants.common.types.restaurant',
+                )}
               </option>
 
               <option value="cafe">
-                Café
+                {t(
+                  'restaurants.common.types.cafe',
+                )}
               </option>
 
               <option value="fast_food">
-                Comida rápida
+                {t(
+                  'restaurants.common.types.fastFood',
+                )}
               </option>
             </select>
+
           </div>
+
         </label>
 
         <label className="gt-restaurant-filter-field">
+
           <span>
-            Cocina
+            {t(
+              'restaurants.search.cuisine',
+            )}
           </span>
 
           <div className="gt-restaurant-filter-control">
+
             <FoodIcon />
 
             <input
               type="text"
-              placeholder="Ej. italiana, japonesa..."
+              placeholder={t(
+                'restaurants.search.cuisinePlaceholder',
+              )}
               value={
                 cuisine
               }
@@ -314,15 +360,21 @@ function RestaurantSearchForm({
                 )
               }
             />
+
           </div>
+
         </label>
 
         <label className="gt-restaurant-filter-field">
+
           <span>
-            Área de búsqueda
+            {t(
+              'restaurants.search.area',
+            )}
           </span>
 
           <div className="gt-restaurant-filter-control">
+
             <RadiusIcon />
 
             <select
@@ -360,10 +412,13 @@ function RestaurantSearchForm({
                 20 km
               </option>
             </select>
+
           </div>
+
         </label>
 
         <label className="gt-restaurant-website-filter">
+
           <input
             type="checkbox"
             checked={
@@ -384,19 +439,18 @@ function RestaurantSearchForm({
           </span>
 
           <span>
-            Solo lugares con sitio web
+            {t(
+              'restaurants.search.websiteOnly',
+            )}
           </span>
+
         </label>
+
       </div>
+
     </form>
   );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function SearchIcon() {
   return (

@@ -4,70 +4,147 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useCurrency } from '../../hooks/useCurrency';
+
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
+  useCurrency,
+} from '../../hooks/useCurrency';
 
 function CurrencySelector() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const {
     currencies,
     selectedCurrency,
     setSelectedCurrency,
     isLoading,
     error,
-  } = useCurrency();
+  } =
+    useCurrency();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const [
+    isOpen,
+    setIsOpen,
+  ] =
+    useState(
+      false,
+    );
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [
+    search,
+    setSearch,
+  ] =
+    useState('');
 
-  const selectedCurrencyData = currencies.find(
-    (currency) => currency.code === selectedCurrency,
-  );
+  const wrapperRef =
+    useRef<HTMLDivElement>(
+      null,
+    );
 
-  const filteredCurrencies = useMemo(() => {
-    const normalizedSearch = search.trim().toLowerCase();
+  const selectedCurrencyData =
+    currencies.find(
+      (
+        currency,
+      ) =>
+        currency.code ===
+        selectedCurrency,
+    );
 
-    if (!normalizedSearch) {
-      return currencies;
-    }
+  const filteredCurrencies =
+    useMemo(() => {
+      const normalizedSearch =
+        search
+          .trim()
+          .toLowerCase();
 
-    return currencies.filter((currency) => {
-      const code = currency.code.toLowerCase();
-      const name = currency.name.toLowerCase();
+      if (
+        !normalizedSearch
+      ) {
+        return currencies;
+      }
 
-      return (
-        code.includes(normalizedSearch) ||
-        name.includes(normalizedSearch)
+      return currencies.filter(
+        (
+          currency,
+        ) => {
+          const code =
+            currency.code.toLowerCase();
+
+          const name =
+            currency.name.toLowerCase();
+
+          return (
+            code.includes(
+              normalizedSearch,
+            ) ||
+            name.includes(
+              normalizedSearch,
+            )
+          );
+        },
       );
-    });
-  }, [currencies, search]);
+    }, [
+      currencies,
+      search,
+    ]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (
+      event:
+        MouseEvent,
+    ) => {
       if (
         wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
+        !wrapperRef.current.contains(
+          event.target as Node,
+        )
       ) {
-        setIsOpen(false);
+        setIsOpen(
+          false,
+        );
+
         setSearch('');
       }
     };
 
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
+    const handleEscape = (
+      event:
+        KeyboardEvent,
+    ) => {
+      if (
+        event.key ===
+        'Escape'
+      ) {
+        setIsOpen(
+          false,
+        );
+
         setSearch('');
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('keydown', handleEscape);
+    document.addEventListener(
+      'mousedown',
+      handleClickOutside,
+    );
+
+    document.addEventListener(
+      'keydown',
+      handleEscape,
+    );
 
     return () => {
       document.removeEventListener(
         'mousedown',
         handleClickOutside,
       );
+
       document.removeEventListener(
         'keydown',
         handleEscape,
@@ -75,40 +152,72 @@ function CurrencySelector() {
     };
   }, []);
 
-  const handleSelectCurrency = (currencyCode: string) => {
-    setSelectedCurrency(currencyCode);
+  const handleSelectCurrency = (
+    currencyCode:
+      string,
+  ) => {
+    setSelectedCurrency(
+      currencyCode,
+    );
+
     setSearch('');
-    setIsOpen(false);
+
+    setIsOpen(
+      false,
+    );
   };
 
   return (
     <div
       className="currency-selector-wrapper"
-      ref={wrapperRef}
+      ref={
+        wrapperRef
+      }
     >
       <span className="currency-selector-label">
-        Moneda
+        {t(
+          'currencySelector.label',
+        )}
       </span>
 
       <div
         className={`currency-select-control ${
-          error ? 'currency-select-error' : ''
+          error
+            ? 'currency-select-error'
+            : ''
         }`}
-        title={error ?? undefined}
+        title={
+          error ??
+          undefined
+        }
       >
         <button
           type="button"
           className="currency-selector-trigger"
           onClick={() => {
-            if (!isLoading) {
-              setIsOpen((current) => !current);
+            if (
+              !isLoading
+            ) {
+              setIsOpen(
+                (
+                  current,
+                ) =>
+                  !current,
+              );
+
               setSearch('');
             }
           }}
-          disabled={isLoading}
-          aria-label="Seleccionar moneda"
+          disabled={
+            isLoading
+          }
+          aria-label={t(
+            'currencySelector.selectAria',
+          )}
           aria-haspopup="listbox"
-          aria-expanded={isOpen}
+          aria-expanded={
+            isOpen
+          }
         >
           <svg
             className="currency-selector-icon"
@@ -134,7 +243,8 @@ function CurrencySelector() {
           </svg>
 
           <span className="currency-selector-current">
-            {selectedCurrencyData?.code ?? selectedCurrency}
+            {selectedCurrencyData?.code ??
+              selectedCurrency}
           </span>
 
           <svg
@@ -157,9 +267,12 @@ function CurrencySelector() {
           </svg>
         </button>
 
-        {isOpen && !isLoading && (
+        {isOpen &&
+          !isLoading && (
           <div className="currency-dropdown">
+
             <div className="currency-search-wrapper">
+
               <svg
                 className="currency-search-icon"
                 viewBox="0 0 24 24"
@@ -186,76 +299,110 @@ function CurrencySelector() {
               <input
                 type="text"
                 className="currency-search-input"
-                placeholder="Buscar moneda..."
-                value={search}
-                onChange={(event) =>
-                  setSearch(event.target.value)
+                placeholder={t(
+                  'currencySelector.searchPlaceholder',
+                )}
+                value={
+                  search
+                }
+                onChange={(
+                  event,
+                ) =>
+                  setSearch(
+                    event.target.value,
+                  )
                 }
                 autoFocus
-                aria-label="Buscar moneda"
+                aria-label={t(
+                  'currencySelector.searchAria',
+                )}
               />
+
             </div>
 
             <div
               className="currency-options-list"
               role="listbox"
-              aria-label="Monedas disponibles"
+              aria-label={t(
+                'currencySelector.availableAria',
+              )}
             >
-              {filteredCurrencies.length > 0 ? (
-                filteredCurrencies.map((currency) => {
-                  const isSelected =
-                    currency.code === selectedCurrency;
+              {filteredCurrencies.length >
+              0 ? (
+                filteredCurrencies.map(
+                  (
+                    currency,
+                  ) => {
+                    const isSelected =
+                      currency.code ===
+                      selectedCurrency;
 
-                  return (
-                    <button
-                      key={currency.code}
-                      type="button"
-                      className={`currency-option ${
-                        isSelected
-                          ? 'currency-option-selected'
-                          : ''
-                      }`}
-                      onClick={() =>
-                        handleSelectCurrency(currency.code)
-                      }
-                      role="option"
-                      aria-selected={isSelected}
-                    >
-                      <span className="currency-option-code">
-                        {currency.code}
-                      </span>
+                    return (
+                      <button
+                        key={
+                          currency.code
+                        }
+                        type="button"
+                        className={`currency-option ${
+                          isSelected
+                            ? 'currency-option-selected'
+                            : ''
+                        }`}
+                        onClick={() =>
+                          handleSelectCurrency(
+                            currency.code,
+                          )
+                        }
+                        role="option"
+                        aria-selected={
+                          isSelected
+                        }
+                      >
+                        <span className="currency-option-code">
+                          {
+                            currency.code
+                          }
+                        </span>
 
-                      <span className="currency-option-name">
-                        {currency.name}
-                      </span>
+                        <span className="currency-option-name">
+                          {
+                            currency.name
+                          }
+                        </span>
 
-                      {isSelected && (
-                        <svg
-                          className="currency-option-check"
-                          viewBox="0 0 20 20"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M5 10.5l3 3 7-7"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  );
-                })
+                        {isSelected && (
+                          <svg
+                            className="currency-option-check"
+                            viewBox="0 0 20 20"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M5 10.5l3 3 7-7"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        )}
+
+                      </button>
+                    );
+                  },
+                )
               ) : (
                 <div className="currency-no-results">
-                  No se encontraron monedas
+                  {t(
+                    'currencySelector.noResults',
+                  )}
                 </div>
               )}
             </div>
+
           </div>
         )}
+
       </div>
     </div>
   );

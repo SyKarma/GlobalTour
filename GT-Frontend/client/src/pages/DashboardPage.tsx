@@ -23,6 +23,12 @@ import {
 } from 'react';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
+
+import {
   getDashboardAnalytics,
 } from '../services/dashboard.service';
 
@@ -31,24 +37,6 @@ import type {
   DashboardFilterCount,
   DashboardTypeCount,
 } from '../types/dashboard.types';
-
-/*
- * =========================================
- * CONSTANTS
- * =========================================
- */
-
-const SEARCH_TYPE_LABELS: Record<
-  string,
-  string
-> = {
-  flight: 'Vuelos',
-  hotel: 'Hospedaje',
-  currency: 'Divisas',
-  destination: 'Destinos',
-  restaurant: 'Restaurantes',
-  car: 'Rent a Car',
-};
 
 const CHART_COLORS = [
   '#2563eb',
@@ -59,13 +47,18 @@ const CHART_COLORS = [
   '#8b5cf6',
 ];
 
-/*
- * =========================================
- * DASHBOARD PAGE
- * =========================================
- */
-
 function DashboardPage() {
+  const {
+    t,
+    i18n: i18nInstance,
+  } = useTranslation();
+
+  const locale =
+    getLocale(
+      i18nInstance.resolvedLanguage ??
+        i18nInstance.language,
+    );
+
   const [
     dashboard,
     setDashboard,
@@ -77,12 +70,18 @@ function DashboardPage() {
   const [
     days,
     setDays,
-  ] = useState(30);
+  ] =
+    useState(
+      30,
+    );
 
   const [
     isLoading,
     setIsLoading,
-  ] = useState(true);
+  ] =
+    useState(
+      true,
+    );
 
   const [
     error,
@@ -92,14 +91,9 @@ function DashboardPage() {
       null,
     );
 
-  /*
-   * =========================================
-   * LOAD DASHBOARD
-   * =========================================
-   */
-
   useEffect(() => {
-    let cancelled = false;
+    let cancelled =
+      false;
 
     const loadDashboard =
       async () => {
@@ -122,7 +116,9 @@ function DashboardPage() {
             response.data,
           );
 
-          setError(null);
+          setError(
+            null,
+          );
         } catch (
           requestError
         ) {
@@ -135,7 +131,7 @@ function DashboardPage() {
             !cancelled
           ) {
             setError(
-              'No fue posible cargar la información del dashboard.',
+              'dashboard.errors.loadMessage',
             );
           }
         } finally {
@@ -152,22 +148,24 @@ function DashboardPage() {
     void loadDashboard();
 
     return () => {
-      cancelled = true;
+      cancelled =
+        true;
     };
-  }, [days]);
-
-  /*
-   * =========================================
-   * PERIOD
-   * =========================================
-   */
+  }, [
+    days,
+  ]);
 
   const handlePeriodChange = (
     event:
       ChangeEvent<HTMLSelectElement>,
   ) => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(
+      true,
+    );
+
+    setError(
+      null,
+    );
 
     setDays(
       Number(
@@ -177,45 +175,36 @@ function DashboardPage() {
   };
 
   /*
-   * =========================================
-   * SEARCH TYPES
-   * =========================================
+   * No usamos useMemo aquí porque las
+   * etiquetas cambian con el idioma.
+   * El array es pequeño y se puede
+   * recalcular sin problema.
    */
-
   const searchTypes =
-    useMemo(() => {
-      if (!dashboard) {
-        return [];
-      }
+    dashboard
+      ? dashboard
+          .summary
+          .byType
+          .map(
+            (
+              item:
+                DashboardTypeCount,
+            ) => ({
+              ...item,
 
-      return dashboard
-        .summary
-        .byType
-        .map(
-          (
-            item:
-              DashboardTypeCount,
-          ) => ({
-            ...item,
-
-            name:
-              SEARCH_TYPE_LABELS[
-                item.searchType
-              ] ??
-              item.searchType,
-          }),
-        );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * DESTINATIONS
-   * =========================================
-   */
+              name:
+                getSearchTypeLabel(
+                  item.searchType,
+                ),
+            }),
+          )
+      : [];
 
   const destinationData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
@@ -237,50 +226,52 @@ function DashboardPage() {
               destination.count,
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * SEARCH VOLUME
-   * =========================================
-   */
+    }, [
+      dashboard,
+    ]);
 
   const volumeData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
       return dashboard
         .volumeByDay
         .map(
-          (item) => ({
+          (
+            item,
+          ) => ({
             ...item,
 
             label:
               formatShortDate(
                 item.date,
+                locale,
               ),
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * RESTAURANT CITIES
-   * =========================================
-   */
+    }, [
+      dashboard,
+      locale,
+    ]);
 
   const restaurantCityData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
       return dashboard
         .topRestaurantCities
         .map(
-          (item) => ({
+          (
+            item,
+          ) => ({
             name:
               item.iata
                 ? `${item.cityName} (${item.iata})`
@@ -290,24 +281,24 @@ function DashboardPage() {
               item.count,
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * CAR CITIES
-   * =========================================
-   */
+    }, [
+      dashboard,
+    ]);
 
   const carCityData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
       return dashboard
         .topCarCities
         .map(
-          (item) => ({
+          (
+            item,
+          ) => ({
             name:
               item.iata
                 ? `${item.cityName} (${item.iata})`
@@ -317,24 +308,24 @@ function DashboardPage() {
               item.count,
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * ROUTES
-   * =========================================
-   */
+    }, [
+      dashboard,
+    ]);
 
   const routeData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
       return dashboard
         .topRoutes
         .map(
-          (route) => ({
+          (
+            route,
+          ) => ({
             name:
               `${route.originIata} → ${route.destinationIata}`,
 
@@ -342,24 +333,24 @@ function DashboardPage() {
               route.count,
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * COUNTRIES
-   * =========================================
-   */
+    }, [
+      dashboard,
+    ]);
 
   const countryData =
     useMemo(() => {
-      if (!dashboard) {
+      if (
+        !dashboard
+      ) {
         return [];
       }
 
       return dashboard
         .topCountries
         .map(
-          (country) => ({
+          (
+            country,
+          ) => ({
             name:
               country
                 .countryName ??
@@ -370,13 +361,9 @@ function DashboardPage() {
               country.count,
           }),
         );
-    }, [dashboard]);
-
-  /*
-   * =========================================
-   * KPI VALUES
-   * =========================================
-   */
+    }, [
+      dashboard,
+    ]);
 
   const mainRoute =
     dashboard
@@ -394,34 +381,28 @@ function DashboardPage() {
       'car',
     );
 
-  /*
-   * =========================================
-   * LOADING
-   * =========================================
-   */
-
   if (
     isLoading &&
     !dashboard
   ) {
     return (
       <main className="analytics-page">
+
         <div className="dashboard-loading">
+
           <div className="dashboard-loading-spinner" />
 
           <p>
-            Cargando dashboard...
+            {t(
+              'dashboard.loading',
+            )}
           </p>
+
         </div>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * ERROR
-   * =========================================
-   */
 
   if (
     error &&
@@ -429,50 +410,57 @@ function DashboardPage() {
   ) {
     return (
       <main className="analytics-page">
+
         <div className="dashboard-error">
+
           <h2>
-            No pudimos cargar el dashboard
+            {t(
+              'dashboard.errors.title',
+            )}
           </h2>
 
           <p>
-            {error}
+            {t(
+              error,
+            )}
           </p>
+
         </div>
+
       </main>
     );
   }
 
-  if (!dashboard) {
+  if (
+    !dashboard
+  ) {
     return null;
   }
 
-  /*
-   * =========================================
-   * RENDER
-   * =========================================
-   */
-
   return (
     <main className="analytics-page">
+
       <div className="analytics-layout">
 
-        {/* =====================================
-            SIDEBAR
-        ====================================== */}
-
         <aside className="analytics-sidebar">
+
           <div className="analytics-sidebar-heading">
-            Analítica
+            {t(
+              'dashboard.sidebar.analytics',
+            )}
           </div>
 
           <nav className="analytics-sidebar-nav">
+
             <a
               href="#dashboard-summary"
               className="analytics-sidebar-link analytics-sidebar-link-active"
             >
               <DashboardIcon />
 
-              Dashboard
+              {t(
+                'dashboard.sidebar.dashboard',
+              )}
             </a>
 
             <a
@@ -481,7 +469,9 @@ function DashboardPage() {
             >
               <SearchIcon />
 
-              Búsquedas
+              {t(
+                'dashboard.sidebar.searches',
+              )}
             </a>
 
             <a
@@ -490,7 +480,9 @@ function DashboardPage() {
             >
               <LocationIcon />
 
-              Destinos
+              {t(
+                'dashboard.sidebar.destinations',
+              )}
             </a>
 
             <a
@@ -499,7 +491,9 @@ function DashboardPage() {
             >
               <ServicesIcon />
 
-              Servicios
+              {t(
+                'dashboard.sidebar.services',
+              )}
             </a>
 
             <a
@@ -508,7 +502,9 @@ function DashboardPage() {
             >
               <PlaneIcon />
 
-              Rutas
+              {t(
+                'dashboard.sidebar.routes',
+              )}
             </a>
 
             <a
@@ -517,80 +513,97 @@ function DashboardPage() {
             >
               <TrendIcon />
 
-              Tendencias
+              {t(
+                'dashboard.sidebar.trends',
+              )}
             </a>
+
           </nav>
 
           <div className="analytics-sidebar-info">
+
             <span>
-              Período actual
+              {t(
+                'dashboard.period.current',
+              )}
             </span>
 
             <strong>
-              Últimos{' '}
-              {
-                dashboard
-                  .period.days
-              }{' '}
-              días
+              {t(
+                'dashboard.period.lastDays',
+                {
+                  count:
+                    dashboard
+                      .period
+                      .days,
+                },
+              )}
             </strong>
 
             <small>
-              {
+              {formatPeriodDate(
                 dashboard
-                  .period.from
-              }
+                  .period
+                  .from,
+                locale,
+              )}
 
               {' → '}
 
-              {
+              {formatPeriodDate(
                 dashboard
-                  .period.to
-              }
+                  .period
+                  .to,
+                locale,
+              )}
             </small>
+
           </div>
+
         </aside>
 
-        {/* =====================================
-            CONTENT
-        ====================================== */}
-
         <section className="analytics-content">
-
-          {/* =====================================
-              HEADER
-          ====================================== */}
 
           <header
             className="dashboard-header"
             id="dashboard-summary"
           >
+
             <div>
+
               <span className="dashboard-eyebrow">
                 GlobalTour Analytics
               </span>
 
               <h1>
-                Dashboard
+                {t(
+                  'dashboard.header.title',
+                )}
               </h1>
 
               <p>
-                Comportamiento y tendencias
-                de búsqueda dentro de
-                GlobalTour.
+                {t(
+                  'dashboard.header.description',
+                )}
               </p>
+
             </div>
 
             <div className="dashboard-period-control">
+
               <label
                 htmlFor="dashboard-period"
               >
-                Período
+                {t(
+                  'dashboard.period.label',
+                )}
               </label>
 
               <select
                 id="dashboard-period"
-                value={days}
+                value={
+                  days
+                }
                 onChange={
                   handlePeriodChange
                 }
@@ -599,41 +612,52 @@ function DashboardPage() {
                 }
               >
                 <option value={7}>
-                  Últimos 7 días
+                  {t(
+                    'dashboard.period.last7',
+                  )}
                 </option>
 
                 <option value={30}>
-                  Últimos 30 días
+                  {t(
+                    'dashboard.period.last30',
+                  )}
                 </option>
 
                 <option value={90}>
-                  Últimos 90 días
+                  {t(
+                    'dashboard.period.last90',
+                  )}
                 </option>
               </select>
+
             </div>
+
           </header>
 
           {error && (
             <div className="dashboard-inline-error">
-              {error}
+              {t(
+                error,
+              )}
             </div>
           )}
-
-          {/* =====================================
-              KPIs
-          ====================================== */}
 
           <section className="dashboard-kpi-grid">
 
             <article className="dashboard-kpi-card dashboard-kpi-primary">
+
               <div className="dashboard-kpi-heading">
+
                 <span className="dashboard-kpi-icon">
                   <SearchIcon />
                 </span>
 
                 <span>
-                  Búsquedas totales
+                  {t(
+                    'dashboard.kpis.totalSearches',
+                  )}
                 </span>
+
               </div>
 
               <strong>
@@ -645,19 +669,27 @@ function DashboardPage() {
               </strong>
 
               <span className="dashboard-kpi-caption">
-                En el período seleccionado
+                {t(
+                  'dashboard.kpis.selectedPeriod',
+                )}
               </span>
+
             </article>
 
             <article className="dashboard-kpi-card dashboard-kpi-secondary">
+
               <div className="dashboard-kpi-heading">
+
                 <span className="dashboard-kpi-icon">
                   <PlaneIcon />
                 </span>
 
                 <span>
-                  Orígenes únicos
+                  {t(
+                    'dashboard.kpis.uniqueOrigins',
+                  )}
                 </span>
+
               </div>
 
               <strong>
@@ -669,19 +701,27 @@ function DashboardPage() {
               </strong>
 
               <span className="dashboard-kpi-caption">
-                Ciudades de salida buscadas
+                {t(
+                  'dashboard.kpis.originCities',
+                )}
               </span>
+
             </article>
 
             <article className="dashboard-kpi-card dashboard-kpi-tertiary">
+
               <div className="dashboard-kpi-heading">
+
                 <span className="dashboard-kpi-icon">
                   <LocationIcon />
                 </span>
 
                 <span>
-                  Destinos únicos
+                  {t(
+                    'dashboard.kpis.uniqueDestinations',
+                  )}
                 </span>
+
               </div>
 
               <strong>
@@ -693,69 +733,95 @@ function DashboardPage() {
               </strong>
 
               <span className="dashboard-kpi-caption">
-                Destinos diferentes
-                consultados
+                {t(
+                  'dashboard.kpis.differentDestinations',
+                )}
               </span>
+
             </article>
 
             <article className="dashboard-kpi-card dashboard-kpi-route">
+
               <div className="dashboard-kpi-heading">
+
                 <span className="dashboard-kpi-icon">
                   <RouteIcon />
                 </span>
 
                 <span>
-                  Ruta principal
+                  {t(
+                    'dashboard.kpis.mainRoute',
+                  )}
                 </span>
+
               </div>
 
               <strong className="dashboard-route-value">
                 {mainRoute
                   ? `${mainRoute.originIata} → ${mainRoute.destinationIata}`
-                  : 'Sin datos'}
+                  : t(
+                      'dashboard.common.noData',
+                    )}
               </strong>
 
               <span className="dashboard-kpi-caption">
                 {mainRoute
-                  ? `${mainRoute.count} búsquedas`
-                  : 'Aún no hay rutas registradas'}
+                  ? t(
+                      'dashboard.kpis.routeSearches',
+                      {
+                        count:
+                          mainRoute
+                            .count,
+                      },
+                    )
+                  : t(
+                      'dashboard.kpis.noRoutes',
+                    )}
               </span>
+
             </article>
+
           </section>
 
-          {/* =====================================
-              TYPE + DESTINATIONS
-          ====================================== */}
-
           <section className="dashboard-chart-grid">
-
-            {/* SEARCH TYPE */}
 
             <article
               className="dashboard-panel"
               id="search-types"
             >
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Búsquedas por tipo
+                    {t(
+                      'dashboard.charts.searchTypes.title',
+                    )}
                   </h2>
 
                   <p>
-                    Distribución del uso de
-                    los módulos.
+                    {t(
+                      'dashboard.charts.searchTypes.description',
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <div className="dashboard-chart-container">
+
                 {searchTypes.length >
                 0 ? (
                   <ResponsiveContainer
                     width="100%"
-                    height={320}
+                    height={
+                      320
+                    }
                   >
                     <PieChart>
+
                       <Pie
                         data={
                           searchTypes
@@ -794,51 +860,72 @@ function DashboardPage() {
 
                       <Legend
                         verticalAlign="bottom"
-                        height={36}
+                        height={
+                          36
+                        }
                       />
+
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
                   <EmptyChart />
                 )}
-              </div>
-            </article>
 
-            {/* DESTINATIONS */}
+              </div>
+
+            </article>
 
             <article
               className="dashboard-panel"
               id="popular-destinations"
             >
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Destinos más buscados
+                    {t(
+                      'dashboard.charts.destinations.title',
+                    )}
                   </h2>
 
                   <p>
-                    Ciudades con mayor
-                    interés de los usuarios.
+                    {t(
+                      'dashboard.charts.destinations.description',
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <div className="dashboard-chart-container">
+
                 {destinationData.length >
                 0 ? (
                   <ResponsiveContainer
                     width="100%"
-                    height={320}
+                    height={
+                      320
+                    }
                   >
                     <BarChart
                       data={
                         destinationData
                       }
                       margin={{
-                        top: 12,
-                        right: 10,
-                        left: -20,
-                        bottom: 5,
+                        top:
+                          12,
+
+                        right:
+                          10,
+
+                        left:
+                          -20,
+
+                        bottom:
+                          5,
                       }}
                     >
                       <CartesianGrid
@@ -874,7 +961,9 @@ function DashboardPage() {
 
                       <Bar
                         dataKey="count"
-                        name="Búsquedas"
+                        name={t(
+                          'dashboard.common.searches',
+                        )}
                         fill="#2563eb"
                         radius={[
                           8,
@@ -886,33 +975,40 @@ function DashboardPage() {
                           54
                         }
                       />
+
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
                   <EmptyChart />
                 )}
-              </div>
-            </article>
-          </section>
 
-          {/* =====================================
-              SEARCH TREND
-          ====================================== */}
+              </div>
+
+            </article>
+
+          </section>
 
           <section
             className="dashboard-panel dashboard-panel-wide"
             id="search-trend"
           >
+
             <div className="dashboard-panel-header">
+
               <div>
+
                 <h2>
-                  Evolución de búsquedas
+                  {t(
+                    'dashboard.charts.trend.title',
+                  )}
                 </h2>
 
                 <p>
-                  Cantidad de búsquedas
-                  realizadas por día.
+                  {t(
+                    'dashboard.charts.trend.description',
+                  )}
                 </p>
+
               </div>
 
               <span className="dashboard-panel-badge">
@@ -921,24 +1017,38 @@ function DashboardPage() {
                     .summary
                     .totalSearches
                 }{' '}
-                búsquedas
+
+                {t(
+                  'dashboard.common.searches',
+                )}
               </span>
+
             </div>
 
             <div className="dashboard-chart-container dashboard-line-chart">
+
               <ResponsiveContainer
                 width="100%"
-                height={330}
+                height={
+                  330
+                }
               >
                 <LineChart
                   data={
                     volumeData
                   }
                   margin={{
-                    top: 10,
-                    right: 15,
-                    left: -20,
-                    bottom: 5,
+                    top:
+                      10,
+
+                    right:
+                      15,
+
+                    left:
+                      -20,
+
+                    bottom:
+                      5,
                   }}
                 >
                   <CartesianGrid
@@ -978,87 +1088,113 @@ function DashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="count"
-                    name="Búsquedas"
+                    name={t(
+                      'dashboard.common.searches',
+                    )}
                     stroke="#2563eb"
                     strokeWidth={
                       3
                     }
                     dot={{
-                      r: 3,
+                      r:
+                        3,
+
                       fill:
                         '#2563eb',
                     }}
                     activeDot={{
-                      r: 6,
+                      r:
+                        6,
                     }}
                   />
+
                 </LineChart>
               </ResponsiveContainer>
-            </div>
-          </section>
 
-          {/* =====================================
-              SERVICE ANALYTICS
-          ====================================== */}
+            </div>
+
+          </section>
 
           <section
             className="dashboard-bottom-grid"
             id="service-analytics"
           >
-            {/* RESTAURANTS */}
 
             <article className="dashboard-panel">
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Restaurantes por ciudad
+                    {t(
+                      'dashboard.charts.restaurantCities.title',
+                    )}
                   </h2>
 
                   <p>
-                    {restaurantSearches}{' '}
-                    búsquedas de restaurantes
-                    registradas.
+                    {t(
+                      'dashboard.charts.restaurantCities.description',
+                      {
+                        count:
+                          restaurantSearches,
+                      },
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <RankingBarChart
                 data={
                   restaurantCityData
                 }
-                label="Búsquedas"
+                label={t(
+                  'dashboard.common.searches',
+                )}
               />
+
             </article>
 
-            {/* CARS */}
-
             <article className="dashboard-panel">
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Rent a Car por ciudad
+                    {t(
+                      'dashboard.charts.carCities.title',
+                    )}
                   </h2>
 
                   <p>
-                    {carSearches}{' '}
-                    búsquedas de Rent a Car
-                    registradas.
+                    {t(
+                      'dashboard.charts.carCities.description',
+                      {
+                        count:
+                          carSearches,
+                      },
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <RankingBarChart
                 data={
                   carCityData
                 }
-                label="Búsquedas"
+                label={t(
+                  'dashboard.common.searches',
+                )}
               />
-            </article>
-          </section>
 
-          {/* =====================================
-              FILTER ANALYTICS
-          ====================================== */}
+            </article>
+
+          </section>
 
           {(dashboard
             .topRestaurantCuisines
@@ -1076,8 +1212,12 @@ function DashboardPage() {
                 .length >
                 0 && (
                 <FilterBarChartPanel
-                  title="Cocinas más buscadas"
-                  description="Preferencias gastronómicas utilizadas como filtro."
+                  title={t(
+                    'dashboard.filters.cuisines.title',
+                  )}
+                  description={t(
+                    'dashboard.filters.cuisines.description',
+                  )}
                   items={
                     dashboard
                       .topRestaurantCuisines
@@ -1093,8 +1233,12 @@ function DashboardPage() {
                 .length >
                 0 && (
                 <FilterBarChartPanel
-                  title="Tipos de restaurante"
-                  description="Tipos de establecimientos gastronómicos más consultados."
+                  title={t(
+                    'dashboard.filters.restaurantTypes.title',
+                  )}
+                  description={t(
+                    'dashboard.filters.restaurantTypes.description',
+                  )}
                   items={
                     dashboard
                       .topRestaurantTypes
@@ -1110,8 +1254,12 @@ function DashboardPage() {
                 .length >
                 0 && (
                 <FilterBarChartPanel
-                  title="Tipos de movilidad"
-                  description="Filtros más utilizados en Rent a Car."
+                  title={t(
+                    'dashboard.filters.carTypes.title',
+                  )}
+                  description={t(
+                    'dashboard.filters.carTypes.description',
+                  )}
                   items={
                     dashboard
                       .topCarTypes
@@ -1121,85 +1269,102 @@ function DashboardPage() {
                   }
                 />
               )}
+
             </section>
           )}
 
-          {/* =====================================
-              ROUTES + COUNTRIES
-          ====================================== */}
-
           <section className="dashboard-bottom-grid">
-
-            {/* ROUTES */}
 
             <article
               className="dashboard-panel"
               id="popular-routes"
             >
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Rutas populares
+                    {t(
+                      'dashboard.charts.routes.title',
+                    )}
                   </h2>
 
                   <p>
-                    Trayectos con mayor
-                    cantidad de consultas.
+                    {t(
+                      'dashboard.charts.routes.description',
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <RankingBarChart
                 data={
                   routeData
                 }
-                label="Búsquedas"
+                label={t(
+                  'dashboard.common.searches',
+                )}
               />
+
             </article>
 
-            {/* COUNTRIES */}
-
             <article className="dashboard-panel">
+
               <div className="dashboard-panel-header">
+
                 <div>
+
                   <h2>
-                    Países más buscados
+                    {t(
+                      'dashboard.charts.countries.title',
+                    )}
                   </h2>
 
                   <p>
-                    Países que concentran
-                    mayor interés.
+                    {t(
+                      'dashboard.charts.countries.description',
+                    )}
                   </p>
+
                 </div>
+
               </div>
 
               <RankingBarChart
                 data={
                   countryData
                 }
-                label="Búsquedas"
+                label={t(
+                  'dashboard.common.searches',
+                )}
               />
+
             </article>
+
           </section>
+
         </section>
+
       </div>
+
     </main>
   );
 }
 
-/*
- * =========================================
- * REUSABLE RANKING BAR CHART
- * =========================================
- */
-
 interface RankingBarChartProps {
   data: {
-    name: string;
-    count: number;
+    name:
+      string;
+
+    count:
+      number;
   }[];
 
-  label: string;
+  label:
+    string;
 }
 
 function RankingBarChart({
@@ -1207,29 +1372,25 @@ function RankingBarChart({
   label,
 }: RankingBarChartProps) {
   if (
-    data.length === 0
+    data.length ===
+    0
   ) {
-    return <EmptyChart />;
+    return (
+      <EmptyChart />
+    );
   }
 
-  /*
-   * Orden descendente para mantener
-   * comportamiento de ranking.
-   */
   const sortedData = [
     ...data,
   ].sort(
-    (a, b) =>
+    (
+      a,
+      b,
+    ) =>
       b.count -
       a.count,
   );
 
-  /*
-   * Altura dinámica.
-   *
-   * Antes el mínimo era 260px y
-   * generaba demasiado espacio vacío.
-   */
   const chartHeight =
     Math.max(
       170,
@@ -1240,16 +1401,14 @@ function RankingBarChart({
   const maxValue =
     Math.max(
       ...sortedData.map(
-        (item) =>
+        (
+          item,
+        ) =>
           item.count,
       ),
       1,
     );
 
-  /*
-   * Espacio extra para mostrar
-   * el valor al final de cada barra.
-   */
   const domainMax =
     Math.max(
       2,
@@ -1261,6 +1420,7 @@ function RankingBarChart({
 
   return (
     <div className="dashboard-ranking-chart">
+
       <ResponsiveContainer
         width="100%"
         height={
@@ -1273,19 +1433,23 @@ function RankingBarChart({
           }
           layout="vertical"
           margin={{
-            top: 12,
-            right: 58,
-            left: 12,
-            bottom: 8,
+            top:
+              12,
+
+            right:
+              58,
+
+            left:
+              12,
+
+            bottom:
+              8,
           }}
           barCategoryGap="24%"
         >
 
-          {/* =================================
-              GRADIENTS
-          ================================== */}
-
           <defs>
+
             <linearGradient
               id="rankingGradientFirst"
               x1="0"
@@ -1344,11 +1508,8 @@ function RankingBarChart({
                 stopColor="#93c5fd"
               />
             </linearGradient>
-          </defs>
 
-          {/* =================================
-              GRID
-          ================================== */}
+          </defs>
 
           <CartesianGrid
             strokeDasharray="4 5"
@@ -1357,10 +1518,6 @@ function RankingBarChart({
             }
             stroke="#e6edf7"
           />
-
-          {/* =================================
-              X AXIS
-          ================================== */}
 
           <XAxis
             type="number"
@@ -1380,18 +1537,18 @@ function RankingBarChart({
             tick={{
               fill:
                 '#98a2b3',
-              fontSize: 12,
+
+              fontSize:
+                12,
             }}
           />
-
-          {/* =================================
-              Y AXIS
-          ================================== */}
 
           <YAxis
             type="category"
             dataKey="name"
-            width={165}
+            width={
+              165
+            }
             tickLine={
               false
             }
@@ -1401,15 +1558,14 @@ function RankingBarChart({
             tick={{
               fill:
                 '#475467',
-              fontSize: 13,
+
+              fontSize:
+                13,
+
               fontWeight:
                 600,
             }}
           />
-
-          {/* =================================
-              TOOLTIP
-          ================================== */}
 
           <Tooltip
             cursor={{
@@ -1447,13 +1603,11 @@ function RankingBarChart({
             }}
           />
 
-          {/* =================================
-              BARS
-          ================================== */}
-
           <Bar
             dataKey="count"
-            name={label}
+            name={
+              label
+            }
             radius={[
               0,
               10,
@@ -1474,6 +1628,7 @@ function RankingBarChart({
                 '#f2f5fa',
             }}
           >
+
             {sortedData.map(
               (
                 _item,
@@ -1483,12 +1638,14 @@ function RankingBarChart({
                   'url(#rankingGradientDefault)';
 
                 if (
-                  index === 0
+                  index ===
+                  0
                 ) {
                   fill =
                     'url(#rankingGradientFirst)';
                 } else if (
-                  index === 1
+                  index ===
+                  1
                 ) {
                   fill =
                     'url(#rankingGradientSecond)';
@@ -1511,28 +1668,24 @@ function RankingBarChart({
               },
             )}
 
-            {/* Número visible */}
-
             <LabelList
               dataKey="count"
               position="right"
               className="dashboard-ranking-value"
             />
+
           </Bar>
+
         </BarChart>
       </ResponsiveContainer>
+
     </div>
   );
 }
 
-/*
- * =========================================
- * FILTER CHART
- * =========================================
- */
-
 interface FilterBarChartPanelProps {
-  title: string;
+  title:
+    string;
 
   description:
     string;
@@ -1541,7 +1694,8 @@ interface FilterBarChartPanelProps {
     DashboardFilterCount[];
 
   formatter?: (
-    value: string,
+    value:
+      string,
   ) => string;
 }
 
@@ -1552,9 +1706,16 @@ function FilterBarChartPanel({
   formatter =
     formatFilterLabel,
 }: FilterBarChartPanelProps) {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const data =
     items.map(
-      (item) => ({
+      (
+        item,
+      ) => ({
         name:
           formatter(
             item.value,
@@ -1567,8 +1728,11 @@ function FilterBarChartPanel({
 
   return (
     <article className="dashboard-panel">
+
       <div className="dashboard-panel-header">
+
         <div>
+
           <h2>
             {title}
           </h2>
@@ -1576,86 +1740,144 @@ function FilterBarChartPanel({
           <p>
             {description}
           </p>
+
         </div>
+
       </div>
 
       <RankingBarChart
         data={
           data
         }
-        label="Búsquedas"
+        label={t(
+          'dashboard.common.searches',
+        )}
       />
+
     </article>
   );
 }
 
-/*
- * =========================================
- * EMPTY STATE
- * =========================================
- */
-
 function EmptyChart() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   return (
     <div className="dashboard-empty">
+
       <span>
-        Sin datos suficientes
+        {t(
+          'dashboard.empty.title',
+        )}
       </span>
 
       <p>
-        Los gráficos aparecerán cuando
-        se registren búsquedas.
+        {t(
+          'dashboard.empty.description',
+        )}
       </p>
+
     </div>
   );
 }
 
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
-
 function getSearchTypeCount(
   dashboard:
-    DashboardData | null,
-  type: string,
+    DashboardData |
+    null,
+
+  type:
+    string,
 ) {
   return (
     dashboard
       ?.summary
       .byType
       .find(
-        (item) =>
+        (
+          item,
+        ) =>
           item.searchType ===
           type,
       )
-      ?.count ?? 0
+      ?.count ??
+    0
   );
 }
 
+function getSearchTypeLabel(
+  value:
+    string,
+) {
+  switch (
+    value
+  ) {
+    case 'flight':
+      return i18n.t(
+        'dashboard.searchTypes.flights',
+      );
+
+    case 'hotel':
+      return i18n.t(
+        'dashboard.searchTypes.hotels',
+      );
+
+    case 'currency':
+      return i18n.t(
+        'dashboard.searchTypes.currency',
+      );
+
+    case 'destination':
+      return i18n.t(
+        'dashboard.searchTypes.destinations',
+      );
+
+    case 'restaurant':
+      return i18n.t(
+        'dashboard.searchTypes.restaurants',
+      );
+
+    case 'car':
+      return i18n.t(
+        'dashboard.searchTypes.cars',
+      );
+
+    default:
+      return value;
+  }
+}
+
 function formatRestaurantFilter(
-  value: string,
+  value:
+    string,
 ) {
   if (
     value ===
     'restaurant'
   ) {
-    return 'Restaurante';
+    return i18n.t(
+      'restaurants.common.types.restaurant',
+    );
   }
 
   if (
     value ===
     'cafe'
   ) {
-    return 'Café';
+    return i18n.t(
+      'restaurants.common.types.cafe',
+    );
   }
 
   if (
     value ===
     'fast_food'
   ) {
-    return 'Comida rápida';
+    return i18n.t(
+      'restaurants.common.types.fastFood',
+    );
   }
 
   return formatFilterLabel(
@@ -1664,20 +1886,25 @@ function formatRestaurantFilter(
 }
 
 function formatCarFilter(
-  value: string,
+  value:
+    string,
 ) {
   if (
     value ===
     'car_rental'
   ) {
-    return 'Rent a Car';
+    return i18n.t(
+      'cars.common.types.carRental',
+    );
   }
 
   if (
     value ===
     'car_sharing'
   ) {
-    return 'Car sharing';
+    return i18n.t(
+      'cars.common.types.carSharing',
+    );
   }
 
   return formatFilterLabel(
@@ -1686,7 +1913,8 @@ function formatCarFilter(
 }
 
 function formatFilterLabel(
-  value: string,
+  value:
+    string,
 ) {
   return value
     .replace(
@@ -1702,24 +1930,155 @@ function formatFilterLabel(
     );
 }
 
-function formatShortDate(
-  date: string,
+function getLocale(
+  language:
+    string |
+    undefined,
 ) {
+  const normalized =
+    language
+      ?.split(
+        '-',
+      )[0] ??
+    'es';
+
+  if (
+    normalized ===
+    'en'
+  ) {
+    return 'en-US';
+  }
+
+  if (
+    normalized ===
+    'pt'
+  ) {
+    return 'pt-BR';
+  }
+
+  return 'es-CR';
+}
+
+function formatShortDate(
+  value:
+    string,
+
+  locale:
+    string,
+) {
+  const match =
+    value.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+    );
+
+  if (
+    !match
+  ) {
+    return value;
+  }
+
   const [
     ,
+    year,
     month,
     day,
   ] =
-    date.split('-');
+    match;
 
-  return `${day}/${month}`;
+  const date =
+    new Date(
+      Date.UTC(
+        Number(
+          year,
+        ),
+        Number(
+          month,
+        ) -
+          1,
+        Number(
+          day,
+        ),
+      ),
+    );
+
+  return new Intl.DateTimeFormat(
+    locale,
+    {
+      day:
+        '2-digit',
+
+      month:
+        '2-digit',
+
+      timeZone:
+        'UTC',
+    },
+  ).format(
+    date,
+  );
 }
 
-/*
- * =========================================
- * ICONS
- * =========================================
- */
+function formatPeriodDate(
+  value:
+    string,
+
+  locale:
+    string,
+) {
+  const match =
+    value.match(
+      /^(\d{4})-(\d{2})-(\d{2})/,
+    );
+
+  if (
+    !match
+  ) {
+    return value;
+  }
+
+  const [
+    ,
+    year,
+    month,
+    day,
+  ] =
+    match;
+
+  const date =
+    new Date(
+      Date.UTC(
+        Number(
+          year,
+        ),
+        Number(
+          month,
+        ) -
+          1,
+        Number(
+          day,
+        ),
+      ),
+    );
+
+  return new Intl.DateTimeFormat(
+    locale,
+    {
+      day:
+        '2-digit',
+
+      month:
+        'short',
+
+      year:
+        'numeric',
+
+      timeZone:
+        'UTC',
+    },
+  ).format(
+    date,
+  );
+}
 
 function DashboardIcon() {
   return (

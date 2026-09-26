@@ -3,6 +3,10 @@ import {
   type FormEvent,
 } from 'react';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
 
 import {
@@ -35,6 +39,10 @@ function TravelPlanSearchForm({
   onSearch,
 }: TravelPlanSearchFormProps) {
   const {
+    t,
+  } = useTranslation();
+
+  const {
     selectedCurrency,
   } = useCurrency();
 
@@ -48,33 +56,42 @@ function TravelPlanSearchForm({
   const [
     origin,
     setOrigin,
-  ] = useState<Destination | null>(
-    null,
-  );
+  ] =
+    useState<Destination | null>(
+      null,
+    );
 
   const [
     destination,
     setDestination,
-  ] = useState<Destination | null>(
-    null,
-  );
+  ] =
+    useState<Destination | null>(
+      null,
+    );
 
   const [
     departureDate,
     setDepartureDate,
-  ] = useState('');
+  ] =
+    useState('');
 
   const [
     returnDate,
     setReturnDate,
-  ] = useState('');
+  ] =
+    useState('');
 
   const handleTripTypeChange = (
     value: TripType,
   ) => {
-    setTripType(value);
+    setTripType(
+      value,
+    );
 
-    if (value === 'one-way') {
+    if (
+      value ===
+      'one-way'
+    ) {
       setReturnDate('');
     }
   };
@@ -82,7 +99,9 @@ function TravelPlanSearchForm({
   const handleDepartureDateChange = (
     value: string,
   ) => {
-    setDepartureDate(value);
+    setDepartureDate(
+      value,
+    );
 
     if (
       returnDate &&
@@ -92,15 +111,23 @@ function TravelPlanSearchForm({
     }
   };
 
-  const handleSwapLocations = () => {
-    const previousOrigin = origin;
+  const handleSwapLocations =
+    () => {
+      const previousOrigin =
+        origin;
 
-    setOrigin(destination);
-    setDestination(previousOrigin);
-  };
+      setOrigin(
+        destination,
+      );
+
+      setDestination(
+        previousOrigin,
+      );
+    };
 
   const handleSubmit = (
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
@@ -113,21 +140,31 @@ function TravelPlanSearchForm({
     }
 
     if (
-      tripType === 'round-trip' &&
+      tripType ===
+        'round-trip' &&
       !returnDate
     ) {
       return;
     }
 
     onSearch({
-      origin: origin.cityIata,
-      destination: destination.cityIata,
-      departureAt: departureDate,
+      origin:
+        origin.cityIata,
+
+      destination:
+        destination.cityIata,
+
+      departureAt:
+        departureDate,
+
       returnAt:
-        tripType === 'round-trip'
+        tripType ===
+        'round-trip'
           ? returnDate
           : undefined,
-      currency: selectedCurrency,
+
+      currency:
+        selectedCurrency,
     });
   };
 
@@ -136,50 +173,68 @@ function TravelPlanSearchForm({
     !destination ||
     !departureDate ||
     (
-      tripType === 'round-trip' &&
+      tripType ===
+        'round-trip' &&
       !returnDate
     );
 
   return (
     <section className="gt-travel-plan">
 
-      {/* HERO */}
       <div className="gt-travel-plan-hero">
+
         <div className="gt-travel-plan-hero-overlay" />
 
         <div className="gt-travel-plan-hero-inner">
+
           <span className="gt-travel-plan-eyebrow">
             GLOBALTOUR
           </span>
 
           <h1>
-            Planifica tu viaje
+            {t(
+              'travelPlan.form.hero.titleLine1',
+            )}
+
             <br />
-            desde un solo lugar
+
+            {t(
+              'travelPlan.form.hero.titleLine2',
+            )}
           </h1>
 
           <p>
-            Encuentra tu vuelo y organiza los
-            servicios que necesitas para disfrutar
-            tu viaje.
+            {t(
+              'travelPlan.form.hero.description',
+            )}
           </p>
+
         </div>
+
       </div>
 
-      {/* BUSCADOR */}
       <div className="gt-travel-plan-search-section">
+
         <div className="gt-travel-plan-search-shell">
 
           <div className="gt-travel-plan-search-heading">
+
             <div>
+
               <span>
-                PLAN DE VIAJE
+                {t(
+                  'travelPlan.form.search.eyebrow',
+                )}
               </span>
 
               <strong>
-                Busca tu próxima aventura
+                {t(
+                  'travelPlan.form.search.title',
+                )}
               </strong>
+
             </div>
+
           </div>
 
           <div className="gt-travel-plan-trip-type">
@@ -187,7 +242,8 @@ function TravelPlanSearchForm({
             <button
               type="button"
               className={
-                tripType === 'round-trip'
+                tripType ===
+                'round-trip'
                   ? 'active'
                   : ''
               }
@@ -197,13 +253,16 @@ function TravelPlanSearchForm({
                 )
               }
             >
-              Ida y vuelta
+              {t(
+                'travelPlan.form.tripType.roundTrip',
+              )}
             </button>
 
             <button
               type="button"
               className={
-                tripType === 'one-way'
+                tripType ===
+                'one-way'
                   ? 'active'
                   : ''
               }
@@ -213,40 +272,54 @@ function TravelPlanSearchForm({
                 )
               }
             >
-              Solo ida
+              {t(
+                'travelPlan.form.tripType.oneWay',
+              )}
             </button>
 
           </div>
 
           <form
             className="gt-travel-plan-form"
-            onSubmit={handleSubmit}
+            onSubmit={
+              handleSubmit
+            }
           >
 
             <div className="gt-travel-plan-search-row">
 
-              {/* ORIGEN */}
               <div className="gt-travel-plan-field">
+
                 <span className="gt-travel-plan-field-label">
-                  ORIGEN
+                  {t(
+                    'travelPlan.form.fields.origin',
+                  )}
                 </span>
 
                 <DestinationAutocomplete
                   label=""
-                  placeholder="¿Desde dónde viajas?"
-                  value={origin}
-                  onChange={setOrigin}
+                  placeholder={t(
+                    'forms.flights.originPlaceholder',
+                  )}
+                  value={
+                    origin
+                  }
+                  onChange={
+                    setOrigin
+                  }
                   excludeIata={
                     destination?.cityIata
                   }
                 />
+
               </div>
 
-              {/* INTERCAMBIAR */}
               <button
                 type="button"
                 className="gt-travel-plan-swap"
-                aria-label="Intercambiar origen y destino"
+                aria-label={t(
+                  'travelPlan.form.fields.swap',
+                )}
                 onClick={
                   handleSwapLocations
                 }
@@ -258,66 +331,93 @@ function TravelPlanSearchForm({
                 ⇄
               </button>
 
-              {/* DESTINO */}
               <div className="gt-travel-plan-field">
+
                 <span className="gt-travel-plan-field-label">
-                  DESTINO
+                  {t(
+                    'travelPlan.form.fields.destination',
+                  )}
                 </span>
 
                 <DestinationAutocomplete
                   label=""
-                  placeholder="¿A dónde quieres ir?"
-                  value={destination}
-                  onChange={setDestination}
+                  placeholder={t(
+                    'forms.flights.destinationPlaceholder',
+                  )}
+                  value={
+                    destination
+                  }
+                  onChange={
+                    setDestination
+                  }
                   excludeIata={
                     origin?.cityIata
                   }
                 />
+
               </div>
 
-              {/* SALIDA */}
               <label className="gt-travel-plan-field">
+
                 <span className="gt-travel-plan-field-label">
-                  SALIDA
+                  {t(
+                    'travelPlan.form.fields.departure',
+                  )}
                 </span>
 
                 <input
                   type="date"
-                  value={departureDate}
-                  aria-label="Fecha de salida"
-                  onChange={(event) =>
+                  value={
+                    departureDate
+                  }
+                  aria-label={t(
+                    'travelPlan.form.fields.departureAria',
+                  )}
+                  onChange={(
+                    event,
+                  ) =>
                     handleDepartureDateChange(
                       event.target.value,
                     )
                   }
                 />
+
               </label>
 
-              {/* REGRESO */}
-              {tripType === 'round-trip' && (
+              {tripType ===
+                'round-trip' && (
                 <label className="gt-travel-plan-field">
+
                   <span className="gt-travel-plan-field-label">
-                    REGRESO
+                    {t(
+                      'travelPlan.form.fields.return',
+                    )}
                   </span>
 
                   <input
                     type="date"
-                    value={returnDate}
+                    value={
+                      returnDate
+                    }
                     min={
                       departureDate ||
                       undefined
                     }
-                    aria-label="Fecha de regreso"
-                    onChange={(event) =>
+                    aria-label={t(
+                      'travelPlan.form.fields.returnAria',
+                    )}
+                    onChange={(
+                      event,
+                    ) =>
                       setReturnDate(
                         event.target.value,
                       )
                     }
                   />
+
                 </label>
               )}
 
-              {/* BUSCAR */}
               <button
                 type="submit"
                 className="gt-travel-plan-search-button"
@@ -325,7 +425,9 @@ function TravelPlanSearchForm({
                   isSearchDisabled
                 }
               >
-                Buscar vuelos
+                {t(
+                  'travelPlan.form.search.button',
+                )}
               </button>
 
             </div>
@@ -333,6 +435,7 @@ function TravelPlanSearchForm({
           </form>
 
         </div>
+
       </div>
 
     </section>
