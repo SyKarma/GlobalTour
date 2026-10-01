@@ -3,10 +3,20 @@ export type TravelpayoutsCity = {
   name?: string;
   country_code?: string;
   time_zone?: string;
+  has_flightable_airport?: boolean;
   coordinates?: {
     lat?: number;
     lon?: number;
   };
+};
+
+export type TravelpayoutsAirport = {
+  code?: string;
+  name?: string;
+  city_code?: string;
+  country_code?: string;
+  flightable?: boolean;
+  iata_type?: string;
 };
 
 export type TravelpayoutsCountry = {

@@ -9,10 +9,14 @@ export enum SearchType {
   FLIGHT = 'flight',
   HOTEL = 'hotel',
   CURRENCY = 'currency',
+  RESTAURANT = 'restaurant',
+  CAR = 'car',
 }
 
 export enum CacheProvider {
   TRAVELPAYOUTS = 'travelpayouts',
   FRANKFURTER = 'frankfurter',
   LITEAPI = 'liteapi',
+  GOOGLE_PLACES = 'google_places',
+  OVERPASS = 'overpass',
 }

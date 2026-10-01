@@ -36,9 +36,11 @@ describe('FlightsService', () => {
         {
           provide: CurrencyService,
           useValue: {
-            convert: jest.fn(async () => ({
-              data: { rate: 1, result: 1 },
-            })),
+            convert: jest.fn(() =>
+              Promise.resolve({
+                data: { rate: 1, result: 1 },
+              }),
+            ),
           },
         },
       ],
@@ -101,13 +103,109 @@ describe('FlightsService', () => {
     expect(cacheSet).toHaveBeenCalled();
   });
 
+  it('falls back to one-way month prices when a month+return-day dump is empty', async () => {
+    getPricesForDates
+      .mockResolvedValueOnce({
+        success: true,
+        currency: 'USD',
+        data: [],
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        currency: 'USD',
+        data: [
+          {
+            origin: 'SJO',
+            destination: 'MIA',
+            price: 266,
+            airline: 'AA',
+            departure_at: '2026-09-03T16:15:00-06:00',
+          },
+        ],
+      });
+
+    const result = await service.search({
+      origin: 'SJO',
+      destination: 'MIA',
+      departureAt: '2026-09',
+      returnAt: '2026-09-25',
+      currency: 'USD',
+    });
+
+    expect(getPricesForDates).toHaveBeenCalledTimes(2);
+    expect(getPricesForDates.mock.calls[1]?.[0]).toMatchObject({
+      origin: 'SJO',
+      destination: 'MIA',
+      departureAt: '2026-09',
+    });
+    expect(getPricesForDates.mock.calls[1]?.[0]).not.toHaveProperty('returnAt');
+    expect(result.data[0]?.price).toBe(266);
+    expect(result.meta.unavailable).toBe(false);
+    expect(result.meta.fallback).toBe('one_way_month');
+  });
+
+  it('falls back to nearby calendar days when an exact round trip is missing', async () => {
+    getPricesForDates.mockResolvedValue({
+      success: true,
+      currency: 'USD',
+      data: [],
+    });
+    getGroupedPrices
+      .mockResolvedValueOnce({
+        success: true,
+        currency: 'USD',
+        data: {},
+      })
+      .mockResolvedValueOnce({
+        success: true,
+        currency: 'USD',
+        data: {
+          '2026-09-24': {
+            origin: 'SJO',
+            destination: 'MIA',
+            price: 295,
+            airline: 'AA',
+            departure_at: '2026-09-24T14:57:00-06:00',
+          },
+        },
+      });
+
+    const result = await service.search({
+      origin: 'SJO',
+      destination: 'MIA',
+      departureAt: '2026-08-30',
+      returnAt: '2026-09-24',
+      currency: 'USD',
+    });
+
+    expect(getGroupedPrices).toHaveBeenCalledTimes(2);
+    expect(getGroupedPrices.mock.calls[1]?.[0]).toMatchObject({
+      groupBy: 'departure_at',
+      departureAt: '2026-09',
+    });
+    expect(result.data[0]?.price).toBe(295);
+    expect(result.meta.fallback).toBe('calendar');
+    expect(result.meta.fallbackPeriod).toBe('2026-09');
+    expect(result.meta.unavailable).toBe(false);
+  });
+
   it('builds monthly history points from grouped prices', async () => {
     getGroupedPrices.mockResolvedValue({
       success: true,
       currency: 'USD',
       data: {
-        '2026-08': { price: 60, origin: 'MAD', destination: 'BCN', airline: 'IB' },
-        '2026-09': { price: 40, origin: 'MAD', destination: 'BCN', airline: 'VY' },
+        '2026-08': {
+          price: 60,
+          origin: 'MAD',
+          destination: 'BCN',
+          airline: 'IB',
+        },
+        '2026-09': {
+          price: 40,
+          origin: 'MAD',
+          destination: 'BCN',
+          airline: 'VY',
+        },
       },
     });
 

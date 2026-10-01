@@ -1,9 +1,21 @@
 import { randomUUID } from 'crypto';
-import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Destination } from '../database/entities/destination.entity';
+import { TravelpayoutsAirport } from '../travelpayouts/travelpayouts.types';
 import { TravelpayoutsClient } from '../travelpayouts/travelpayouts.client';
+import {
+  escapeLikePattern,
+  isIataQuery,
+  rankSearchResults,
+} from './destination-search';
 import { SearchDestinationsDto } from './dto/search-destinations.dto';
 
 const FEATURED_IATAS = [
@@ -27,6 +39,7 @@ const FEATURED_IATAS = [
 
 const IATA = /^[A-Z]{3}$/;
 const CHUNK_SIZE = 400;
+const SEARCH_CANDIDATE_LIMIT = 80;
 
 @Injectable()
 export class DestinationsService implements OnModuleInit {
@@ -45,11 +58,21 @@ export class DestinationsService implements OnModuleInit {
     }
 
     const count = await this.destinations.count();
-    if (count === 0) {
-      this.logger.log('Destinations table is empty; seeding from TravelPayouts');
+    const flightableCount = await this.destinations.count({
+      where: { hasFlightableAirport: true },
+    });
+
+    if (count === 0 || flightableCount === 0) {
+      this.logger.log(
+        count === 0
+          ? 'Destinations table is empty; seeding from TravelPayouts'
+          : 'Destinations are missing flightable flags; re-syncing catalog',
+      );
       await this.syncFromTravelpayouts().catch((error: unknown) => {
         this.logger.error(
-          `Destination seed failed: ${error instanceof Error ? error.message : error}`,
+          `Destination seed failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
         );
       });
     }
@@ -59,48 +82,70 @@ export class DestinationsService implements OnModuleInit {
     const limit = query.limit ?? 20;
 
     if (!query.q && !query.country) {
-      const featured = await this.destinations
-        .createQueryBuilder('destination')
-        .where('destination.cityIata IN (:...codes)', { codes: FEATURED_IATAS })
-        .take(limit)
-        .getMany();
-
-      return {
-        data: featured.map((row) => this.toDto(row)),
-        meta: { count: featured.length, featured: true },
-      };
+      return this.featured(limit);
     }
 
-    const where: FindOptionsWhere<Destination>[] = [];
+    const q = query.q?.trim() ?? '';
     const country = query.country;
-    const q = query.q?.trim();
+    const exactIata = isIataQuery(q) ? q.toUpperCase() : undefined;
+    const likeValue = q ? escapeLikePattern(q) : '';
+    const prefix = q ? `${likeValue}%` : '';
+    const contains = q ? `%${likeValue}%` : '';
+    const useContains = q.length >= 3;
+
+    const qb = this.destinations.createQueryBuilder('destination').where(
+      new Brackets((where) => {
+        where.where('destination.hasFlightableAirport = :flightable', {
+          flightable: true,
+        });
+        if (exactIata) {
+          where.orWhere('destination.cityIata = :exactIata', { exactIata });
+        }
+      }),
+    );
+
+    if (country) {
+      qb.andWhere('destination.countryCode = :country', { country });
+    }
 
     if (q) {
-      const like = `%${q}%`;
-      where.push(
-        country
-          ? { cityName: Like(like), countryCode: country }
-          : { cityName: Like(like) },
-        country
-          ? { countryName: Like(like), countryCode: country }
-          : { countryName: Like(like) },
-        country
-          ? { cityIata: Like(`%${q.toUpperCase()}%`), countryCode: country }
-          : { cityIata: Like(`%${q.toUpperCase()}%`) },
+      qb.andWhere(
+        new Brackets((where) => {
+          where.where('LOWER(destination.cityName) LIKE LOWER(:prefix)', {
+            prefix,
+          });
+          if (useContains) {
+            where.orWhere('LOWER(destination.cityName) LIKE LOWER(:contains)', {
+              contains,
+            });
+            where.orWhere(
+              'LOWER(destination.countryName) LIKE LOWER(:contains)',
+              { contains },
+            );
+          }
+          if (exactIata) {
+            where.orWhere('destination.cityIata = :exactIata', { exactIata });
+          }
+        }),
       );
-    } else if (country) {
-      where.push({ countryCode: country });
     }
 
-    const rows = await this.destinations.find({
-      where,
-      take: limit,
-      order: { cityName: 'ASC' },
-    });
+    const rows = await qb.take(SEARCH_CANDIDATE_LIMIT).getMany();
+
+    const visible = rows.filter(
+      (row) =>
+        row.hasFlightableAirport ||
+        (exactIata !== undefined && row.cityIata === exactIata),
+    );
+    const ranked = rankSearchResults(visible, q || undefined, FEATURED_IATAS);
+    const page = ranked.slice(0, limit);
 
     return {
-      data: rows.map((row) => this.toDto(row)),
-      meta: { count: rows.length, featured: false },
+      data: page.map((row) => this.toDto(row)),
+      meta: {
+        count: page.length,
+        featured: false,
+      },
     };
   }
 
@@ -117,6 +162,38 @@ export class DestinationsService implements OnModuleInit {
     return { data: this.toDto(destination) };
   }
 
+  async getByCity(cityName: string, countryCode?: string) {
+    const name = cityName.trim();
+    const country = countryCode?.trim().toUpperCase();
+    const qb = this.destinations
+      .createQueryBuilder('destination')
+      .where('LOWER(destination.cityName) = LOWER(:cityName)', {
+        cityName: name,
+      });
+
+    if (country) {
+      qb.andWhere('destination.countryCode = :countryCode', {
+        countryCode: country,
+      });
+    }
+
+    const matches = await qb.getMany();
+    if (matches.length === 0) {
+      const label = country ? `${name}, ${country}` : name;
+      throw new NotFoundException(`Destination ${label} was not found`);
+    }
+
+    const countries = [...new Set(matches.map((row) => row.countryCode))];
+    if (!country && countries.length > 1) {
+      throw new BadRequestException(
+        `City ${name} matches ${countries.join(', ')}. Pass countryCode to disambiguate.`,
+      );
+    }
+
+    const chosen = pickCityMatch(matches);
+    return { data: this.toDto(chosen) };
+  }
+
   async syncFromTravelpayouts() {
     if (this.seeding) {
       return { data: { status: 'already_running' } };
@@ -124,9 +201,10 @@ export class DestinationsService implements OnModuleInit {
 
     this.seeding = true;
     try {
-      const [cities, countries] = await Promise.all([
+      const [cities, countries, airports] = await Promise.all([
         this.travelpayouts.getCities(),
         this.travelpayouts.getCountries(),
+        this.travelpayouts.getAirports(),
       ]);
 
       const countryNames = new Map(
@@ -134,6 +212,7 @@ export class DestinationsService implements OnModuleInit {
           .filter((country) => country.code && country.name)
           .map((country) => [country.code!.toUpperCase(), country.name!]),
       );
+      const airportsByCity = groupFlightableAirports(airports);
 
       const rows = cities
         .filter((city) => city.code && IATA.test(city.code.toUpperCase()))
@@ -149,6 +228,8 @@ export class DestinationsService implements OnModuleInit {
             latitude: city.coordinates?.lat?.toString() ?? null,
             longitude: city.coordinates?.lon?.toString() ?? null,
             timezone: city.time_zone ?? null,
+            hasFlightableAirport: Boolean(city.has_flightable_airport),
+            airports: airportsByCity.get(cityIata) ?? [],
           };
         });
 
@@ -167,6 +248,8 @@ export class DestinationsService implements OnModuleInit {
               'latitude',
               'longitude',
               'timezone',
+              'has_flightable_airport',
+              'airports',
             ],
             ['city_iata'],
           )
@@ -174,23 +257,98 @@ export class DestinationsService implements OnModuleInit {
       }
 
       const count = await this.destinations.count();
-      this.logger.log(`Synced ${count} destinations from TravelPayouts`);
-      return { data: { status: 'ok', count } };
+      const flightableCount = await this.destinations.count({
+        where: { hasFlightableAirport: true },
+      });
+      this.logger.log(
+        `Synced ${count} destinations (${flightableCount} with flightable airports)`,
+      );
+      return { data: { status: 'ok', count, flightableCount } };
     } finally {
       this.seeding = false;
     }
   }
 
+  private async featured(limit: number) {
+    const featured = await this.destinations
+      .createQueryBuilder('destination')
+      .where('destination.cityIata IN (:...codes)', { codes: FEATURED_IATAS })
+      .andWhere('destination.hasFlightableAirport = :flightable', {
+        flightable: true,
+      })
+      .take(limit)
+      .getMany();
+
+    const ranked = rankSearchResults(featured, undefined, FEATURED_IATAS);
+
+    return {
+      data: ranked.map((row) => this.toDto(row)),
+      meta: { count: ranked.length, featured: true },
+    };
+  }
+
   private toDto(destination: Destination) {
+    const airports = Array.isArray(destination.airports)
+      ? destination.airports
+      : [];
+
     return {
       id: destination.id,
       cityName: destination.cityName,
       countryName: destination.countryName,
       countryCode: destination.countryCode,
       cityIata: destination.cityIata,
+      hasFlightableAirport: Boolean(destination.hasFlightableAirport),
+      airports,
       latitude: destination.latitude ? Number(destination.latitude) : null,
       longitude: destination.longitude ? Number(destination.longitude) : null,
       timezone: destination.timezone,
     };
   }
+}
+
+function groupFlightableAirports(
+  airports: TravelpayoutsAirport[],
+): Map<string, Array<{ iata: string; name: string }>> {
+  const grouped = new Map<string, Array<{ iata: string; name: string }>>();
+
+  for (const airport of airports) {
+    const cityCode = airport.city_code?.toUpperCase();
+    const iata = airport.code?.toUpperCase();
+    if (
+      !cityCode ||
+      !iata ||
+      !IATA.test(cityCode) ||
+      !IATA.test(iata) ||
+      airport.flightable !== true ||
+      airport.iata_type !== 'airport'
+    ) {
+      continue;
+    }
+
+    const list = grouped.get(cityCode) ?? [];
+    if (!list.some((item) => item.iata === iata)) {
+      list.push({ iata, name: airport.name?.trim() || iata });
+      grouped.set(cityCode, list);
+    }
+  }
+
+  for (const list of grouped.values()) {
+    list.sort((left, right) => left.iata.localeCompare(right.iata));
+  }
+
+  return grouped;
+}
+
+function pickCityMatch(matches: Destination[]): Destination {
+  const withCoords = matches.filter(
+    (row) => row.latitude != null && row.longitude != null,
+  );
+  const pool = withCoords.length > 0 ? withCoords : matches;
+  return [...pool].sort((left, right) => {
+    if (left.hasFlightableAirport !== right.hasFlightableAirport) {
+      return left.hasFlightableAirport ? -1 : 1;
+    }
+    return left.cityIata.localeCompare(right.cityIata);
+  })[0];
 }
