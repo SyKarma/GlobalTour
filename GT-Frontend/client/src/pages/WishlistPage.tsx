@@ -3,6 +3,10 @@ import {
 } from 'react-router-dom';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
   useAuth,
 } from '../hooks/useAuth';
 
@@ -17,28 +21,43 @@ import type {
 
 function WishlistPage() {
   const {
+    t,
+  } =
+    useTranslation();
+
+  const {
     user,
     isAuthenticated,
     isLoading,
     login,
-  } = useAuth();
+  } =
+    useAuth();
 
   const {
     items,
     count,
     remove,
-  } = useWishlist();
+  } =
+    useWishlist();
 
-  if (isLoading) {
+  if (
+    isLoading
+  ) {
     return (
       <main className="gt-wishlist-page">
+
         <div className="gt-wishlist-loading">
+
           <div className="gt-wishlist-spinner" />
 
           <p>
-            Cargando tu Wishlist...
+            {t(
+              'wishlist.loading',
+            )}
           </p>
+
         </div>
+
       </main>
     );
   }
@@ -49,23 +68,29 @@ function WishlistPage() {
   ) {
     return (
       <main className="gt-wishlist-page">
+
         <section className="gt-wishlist-guest">
+
           <div className="gt-wishlist-guest-icon">
             <HeartIcon />
           </div>
 
           <span>
-            GLOBALTOUR WISHLIST
+            {t(
+              'wishlist.guest.eyebrow',
+            )}
           </span>
 
           <h1>
-            Guarda tus favoritos
+            {t(
+              'wishlist.guest.title',
+            )}
           </h1>
 
           <p>
-            Inicia sesión para guardar vuelos,
-            hoteles, restaurantes y opciones de
-            movilidad que quieras revisar después.
+            {t(
+              'wishlist.guest.description',
+            )}
           </p>
 
           <button
@@ -74,32 +99,44 @@ function WishlistPage() {
               login
             }
           >
-            Continuar con Google
+            {t(
+              'common.continueWithGoogle',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
 
   return (
     <main className="gt-wishlist-page">
+
       <section className="gt-wishlist-hero">
+
         <div className="gt-wishlist-hero-inner">
+
           <span className="gt-wishlist-eyebrow">
-            GLOBALTOUR · TUS FAVORITOS
+            {t(
+              'wishlist.hero.eyebrow',
+            )}
           </span>
 
           <h1>
-            Mi Wishlist
+            {t(
+              'wishlist.hero.title',
+            )}
           </h1>
 
           <p>
-            Guarda las opciones que más te
-            interesan y compáralas cuando estés
-            listo para organizar tu viaje.
+            {t(
+              'wishlist.hero.description',
+            )}
           </p>
 
           <div className="gt-wishlist-count">
+
             <HeartIcon />
 
             <strong>
@@ -108,20 +145,32 @@ function WishlistPage() {
 
             <span>
               {count === 1
-                ? 'elemento guardado'
-                : 'elementos guardados'}
+                ? t(
+                    'wishlist.hero.savedOne',
+                  )
+                : t(
+                    'wishlist.hero.savedMany',
+                  )}
             </span>
+
           </div>
+
         </div>
+
       </section>
 
       <section className="gt-wishlist-content">
-        {items.length === 0 ? (
+
+        {items.length ===
+        0 ? (
           <EmptyWishlist />
         ) : (
           <div className="gt-wishlist-grid">
+
             {items.map(
-              (item) => (
+              (
+                item,
+              ) => (
                 <WishlistCard
                   key={
                     item.id
@@ -135,19 +184,24 @@ function WishlistPage() {
                 />
               ),
             )}
+
           </div>
         )}
+
       </section>
+
     </main>
   );
 }
 
 interface WishlistCardProps {
-  item: WishlistItem;
+  item:
+    WishlistItem;
 
   onRemove:
     (
-      itemId: string,
+      itemId:
+        string,
     ) => void;
 }
 
@@ -155,9 +209,17 @@ function WishlistCard({
   item,
   onRemove,
 }: WishlistCardProps) {
+  const {
+    t,
+    i18n,
+  } =
+    useTranslation();
+
   return (
     <article className="gt-wishlist-card">
+
       <div className="gt-wishlist-card-media">
+
         {item.imageUrl ? (
           <img
             src={
@@ -168,7 +230,9 @@ function WishlistCard({
             }
           />
         ) : (
-          <div className={`gt-wishlist-placeholder gt-wishlist-placeholder-${item.type}`}>
+          <div
+            className={`gt-wishlist-placeholder gt-wishlist-placeholder-${item.type}`}
+          >
             <TypeIcon
               type={
                 item.type
@@ -177,9 +241,12 @@ function WishlistCard({
           </div>
         )}
 
-        <span className={`gt-wishlist-type gt-wishlist-type-${item.type}`}>
+        <span
+          className={`gt-wishlist-type gt-wishlist-type-${item.type}`}
+        >
           {typeLabel(
             item.type,
+            t,
           )}
         </span>
 
@@ -191,14 +258,24 @@ function WishlistCard({
               item.id,
             )
           }
-          aria-label={`Eliminar ${item.title} de Wishlist`}
-          title="Eliminar de Wishlist"
+          aria-label={t(
+            'wishlist.card.removeAria',
+            {
+              title:
+                item.title,
+            },
+          )}
+          title={t(
+            'wishlist.card.remove',
+          )}
         >
           <HeartFilledIcon />
         </button>
+
       </div>
 
       <div className="gt-wishlist-card-body">
+
         <h2>
           {item.title}
         </h2>
@@ -210,6 +287,7 @@ function WishlistCard({
         )}
 
         <div className="gt-wishlist-metadata">
+
           {Object.entries(
             item.metadata,
           )
@@ -230,28 +308,36 @@ function WishlistCard({
                     }
                   >
                     <small>
-                      {
-                        formatLabel(
-                          label,
-                        )
-                      }
+                      {formatMetadataLabel(
+                        label,
+                        t,
+                      )}
                     </small>
 
                     <strong>
-                      {String(
+                      {formatMetadataValue(
+                        label,
                         value,
+                        t,
                       )}
                     </strong>
                   </span>
                 ),
             )}
+
         </div>
 
         <div className="gt-wishlist-card-footer">
+
           <small>
-            Guardado{' '}
+            {t(
+              'wishlist.card.saved',
+            )}{' '}
+
             {formatDate(
               item.createdAt,
+              i18n.resolvedLanguage ??
+                i18n.language,
             )}
           </small>
 
@@ -261,81 +347,281 @@ function WishlistCard({
                 item.href
               }
             >
-              Ver detalle
+              {t(
+                'wishlist.card.viewDetail',
+              )}
+
               <ArrowIcon />
             </Link>
           )}
+
         </div>
+
       </div>
+
     </article>
   );
 }
 
 function EmptyWishlist() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   return (
     <div className="gt-wishlist-empty">
+
       <div>
         <HeartIcon />
       </div>
 
       <span>
-        TU LISTA ESTÁ VACÍA
+        {t(
+          'wishlist.empty.eyebrow',
+        )}
       </span>
 
       <h2>
-        Comienza a guardar tus favoritos
+        {t(
+          'wishlist.empty.title',
+        )}
       </h2>
 
       <p>
-        Cuando encuentres algo que te guste,
-        pulsa el corazón para agregarlo aquí.
+        {t(
+          'wishlist.empty.description',
+        )}
       </p>
 
       <div className="gt-wishlist-empty-links">
+
         <Link to="/flights">
-          Explorar vuelos
+          {t(
+            'wishlist.empty.flights',
+          )}
         </Link>
 
         <Link to="/hotels">
-          Ver hospedaje
+          {t(
+            'wishlist.empty.hotels',
+          )}
         </Link>
 
         <Link to="/restaurants">
-          Restaurantes
+          {t(
+            'wishlist.empty.restaurants',
+          )}
         </Link>
 
         <Link to="/cars">
-          Rent a Car
+          {t(
+            'wishlist.empty.cars',
+          )}
         </Link>
+
       </div>
+
     </div>
   );
 }
 
 function typeLabel(
-  type: WishlistItemType,
+  type:
+    WishlistItemType,
+
+  t:
+    (
+      key:
+        string,
+      options?:
+        Record<
+          string,
+          unknown
+        >,
+    ) => string,
 ) {
-  switch (type) {
+  switch (
+    type
+  ) {
     case 'flight':
-      return 'Vuelo';
+      return t(
+        'wishlist.types.flight',
+      );
 
     case 'hotel':
-      return 'Hospedaje';
+      return t(
+        'wishlist.types.hotel',
+      );
 
     case 'restaurant':
-      return 'Restaurante';
+      return t(
+        'wishlist.types.restaurant',
+      );
 
     case 'car':
-      return 'Rent a Car';
+      return t(
+        'wishlist.types.car',
+      );
 
     case 'destination':
-      return 'Destino';
+      return t(
+        'wishlist.types.destination',
+      );
   }
 }
 
-function formatLabel(
-  value: string,
+function formatMetadataLabel(
+  value:
+    string,
+
+  t:
+    (
+      key:
+        string,
+      options?:
+        Record<
+          string,
+          unknown
+        >,
+    ) => string,
 ) {
+  const normalized =
+    value
+      .trim()
+      .toLowerCase();
+
+  const metadataKeys:
+    Record<
+      string,
+      string
+    > = {
+      tipo:
+        'wishlist.metadata.type',
+
+      type:
+        'wishlist.metadata.type',
+
+      marca:
+        'wishlist.metadata.brand',
+
+      brand:
+        'wishlist.metadata.brand',
+
+      sitioweb:
+        'wishlist.metadata.website',
+
+      website:
+        'wishlist.metadata.website',
+
+      mapa:
+        'wishlist.metadata.map',
+
+      map:
+        'wishlist.metadata.map',
+
+      ciudad:
+        'wishlist.metadata.city',
+
+      city:
+        'wishlist.metadata.city',
+
+      pais:
+        'wishlist.metadata.country',
+
+      país:
+        'wishlist.metadata.country',
+
+      country:
+        'wishlist.metadata.country',
+
+      estrellas:
+        'wishlist.metadata.stars',
+
+      stars:
+        'wishlist.metadata.stars',
+
+      rating:
+        'wishlist.metadata.rating',
+
+      cadena:
+        'wishlist.metadata.chain',
+
+      chain:
+        'wishlist.metadata.chain',
+
+      cocina:
+        'wishlist.metadata.cuisine',
+
+      cuisine:
+        'wishlist.metadata.cuisine',
+
+      aerolinea:
+        'wishlist.metadata.airline',
+
+      aerolínea:
+        'wishlist.metadata.airline',
+
+      airline:
+        'wishlist.metadata.airline',
+
+      flightnumber:
+        'wishlist.metadata.flightNumber',
+
+      numerodevuelo:
+        'wishlist.metadata.flightNumber',
+
+      departure:
+        'wishlist.metadata.departure',
+
+      salida:
+        'wishlist.metadata.departure',
+
+      duration:
+        'wishlist.metadata.duration',
+
+      duracion:
+        'wishlist.metadata.duration',
+
+      duración:
+        'wishlist.metadata.duration',
+
+      stops:
+        'wishlist.metadata.stops',
+
+      escalas:
+        'wishlist.metadata.stops',
+
+      price:
+        'wishlist.metadata.price',
+
+      precio:
+        'wishlist.metadata.price',
+    };
+
+  const compact =
+    normalized
+      .replace(
+        /[_\s-]/g,
+        '',
+      );
+
+  const translationKey =
+    metadataKeys[
+      normalized
+    ] ??
+    metadataKeys[
+      compact
+    ];
+
+  if (
+    translationKey
+  ) {
+    return t(
+      translationKey,
+    );
+  }
+
   return value
     .replace(
       /([A-Z])/g,
@@ -348,23 +634,219 @@ function formatLabel(
     .trim()
     .replace(
       /^\w/,
-      (letter) =>
+      (
+        letter,
+      ) =>
         letter.toUpperCase(),
     );
 }
 
+function formatMetadataValue(
+  label:
+    string,
+
+  value:
+    unknown,
+
+  t:
+    (
+      key:
+        string,
+      options?:
+        Record<
+          string,
+          unknown
+        >,
+    ) => string,
+) {
+  if (
+    typeof value ===
+    'boolean'
+  ) {
+    return value
+      ? t(
+          'wishlist.metadata.yes',
+        )
+      : t(
+          'wishlist.metadata.no',
+        );
+  }
+
+  const text =
+    String(
+      value,
+    );
+
+  const normalizedLabel =
+    label
+      .trim()
+      .toLowerCase();
+
+  const normalizedValue =
+    text
+      .trim()
+      .toLowerCase();
+
+  if (
+    normalizedLabel ===
+      'tipo' ||
+    normalizedLabel ===
+      'type'
+  ) {
+    if (
+      [
+        'rent a car',
+        'alquiler de autos',
+        'aluguel de carros',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'cars.common.types.carRental',
+      );
+    }
+
+    if (
+      [
+        'car sharing',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'cars.common.types.carSharing',
+      );
+    }
+
+    if (
+      [
+        'restaurante',
+        'restaurant',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'restaurants.common.types.restaurant',
+      );
+    }
+
+    if (
+      [
+        'café',
+        'cafe',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'restaurants.common.types.cafe',
+      );
+    }
+
+    if (
+      [
+        'comida rápida',
+        'fast food',
+        'fast_food',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'restaurants.common.types.fastFood',
+      );
+    }
+  }
+
+  if (
+    normalizedLabel ===
+      'escalas' ||
+    normalizedLabel ===
+      'stops'
+  ) {
+    if (
+      [
+        'directo',
+        'direct',
+        'direto',
+      ].includes(
+        normalizedValue,
+      )
+    ) {
+      return t(
+        'flights.format.direct',
+      );
+    }
+  }
+
+  return text;
+}
+
+function getLocale(
+  language:
+    string |
+    undefined,
+) {
+  const normalized =
+    language
+      ?.split(
+        '-',
+      )[0] ??
+    'es';
+
+  if (
+    normalized ===
+    'en'
+  ) {
+    return 'en-US';
+  }
+
+  if (
+    normalized ===
+    'pt'
+  ) {
+    return 'pt-BR';
+  }
+
+  return 'es-CR';
+}
+
 function formatDate(
-  value: string,
+  value:
+    string,
+
+  language:
+    string |
+    undefined,
 ) {
   const date =
-    new Date(value);
+    new Date(
+      value,
+    );
+
+  if (
+    Number.isNaN(
+      date.getTime(),
+    )
+  ) {
+    return value;
+  }
 
   return new Intl.DateTimeFormat(
-    'es-CR',
+    getLocale(
+      language,
+    ),
     {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+      day:
+        '2-digit',
+
+      month:
+        'short',
+
+      year:
+        'numeric',
     },
   ).format(
     date,
@@ -377,7 +859,9 @@ function TypeIcon({
   type:
     WishlistItemType;
 }) {
-  switch (type) {
+  switch (
+    type
+  ) {
     case 'flight':
       return (
         <svg viewBox="0 0 24 24">
@@ -410,6 +894,7 @@ function TypeIcon({
       return (
         <svg viewBox="0 0 24 24">
           <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+
           <circle
             cx="12"
             cy="10"

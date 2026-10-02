@@ -3,6 +3,10 @@ import {
   type FormEvent,
 } from 'react';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import type {
   CarAmenity,
 } from '../../types/car.types';
@@ -31,6 +35,11 @@ function CarSearchForm({
   onSearch,
   isLoading = false,
 }: CarSearchFormProps) {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const [
     cityName,
     setCityName,
@@ -158,14 +167,16 @@ function CarSearchForm({
     >
       <div className="gt-car-search-main">
 
-        {/* CITY */}
-
         <label className="gt-car-main-field gt-car-city-field">
+
           <span>
-            Ciudad
+            {t(
+              'cars.search.city',
+            )}
           </span>
 
           <div className="gt-car-input-control">
+
             <LocationIcon />
 
             <input
@@ -177,8 +188,12 @@ function CarSearchForm({
                 80
               }
               autoComplete="off"
-              placeholder="Ej. Liberia"
-              aria-label="Ciudad"
+              placeholder={t(
+                'cars.search.cityPlaceholder',
+              )}
+              aria-label={t(
+                'cars.search.city',
+              )}
               onChange={(
                 event,
               ) =>
@@ -188,17 +203,21 @@ function CarSearchForm({
                 )
               }
             />
+
           </div>
+
         </label>
 
-        {/* COUNTRY */}
-
         <label className="gt-car-main-field gt-car-country-field">
+
           <span>
-            País
+            {t(
+              'cars.search.country',
+            )}
           </span>
 
           <div className="gt-car-input-control">
+
             <GlobeIcon />
 
             <input
@@ -211,7 +230,9 @@ function CarSearchForm({
               }
               autoComplete="off"
               placeholder="CR"
-              aria-label="Código ISO del país"
+              aria-label={t(
+                'cars.search.countryAria',
+              )}
               onChange={(
                 event,
               ) =>
@@ -221,10 +242,10 @@ function CarSearchForm({
                 )
               }
             />
-          </div>
-        </label>
 
-        {/* SEARCH */}
+          </div>
+
+        </label>
 
         <button
           type="submit"
@@ -239,21 +260,28 @@ function CarSearchForm({
           <SearchIcon />
 
           {isLoading
-            ? 'Buscando...'
-            : 'Buscar movilidad'}
+            ? t(
+                'cars.search.searching',
+              )
+            : t(
+                'cars.search.button',
+              )}
         </button>
-      </div>
 
-      {/* FILTERS */}
+      </div>
 
       <div className="gt-car-search-filters">
 
         <label className="gt-car-filter-field">
+
           <span>
-            Servicio
+            {t(
+              'cars.search.service',
+            )}
           </span>
 
           <div className="gt-car-filter-control">
+
             <CarIcon />
 
             <select
@@ -272,26 +300,38 @@ function CarSearchForm({
               }
             >
               <option value="">
-                Todos
+                {t(
+                  'cars.search.services.all',
+                )}
               </option>
 
               <option value="car_rental">
-                Rent a Car
+                {t(
+                  'cars.common.types.carRental',
+                )}
               </option>
 
               <option value="car_sharing">
-                Car sharing
+                {t(
+                  'cars.common.types.carSharing',
+                )}
               </option>
             </select>
+
           </div>
+
         </label>
 
         <label className="gt-car-filter-field">
+
           <span>
-            Empresa
+            {t(
+              'cars.search.company',
+            )}
           </span>
 
           <div className="gt-car-filter-control">
+
             <BuildingIcon />
 
             <input
@@ -299,7 +339,9 @@ function CarSearchForm({
               value={
                 q
               }
-              placeholder="Ej. Adobe, Hertz..."
+              placeholder={t(
+                'cars.search.companyPlaceholder',
+              )}
               onChange={(
                 event,
               ) =>
@@ -309,15 +351,21 @@ function CarSearchForm({
                 )
               }
             />
+
           </div>
+
         </label>
 
         <label className="gt-car-filter-field">
+
           <span>
-            Área de búsqueda
+            {t(
+              'cars.search.area',
+            )}
           </span>
 
           <div className="gt-car-filter-control">
+
             <RadiusIcon />
 
             <select
@@ -359,10 +407,13 @@ function CarSearchForm({
                 50 km
               </option>
             </select>
+
           </div>
+
         </label>
 
         <label className="gt-car-website-filter">
+
           <input
             type="checkbox"
             checked={
@@ -383,19 +434,18 @@ function CarSearchForm({
           </span>
 
           <span>
-            Solo con sitio web
+            {t(
+              'cars.search.websiteOnly',
+            )}
           </span>
+
         </label>
+
       </div>
+
     </form>
   );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function SearchIcon() {
   return (

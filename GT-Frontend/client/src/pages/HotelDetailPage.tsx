@@ -10,6 +10,10 @@ import {
 } from 'react-router-dom';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
   getHotelById,
   getHotelRates,
 } from '../services/hotels.service';
@@ -24,12 +28,6 @@ import type {
   HotelRate,
   HotelRatesMeta,
 } from '../types/hotel.types';
-
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
 
 function renderStars(
   stars: number | null,
@@ -54,48 +52,109 @@ function renderStars(
   );
 }
 
+function getLocale(
+  language:
+    | string
+    | undefined,
+) {
+  const normalized =
+    language
+      ?.split('-')[0] ??
+    'es';
+
+  if (
+    normalized ===
+    'en'
+  ) {
+    return 'en-US';
+  }
+
+  if (
+    normalized ===
+    'pt'
+  ) {
+    return 'pt-BR';
+  }
+
+  return 'es-CR';
+}
+
 function formatPrice(
   price: number,
   currency: string,
+  locale: string,
 ) {
-  return new Intl.NumberFormat(
-    'es-CR',
-    {
-      style: 'currency',
-      currency,
-      maximumFractionDigits: 2,
-    },
-  ).format(
-    price,
-  );
+  try {
+    return new Intl.NumberFormat(
+      locale,
+      {
+        style:
+          'currency',
+
+        currency,
+
+        maximumFractionDigits:
+          2,
+      },
+    ).format(
+      price,
+    );
+  } catch {
+    return `${currency} ${price}`;
+  }
 }
 
 function formatDate(
-  value: string | null,
+  value:
+    | string
+    | null,
+  locale: string,
+  undefinedLabel: string,
 ) {
   if (!value) {
-    return 'No definida';
+    return undefinedLabel;
   }
 
-  const date =
-    new Date(
-      `${value}T12:00:00`,
+  const match =
+    value.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
     );
 
-  if (
-    Number.isNaN(
-      date.getTime(),
-    )
-  ) {
+  if (!match) {
     return value;
   }
 
+  const [
+    ,
+    year,
+    month,
+    day,
+  ] = match;
+
+  const date =
+    new Date(
+      Date.UTC(
+        Number(year),
+        Number(month) -
+          1,
+        Number(day),
+      ),
+    );
+
   return new Intl.DateTimeFormat(
-    'es-CR',
+    locale,
     {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+      day:
+        '2-digit',
+
+      month:
+        'short',
+
+      year:
+        'numeric',
+
+      timeZone:
+        'UTC',
     },
   ).format(
     date,
@@ -135,7 +194,8 @@ function htmlToPlainText(
 
 function hasValidChain(
   chain:
-    string | null,
+    | string
+    | null,
 ) {
   if (!chain) {
     return false;
@@ -157,15 +217,15 @@ function hasValidChain(
   );
 }
 
-/*
- * =========================================
- * PAGE
- * =========================================
- */
-
 function HotelDetailPage() {
   const navigate =
     useNavigate();
+
+  const {
+    t,
+    i18n,
+  } =
+    useTranslation();
 
   const {
     id,
@@ -187,33 +247,33 @@ function HotelDetailPage() {
     hotel,
     setHotel,
   ] =
-    useState<HotelDetail | null>(
-      null,
-    );
+    useState<
+      HotelDetail | null
+    >(null);
 
   const [
     hotelMeta,
     setHotelMeta,
   ] =
-    useState<HotelDetailMeta | null>(
-      null,
-    );
+    useState<
+      HotelDetailMeta | null
+    >(null);
 
   const [
     rates,
     setRates,
   ] =
-    useState<HotelRate[]>(
-      [],
-    );
+    useState<
+      HotelRate[]
+    >([]);
 
   const [
     ratesMeta,
     setRatesMeta,
   ] =
-    useState<HotelRatesMeta | null>(
-      null,
-    );
+    useState<
+      HotelRatesMeta | null
+    >(null);
 
   const [
     isLoadingHotel,
@@ -235,17 +295,17 @@ function HotelDetailPage() {
     hotelError,
     setHotelError,
   ] =
-    useState<string | null>(
-      null,
-    );
+    useState<
+      string | null
+    >(null);
 
   const [
     ratesError,
     setRatesError,
   ] =
-    useState<string | null>(
-      null,
-    );
+    useState<
+      string | null
+    >(null);
 
   const checkin =
     searchParams.get(
@@ -283,31 +343,32 @@ function HotelDetailPage() {
   const hasStayDates =
     Boolean(
       checkin &&
-      checkout,
+        checkout,
     );
 
-  const handleBack = () => {
-    if (
-      window.history.length >
-      1
-    ) {
+  const locale =
+    getLocale(
+      i18n.resolvedLanguage ??
+        i18n.language,
+    );
+
+  const handleBack =
+    () => {
+      if (
+        window.history.length >
+        1
+      ) {
+        navigate(
+          -1,
+        );
+
+        return;
+      }
+
       navigate(
-        -1,
+        '/hotels',
       );
-
-      return;
-    }
-
-    navigate(
-      '/hotels',
-    );
-  };
-
-  /*
-   * =========================================
-   * CURRENCY
-   * =========================================
-   */
+    };
 
   useEffect(() => {
     const urlCurrency =
@@ -335,7 +396,8 @@ function HotelDetailPage() {
     setSearchParams(
       updatedParams,
       {
-        replace: true,
+        replace:
+          true,
       },
     );
   }, [
@@ -343,12 +405,6 @@ function HotelDetailPage() {
     selectedCurrency,
     setSearchParams,
   ]);
-
-  /*
-   * =========================================
-   * HOTEL
-   * =========================================
-   */
 
   useEffect(() => {
     let cancelled =
@@ -358,7 +414,7 @@ function HotelDetailPage() {
       async () => {
         if (!id) {
           setHotelError(
-            'No se encontró el identificador del hotel.',
+            'hotels.detail.errors.missingId',
           );
 
           setIsLoadingHotel(
@@ -405,7 +461,7 @@ function HotelDetailPage() {
           }
 
           console.error(
-            'Error al cargar el hotel:',
+            'Error loading hotel:',
             error,
           );
 
@@ -414,7 +470,7 @@ function HotelDetailPage() {
           );
 
           setHotelError(
-            'No pudimos obtener la información del alojamiento.',
+            'hotels.detail.errors.loadMessage',
           );
         } finally {
           if (
@@ -436,12 +492,6 @@ function HotelDetailPage() {
   }, [
     id,
   ]);
-
-  /*
-   * =========================================
-   * RATES
-   * =========================================
-   */
 
   useEffect(() => {
     let cancelled =
@@ -513,7 +563,7 @@ function HotelDetailPage() {
           }
 
           console.error(
-            'Error al cargar tarifas:',
+            'Error loading hotel rates:',
             error,
           );
 
@@ -526,7 +576,7 @@ function HotelDetailPage() {
           );
 
           setRatesError(
-            'No pudimos obtener tarifas para las fechas seleccionadas.',
+            'hotels.detail.errors.ratesMessage',
           );
         } finally {
           if (
@@ -553,34 +603,26 @@ function HotelDetailPage() {
     currency,
   ]);
 
-  /*
-   * =========================================
-   * LOADING
-   * =========================================
-   */
-
   if (
     isLoadingHotel
   ) {
     return (
       <main className="gt-hotel-detail-page">
+
         <div className="gt-detail-loading-shell">
+
           <div className="gt-detail-loading-hero" />
 
           <div className="gt-detail-loading-grid">
             <div />
             <div />
           </div>
+
         </div>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * ERROR
-   * =========================================
-   */
 
   if (
     hotelError ||
@@ -588,22 +630,33 @@ function HotelDetailPage() {
   ) {
     return (
       <main className="gt-hotel-detail-page">
+
         <section className="gt-detail-error-state">
+
           <div className="gt-detail-error-icon">
             <HotelIcon />
           </div>
 
           <span>
-            HOSPEDAJE
+            {t(
+              'hotels.detail.common.eyebrow',
+            )}
           </span>
 
           <h1>
-            No pudimos cargar este alojamiento
+            {t(
+              'hotels.detail.errors.title',
+            )}
           </h1>
 
           <p>
-            {hotelError ??
-              'El alojamiento solicitado no está disponible.'}
+            {hotelError
+              ? t(
+                  hotelError,
+                )
+              : t(
+                  'hotels.detail.errors.notAvailable',
+                )}
           </p>
 
           <button
@@ -614,9 +667,13 @@ function HotelDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'hotels.detail.common.back',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
@@ -667,14 +724,16 @@ function HotelDetailPage() {
     typeof hotel.rating ===
     'number';
 
+  const undefinedDate =
+    t(
+      'hotels.detail.common.undefinedDate',
+    );
+
   return (
     <main className="gt-hotel-detail-page">
 
-      {/* =====================================
-          HERO
-      ====================================== */}
-
       <section className="gt-hotel-detail-hero">
+
         {mainImage ? (
           <img
             src={
@@ -691,6 +750,7 @@ function HotelDetailPage() {
         <div className="gt-hotel-detail-hero-overlay" />
 
         <div className="gt-hotel-detail-hero-content">
+
           <button
             type="button"
             className="gt-detail-back-button gt-detail-back-light"
@@ -700,13 +760,19 @@ function HotelDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'hotels.detail.common.back',
+            )}
           </button>
 
           <div className="gt-hotel-detail-hero-bottom">
+
             <div>
+
               <span className="gt-hotel-detail-eyebrow">
-                GLOBALTOUR · HOSPEDAJE
+                {t(
+                  'hotels.detail.common.brandEyebrow',
+                )}
               </span>
 
               {hotel.starRating && (
@@ -718,7 +784,9 @@ function HotelDetailPage() {
               )}
 
               <h1>
-                {hotel.name}
+                {
+                  hotel.name
+                }
               </h1>
 
               <p>
@@ -735,15 +803,22 @@ function HotelDetailPage() {
                   .join(
                     ', ',
                   ) ||
-                  'Ubicación no disponible'}
+                  t(
+                    'hotels.detail.common.locationUnavailable',
+                  )}
               </p>
+
             </div>
 
             <div className="gt-hotel-detail-hero-actions">
+
               {hasRating && (
                 <div className="gt-hotel-detail-rating">
+
                   <span>
-                    Valoración
+                    {t(
+                      'hotels.detail.common.rating',
+                    )}
                   </span>
 
                   <strong>
@@ -755,13 +830,21 @@ function HotelDetailPage() {
                   {typeof hotel.reviewCount ===
                     'number' && (
                     <small>
-                      {hotel.reviewCount}{' '}
+                      {
+                        hotel.reviewCount
+                      }{' '}
+
                       {hotel.reviewCount ===
                       1
-                        ? 'reseña'
-                        : 'reseñas'}
+                        ? t(
+                            'hotels.detail.common.review',
+                          )
+                        : t(
+                            'hotels.detail.common.reviews',
+                          )}
                     </small>
                   )}
+
                 </div>
               )}
 
@@ -776,84 +859,106 @@ function HotelDetailPage() {
                 >
                   <MapIcon />
 
-                  Ver mapa
+                  {t(
+                    'hotels.detail.common.viewMap',
+                  )}
                 </a>
               )}
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* =====================================
-          BODY
-      ====================================== */}
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
 
       <div className="gt-detail-content-shell">
 
         {hotelMeta?.stale && (
           <div className="gt-detail-cache-notice">
+
             <InfoIcon />
 
-            Mostrando información almacenada temporalmente.
+            {t(
+              'hotels.detail.common.cachedInfo',
+            )}
+
           </div>
         )}
-
-        {/* GALLERY */}
 
         {galleryImages.length >
           0 && (
           <section className="gt-hotel-detail-gallery">
+
             {galleryImages.map(
               (
                 image,
                 index,
               ) => (
-              <figure
-                key={`${image.url}-${index}`}
-              >
-                <img
-                  src={
-                    image.url
-                  }
-                  alt={
-                    image.caption ??
-                    `${hotel.name} ${index + 1}`
-                  }
-                  loading="lazy"
-                />
+                <figure
+                  key={`${image.url}-${index}`}
+                >
 
-                {image.caption && (
-                  <figcaption>
-                    {image.caption}
-                  </figcaption>
-                )}
-              </figure>
+                  <img
+                    src={
+                      image.url
+                    }
+                    alt={
+                      image.caption ??
+                      `${hotel.name} ${index + 1}`
+                    }
+                    loading="lazy"
+                  />
+
+                  {image.caption && (
+                    <figcaption>
+                      {
+                        image.caption
+                      }
+                    </figcaption>
+                  )}
+
+                </figure>
               ),
             )}
+
           </section>
         )}
 
-        {/* MAIN GRID */}
-
         <section className="gt-hotel-detail-layout">
+
           <div className="gt-detail-main-column">
 
             <article className="gt-detail-panel">
+
               <span className="gt-detail-panel-eyebrow">
-                EL ALOJAMIENTO
+                {t(
+                  'hotels.detail.about.eyebrow',
+                )}
               </span>
 
               <h2>
-                Sobre {hotel.name}
+                {t(
+                  'hotels.detail.about.title',
+                  {
+                    name:
+                      hotel.name,
+                  },
+                )}
               </h2>
 
               {cleanDescription ? (
                 <p className="gt-detail-description">
-                  {cleanDescription}
+                  {
+                    cleanDescription
+                  }
                 </p>
               ) : (
                 <p className="gt-detail-muted">
-                  Este alojamiento no tiene una descripción disponible.
+                  {t(
+                    'hotels.detail.about.noDescription',
+                  )}
                 </p>
               )}
 
@@ -861,166 +966,241 @@ function HotelDetailPage() {
                 hotel.chain,
               ) && (
                 <div className="gt-hotel-chain-card">
+
                   <BuildingIcon />
 
                   <div>
+
                     <span>
-                      Cadena hotelera
+                      {t(
+                        'hotels.detail.about.chain',
+                      )}
                     </span>
 
                     <strong>
-                      {hotel.chain}
+                      {
+                        hotel.chain
+                      }
                     </strong>
+
                   </div>
+
                 </div>
               )}
+
             </article>
 
             <article className="gt-detail-panel">
+
               <span className="gt-detail-panel-eyebrow">
-                COMODIDADES
+                {t(
+                  'hotels.detail.amenities.eyebrow',
+                )}
               </span>
 
               <h2>
-                Servicios del alojamiento
+                {t(
+                  'hotels.detail.amenities.title',
+                )}
               </h2>
 
               {amenities.length >
-                0 ? (
+              0 ? (
                 <div className="gt-hotel-amenities-grid">
+
                   {amenities.map(
                     (
                       amenity,
                       index,
                     ) => (
-                    <div
-                      key={`${amenity}-${index}`}
-                    >
-                      <CheckIcon />
+                      <div
+                        key={`${amenity}-${index}`}
+                      >
+                        <CheckIcon />
 
-                      <span>
-                        {amenity}
-                      </span>
-                    </div>
+                        <span>
+                          {
+                            amenity
+                          }
+                        </span>
+                      </div>
                     ),
                   )}
+
                 </div>
               ) : (
                 <p className="gt-detail-muted">
-                  No hay información de servicios disponible.
+                  {t(
+                    'hotels.detail.amenities.noInfo',
+                  )}
                 </p>
               )}
+
             </article>
+
           </div>
 
-          {/* STAY */}
-
           <aside className="gt-hotel-stay-card">
+
             <span className="gt-detail-panel-eyebrow">
-              TU ESTADÍA
+              {t(
+                'hotels.detail.stay.eyebrow',
+              )}
             </span>
 
             <h2>
-              Resumen del viaje
+              {t(
+                'hotels.detail.stay.title',
+              )}
             </h2>
 
             <div className="gt-hotel-stay-detail">
+
               <CalendarIcon />
 
               <div>
+
                 <span>
-                  Check-in
+                  {t(
+                    'hotels.detail.stay.checkin',
+                  )}
                 </span>
 
                 <strong>
                   {formatDate(
                     checkin,
+                    locale,
+                    undefinedDate,
                   )}
                 </strong>
+
               </div>
+
             </div>
 
             <div className="gt-hotel-stay-detail">
+
               <CalendarIcon />
 
               <div>
+
                 <span>
-                  Check-out
+                  {t(
+                    'hotels.detail.stay.checkout',
+                  )}
                 </span>
 
                 <strong>
                   {formatDate(
                     checkout,
+                    locale,
+                    undefinedDate,
                   )}
                 </strong>
+
               </div>
+
             </div>
 
             <div className="gt-hotel-stay-detail">
+
               <GuestsIcon />
 
               <div>
+
                 <span>
-                  Huéspedes
+                  {t(
+                    'hotels.detail.stay.guests',
+                  )}
                 </span>
 
                 <strong>
-                  {adults}{' '}
+                  {
+                    adults
+                  }{' '}
+
                   {adults ===
                   1
-                    ? 'adulto'
-                    : 'adultos'}
+                    ? t(
+                        'hotels.detail.stay.adult',
+                      )
+                    : t(
+                        'hotels.detail.stay.adults',
+                      )}
                 </strong>
+
               </div>
+
             </div>
 
             <div className="gt-hotel-stay-detail">
+
               <CurrencyIcon />
 
               <div>
+
                 <span>
-                  Moneda
+                  {t(
+                    'hotels.detail.stay.currency',
+                  )}
                 </span>
 
                 <strong>
-                  {currency}
+                  {
+                    currency
+                  }
                 </strong>
+
               </div>
+
             </div>
 
             {!hasStayDates && (
               <p className="gt-hotel-stay-warning">
-                Realiza una búsqueda con fechas para consultar tarifas.
+                {t(
+                  'hotels.detail.stay.noDates',
+                )}
               </p>
             )}
+
           </aside>
+
         </section>
 
-        {/* =====================================
-            RATES
-        ====================================== */}
-
         <section className="gt-hotel-rates-section">
+
           <div className="gt-detail-section-heading">
+
             <div>
+
               <span className="gt-detail-panel-eyebrow">
-                DISPONIBILIDAD
+                {t(
+                  'hotels.detail.rates.eyebrow',
+                )}
               </span>
 
               <h2>
-                Habitaciones y tarifas
+                {t(
+                  'hotels.detail.rates.title',
+                )}
               </h2>
 
               <p>
-                Consulta las opciones disponibles para las fechas seleccionadas.
+                {t(
+                  'hotels.detail.rates.description',
+                )}
               </p>
+
             </div>
 
             {ratesMeta?.stale && (
               <span className="gt-detail-cache-badge">
-                Tarifas en caché
+                {t(
+                  'hotels.detail.rates.cached',
+                )}
               </span>
             )}
+
           </div>
 
           {!hasStayDates && (
@@ -1028,25 +1208,35 @@ function HotelDetailPage() {
               icon={
                 <CalendarIcon />
               }
-              title="Selecciona tus fechas"
-              text="Vuelve a Hospedaje y realiza una búsqueda con check-in y check-out."
+              title={t(
+                'hotels.detail.rates.selectDatesTitle',
+              )}
+              text={t(
+                'hotels.detail.rates.selectDatesText',
+              )}
             />
           )}
 
           {hasStayDates &&
             isLoadingRates && (
             <div className="gt-hotel-rate-loading">
-              {[1, 2, 3].map(
+
+              {[
+                1,
+                2,
+                3,
+              ].map(
                 (
                   item,
                 ) => (
-                <div
-                  key={
-                    item
-                  }
-                />
+                  <div
+                    key={
+                      item
+                    }
+                  />
                 ),
               )}
+
             </div>
           )}
 
@@ -1057,10 +1247,12 @@ function HotelDetailPage() {
               icon={
                 <InfoIcon />
               }
-              title="No pudimos consultar las tarifas"
-              text={
-                ratesError
-              }
+              title={t(
+                'hotels.detail.rates.errorTitle',
+              )}
+              text={t(
+                ratesError,
+              )}
             />
           )}
 
@@ -1073,8 +1265,12 @@ function HotelDetailPage() {
               icon={
                 <HotelIcon />
               }
-              title="Sin disponibilidad"
-              text="No encontramos habitaciones disponibles para estas fechas."
+              title={t(
+                'hotels.detail.rates.emptyTitle',
+              )}
+              text={t(
+                'hotels.detail.rates.emptyText',
+              )}
             />
           )}
 
@@ -1084,96 +1280,126 @@ function HotelDetailPage() {
             rates.length >
               0 && (
             <div className="gt-hotel-rate-list">
+
               {rates.map(
                 (
                   rate,
                   index,
                 ) => (
-                <article
-                  className="gt-hotel-rate-card"
-                  key={`${rate.name}-${rate.board}-${rate.price}-${index}`}
-                >
-                  <div className="gt-hotel-rate-icon">
-                    <BedIcon />
-                  </div>
+                  <article
+                    className="gt-hotel-rate-card"
+                    key={`${rate.name}-${rate.board}-${rate.price}-${index}`}
+                  >
 
-                  <div className="gt-hotel-rate-copy">
-                    <span>
-                      HABITACIÓN
-                    </span>
-
-                    <h3>
-                      {rate.name ??
-                        'Habitación'}
-                    </h3>
-
-                    <div className="gt-hotel-rate-meta">
-                      {rate.board && (
-                        <span>
-                          <FoodIcon />
-
-                          {rate.board}
-                        </span>
-                      )}
-
-                      {typeof rate.maxOccupancy ===
-                        'number' && (
-                        <span>
-                          <GuestsIcon />
-
-                          Hasta{' '}
-                          {rate.maxOccupancy}{' '}
-                          {rate.maxOccupancy ===
-                          1
-                            ? 'persona'
-                            : 'personas'}
-                        </span>
-                      )}
+                    <div className="gt-hotel-rate-icon">
+                      <BedIcon />
                     </div>
-                  </div>
 
-                  <div className="gt-hotel-rate-price">
-                    <span>
-                      Precio indicativo
-                    </span>
+                    <div className="gt-hotel-rate-copy">
 
-                    <strong>
-                      {formatPrice(
-                        rate.price,
-                        rate.currency ||
-                          currency,
-                      )}
-                    </strong>
+                      <span>
+                        {t(
+                          'hotels.detail.rates.roomEyebrow',
+                        )}
+                      </span>
 
-                    <small>
-                      {rate.currency ||
-                        currency}
-                    </small>
-                  </div>
-                </article>
+                      <h3>
+                        {rate.name ??
+                          t(
+                            'hotels.detail.rates.roomFallback',
+                          )}
+                      </h3>
+
+                      <div className="gt-hotel-rate-meta">
+
+                        {rate.board && (
+                          <span>
+                            <FoodIcon />
+
+                            {
+                              rate.board
+                            }
+                          </span>
+                        )}
+
+                        {typeof rate.maxOccupancy ===
+                          'number' && (
+                          <span>
+                            <GuestsIcon />
+
+                            {t(
+                              'hotels.detail.rates.upTo',
+                            )}{' '}
+
+                            {
+                              rate.maxOccupancy
+                            }{' '}
+
+                            {rate.maxOccupancy ===
+                            1
+                              ? t(
+                                  'hotels.detail.rates.person',
+                                )
+                              : t(
+                                  'hotels.detail.rates.people',
+                                )}
+                          </span>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                    <div className="gt-hotel-rate-price">
+
+                      <span>
+                        {t(
+                          'hotels.detail.rates.indicativePrice',
+                        )}
+                      </span>
+
+                      <strong>
+                        {formatPrice(
+                          rate.price,
+                          rate.currency ||
+                            currency,
+                          locale,
+                        )}
+                      </strong>
+
+                      <small>
+                        {rate.currency ||
+                          currency}
+                      </small>
+
+                    </div>
+
+                  </article>
                 ),
               )}
+
             </div>
           )}
 
           {ratesMeta?.disclaimer && (
             <div className="gt-detail-disclaimer">
+
               <InfoIcon />
 
-              {ratesMeta.disclaimer}
+              {
+                ratesMeta.disclaimer
+              }
+
             </div>
           )}
+
         </section>
+
       </div>
+
     </main>
   );
 }
-
-/*
- * =========================================
- * MESSAGE
- * =========================================
- */
 
 interface DetailMessageProps {
   icon:
@@ -1193,6 +1419,7 @@ function DetailMessage({
 }: DetailMessageProps) {
   return (
     <div className="gt-detail-message">
+
       <div>
         {icon}
       </div>
@@ -1204,19 +1431,17 @@ function DetailMessage({
       <p>
         {text}
       </p>
+
     </div>
   );
 }
 
-/*
- * =========================================
- * ICONS
- * =========================================
- */
-
 function HotelIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M4 20V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v13M2 20h20M8 9h2M14 9h2M8 13h2M14 13h2" />
     </svg>
   );
@@ -1224,16 +1449,26 @@ function HotelIcon() {
 
 function LocationIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
-      <circle cx="12" cy="10" r="2.5" />
+      <circle
+        cx="12"
+        cy="10"
+        r="2.5"
+      />
     </svg>
   );
 }
 
 function MapIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6ZM9 3v15M15 6v15" />
     </svg>
   );
@@ -1241,7 +1476,10 @@ function MapIcon() {
 
 function ArrowLeftIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="m15 18-6-6 6-6" />
     </svg>
   );
@@ -1249,8 +1487,15 @@ function ArrowLeftIcon() {
 
 function InfoIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
       <path d="M12 11v6M12 7h.01" />
     </svg>
   );
@@ -1258,7 +1503,10 @@ function InfoIcon() {
 
 function BuildingIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M4 21V5h10v16M14 9h6v12M2 21h20M8 9h2M8 13h2M8 17h2" />
     </svg>
   );
@@ -1266,7 +1514,10 @@ function BuildingIcon() {
 
 function CheckIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="m6 12 4 4 8-8" />
     </svg>
   );
@@ -1274,8 +1525,17 @@ function CheckIcon() {
 
 function CalendarIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <rect x="3" y="5" width="18" height="16" rx="2" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <rect
+        x="3"
+        y="5"
+        width="18"
+        height="16"
+        rx="2"
+      />
       <path d="M8 3v4M16 3v4M3 10h18" />
     </svg>
   );
@@ -1283,8 +1543,15 @@ function CalendarIcon() {
 
 function GuestsIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="8" r="3" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="8"
+        r="3"
+      />
       <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
     </svg>
   );
@@ -1292,8 +1559,15 @@ function GuestsIcon() {
 
 function CurrencyIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" />
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+      />
       <path d="M12 6v12M16 8.5c-.8-.7-2-1-3.2-1-1.8 0-3.3.8-3.3 2.1 0 3.2 7 1.2 7 4.7 0 1.4-1.5 2.3-3.6 2.3-1.5 0-2.8-.4-3.8-1.2" />
     </svg>
   );
@@ -1301,7 +1575,10 @@ function CurrencyIcon() {
 
 function BedIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M3 18V8M21 18v-6a2 2 0 0 0-2-2H8a3 3 0 0 0-3 3v5M3 15h18M7 10V7h5v3" />
     </svg>
   );
@@ -1309,7 +1586,10 @@ function BedIcon() {
 
 function FoodIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 3v18" />
     </svg>
   );

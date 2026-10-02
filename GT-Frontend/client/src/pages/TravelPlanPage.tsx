@@ -1,150 +1,288 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  useState,
+} from 'react';
+
+import {
+  Link,
+} from 'react-router-dom';
+
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
 
 import TravelPlanSearchForm from '../components/travelplan/TravelPlanSearchForm';
 import WishlistHeart from '../components/wishlist/WishlistHeart';
 
-import { useAuth } from '../hooks/useAuth';
-import { useWishlist } from '../hooks/useWishlist';
+import {
+  useAuth,
+} from '../hooks/useAuth';
 
-import { searchFlights } from '../services/flights.service';
-import { searchHotels } from '../services/hotels.service';
-import { searchRestaurants } from '../services/restaurants.service';
-import { searchCars } from '../services/cars.service';
-import { getDestinationByIata } from '../services/destinations.service';
+import {
+  useWishlist,
+} from '../hooks/useWishlist';
 
-import type { FlightOffer } from '../types/flight.types';
+import {
+  searchFlights,
+} from '../services/flights.service';
+
+import {
+  searchHotels,
+} from '../services/hotels.service';
+
+import {
+  searchRestaurants,
+} from '../services/restaurants.service';
+
+import {
+  searchCars,
+} from '../services/cars.service';
+
+import {
+  getDestinationByIata,
+} from '../services/destinations.service';
+
+import type {
+  FlightOffer,
+} from '../types/flight.types';
 
 import type {
   HotelSummary,
   HotelSearchMeta,
 } from '../types/hotel.types';
 
-import type { Restaurant } from '../types/restaurant.types';
-import type { CarSummary } from '../types/car.types';
+import type {
+  Restaurant,
+} from '../types/restaurant.types';
+
+import type {
+  CarSummary,
+} from '../types/car.types';
 
 import type {
   TravelPlanSearchParams,
 } from '../components/travelplan/TravelPlanSearchForm';
 
+function getLocale() {
+  const language =
+    (
+      i18n.resolvedLanguage ??
+      i18n.language ??
+      'es'
+    ).split('-')[0];
 
-/* =========================================================
-   FUNCIONES PARA VUELOS
-   ========================================================= */
+  if (
+    language ===
+    'en'
+  ) {
+    return 'en-US';
+  }
+
+  if (
+    language ===
+    'pt'
+  ) {
+    return 'pt-BR';
+  }
+
+  return 'es-CR';
+}
 
 function formatTime(
-  value: string | null,
+  value:
+    string |
+    null,
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return '--:--';
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(
+      value,
+    );
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime(),
+    )
+  ) {
     return value;
   }
 
-  return date.toLocaleTimeString(
-    'es-CR',
+  return new Intl.DateTimeFormat(
+    getLocale(),
     {
-      hour: '2-digit',
-      minute: '2-digit',
+      hour:
+        '2-digit',
+
+      minute:
+        '2-digit',
     },
+  ).format(
+    date,
   );
 }
 
-
 function formatDate(
-  value: string | null,
+  value:
+    string |
+    null,
 ) {
-  if (!value) {
+  if (
+    !value
+  ) {
     return '';
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(
+      value,
+    );
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime(),
+    )
+  ) {
     return value;
   }
 
-  return date.toLocaleDateString(
-    'es-CR',
+  return new Intl.DateTimeFormat(
+    getLocale(),
     {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
+      day:
+        '2-digit',
+
+      month:
+        'short',
+
+      year:
+        'numeric',
     },
+  ).format(
+    date,
   );
 }
 
-
 function formatDuration(
-  minutes: number | null,
+  minutes:
+    number |
+    null,
 ) {
-  if (minutes === null) {
-    return 'Duración no disponible';
+  if (
+    minutes ===
+    null
+  ) {
+    return i18n.t(
+      'flights.format.durationUnavailable',
+    );
   }
 
-  const hours = Math.floor(
-    minutes / 60,
-  );
+  const hours =
+    Math.floor(
+      minutes /
+        60,
+    );
 
   const remainingMinutes =
-    minutes % 60;
+    minutes %
+    60;
 
-  if (hours === 0) {
+  if (
+    hours ===
+    0
+  ) {
     return `${remainingMinutes} min`;
   }
 
   return `${hours}h ${remainingMinutes}min`;
 }
 
-
 function formatTransfers(
-  transfers: number,
+  transfers:
+    number,
 ) {
-  if (transfers === 0) {
-    return 'Directo';
+  if (
+    transfers ===
+    0
+  ) {
+    return i18n.t(
+      'flights.format.direct',
+    );
   }
 
-  if (transfers === 1) {
-    return '1 escala';
+  if (
+    transfers ===
+    1
+  ) {
+    return i18n.t(
+      'flights.format.oneStop',
+    );
   }
 
-  return `${transfers} escalas`;
-}
-
-
-function formatAirlineName(
-  name: string | null,
-) {
-  return (
-    name?.trim() ||
-    'Aerolínea'
+  return i18n.t(
+    'flights.format.multipleStops',
+    {
+      count:
+        transfers,
+    },
   );
 }
 
-
-/*
- * Se mantiene el formato visual:
- * $95
- */
-function formatPrice(
-  price: number,
+function formatAirlineName(
+  name:
+    string |
+    null,
 ) {
-  return `$${Math.round(price)}`;
+  return (
+    name?.trim() ||
+    i18n.t(
+      'flights.format.airline',
+    )
+  );
 }
 
+function formatPrice(
+  price:
+    number,
 
-/* =========================================================
-   ESTRELLAS DE HOTEL
-   ========================================================= */
+  currency:
+    string,
+) {
+  try {
+    return new Intl.NumberFormat(
+      getLocale(),
+      {
+        style:
+          'currency',
+
+        currency,
+
+        maximumFractionDigits:
+          0,
+      },
+    ).format(
+      price,
+    );
+  } catch {
+    return `${currency} ${Math.round(
+      price,
+    )}`;
+  }
+}
 
 function renderStars(
-  stars: number | null,
+  stars:
+    number |
+    null,
 ) {
-  if (!stars) {
+  if (
+    !stars
+  ) {
     return null;
   }
 
@@ -153,7 +291,9 @@ function renderStars(
       5,
       Math.max(
         1,
-        Math.round(stars),
+        Math.round(
+          stars,
+        ),
       ),
     );
 
@@ -162,80 +302,104 @@ function renderStars(
   );
 }
 
-
-/* =========================================================
-   RESTAURANTES
-   ========================================================= */
-
 function formatRestaurantType(
-  value: string | null,
+  value:
+    string |
+    null,
 ) {
-  if (!value) {
-    return 'Gastronomía';
+  if (
+    !value
+  ) {
+    return i18n.t(
+      'restaurants.common.types.gastronomy',
+    );
   }
 
   switch (
     value
       .trim()
       .toLowerCase()
-      .replace(/\s+/g, '_')
+      .replace(
+        /\s+/g,
+        '_',
+      )
   ) {
     case 'restaurant':
-      return 'Restaurante';
+      return i18n.t(
+        'restaurants.common.types.restaurant',
+      );
 
     case 'cafe':
-      return 'Café';
+      return i18n.t(
+        'restaurants.common.types.cafe',
+      );
 
     case 'fast_food':
-      return 'Comida rápida';
+      return i18n.t(
+        'restaurants.common.types.fastFood',
+      );
 
     default:
       return value;
   }
 }
 
-
 function formatCuisine(
-  value: string,
+  value:
+    string,
 ) {
   return value
-    .replace(/_/g, ' ')
+    .replace(
+      /_/g,
+      ' ',
+    )
     .replace(
       /\b\w/g,
-      (letter) =>
+      (
+        letter,
+      ) =>
         letter.toUpperCase(),
     );
 }
 
-
 function getRestaurantCuisines(
-  restaurant: Restaurant,
+  restaurant:
+    Restaurant,
 ) {
-  return restaurant.cuisine ?? [];
+  return (
+    restaurant.cuisine ??
+    []
+  );
 }
-
-
-/* =========================================================
-   TARJETA DE RESTAURANTE
-   ========================================================= */
 
 interface RestaurantCardProps {
-  restaurant: Restaurant;
-  index: number;
-}
+  restaurant:
+    Restaurant;
 
+  index:
+    number;
+}
 
 function RestaurantCard({
   restaurant,
   index,
 }: RestaurantCardProps) {
+  const {
+    t,
+  } =
+    useTranslation();
 
   const cuisines =
     getRestaurantCuisines(
       restaurant,
     )
-      .slice(0, 3)
-      .map(formatCuisine);
+      .slice(
+        0,
+        3,
+      )
+      .map(
+        formatCuisine,
+      );
 
   const visualClasses = [
     'gt-restaurant-visual-blue',
@@ -246,33 +410,38 @@ function RestaurantCard({
 
   const visualClass =
     visualClasses[
-      index % visualClasses.length
+      index %
+        visualClasses.length
     ];
 
   const websiteUrl =
-    restaurant.links?.website;
+    restaurant
+      .links
+      ?.website;
 
   const mapsUrl =
-    restaurant.links?.maps;
+    restaurant
+      .links
+      ?.maps;
 
   const typeLabel =
     formatRestaurantType(
       restaurant.primaryType,
     );
 
+  const locationFallback =
+    t(
+      'restaurants.list.card.locationFallback',
+    );
+
   return (
     <article className="gt-restaurant-card">
-
-      {/* =================================================
-          PARTE VISUAL
-          ================================================= */}
 
       <div
         className={`gt-restaurant-card-visual ${visualClass}`}
       >
 
         <div className="gt-restaurant-visual-pattern" />
-
 
         <WishlistHeart
           item={{
@@ -287,53 +456,51 @@ function RestaurantCard({
 
             subtitle:
               restaurant.address ||
-              'Ubicación disponible en el mapa',
+              locationFallback,
 
             href:
               `/restaurants/${restaurant.id}`,
 
             metadata: {
-
-              tipo:
+              type:
                 typeLabel,
 
-              cocina:
-                cuisines.length > 0
-                  ? cuisines.join(', ')
+              cuisine:
+                cuisines.length >
+                0
+                  ? cuisines.join(
+                      ', ',
+                    )
                   : null,
 
-              sitioWeb:
-                Boolean(websiteUrl),
+              website:
+                Boolean(
+                  websiteUrl,
+                ),
 
-              mapa:
-                Boolean(mapsUrl),
-
+              map:
+                Boolean(
+                  mapsUrl,
+                ),
             },
-
           }}
         />
 
-
         <RestaurantIcon />
-
 
         <span>
           {typeLabel}
         </span>
 
-
         {websiteUrl && (
           <div className="gt-restaurant-web-badge">
-            Sitio web
+            {t(
+              'restaurants.list.card.website',
+            )}
           </div>
         )}
 
       </div>
-
-
-      {/* =================================================
-          CUERPO DE LA TARJETA
-          ================================================= */}
 
       <div className="gt-restaurant-card-body">
 
@@ -349,35 +516,26 @@ function RestaurantCard({
 
         </div>
 
-
-        {/* =================================================
-            COCINAS
-            ================================================= */}
-
-        {cuisines.length > 0 && (
-
+        {cuisines.length >
+          0 && (
           <div className="gt-restaurant-cuisine-chips">
 
             {cuisines.map(
-              (cuisineName) => (
-
+              (
+                cuisineName,
+              ) => (
                 <span
-                  key={cuisineName}
+                  key={
+                    cuisineName
+                  }
                 >
                   {cuisineName}
                 </span>
-
               ),
             )}
 
           </div>
-
         )}
-
-
-        {/* =================================================
-            DIRECCIÓN
-            ================================================= */}
 
         <div className="gt-restaurant-address">
 
@@ -385,18 +543,12 @@ function RestaurantCard({
 
           <span>
             {restaurant.address ||
-              'Ubicación disponible en el mapa'}
+              locationFallback}
           </span>
 
         </div>
 
-
         <div className="gt-restaurant-card-spacer" />
-
-
-        {/* =================================================
-            ACCIONES
-            ================================================= */}
 
         <div className="gt-restaurant-card-actions">
 
@@ -404,45 +556,43 @@ function RestaurantCard({
             to={`/restaurants/${restaurant.id}`}
             className="gt-restaurant-detail-button"
           >
-
-            Ver detalles
+            {t(
+              'restaurants.list.card.viewDetails',
+            )}
 
             <ArrowIcon />
-
           </Link>
 
-
           {mapsUrl && (
-
             <a
-              href={mapsUrl}
+              href={
+                mapsUrl
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="gt-restaurant-icon-button"
-              aria-label="Ver en mapa"
+              aria-label={t(
+                'restaurants.list.card.viewMap',
+              )}
             >
-
               <MapIcon />
-
             </a>
-
           )}
 
-
           {websiteUrl && (
-
             <a
-              href={websiteUrl}
+              href={
+                websiteUrl
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="gt-restaurant-icon-button"
-              aria-label="Abrir sitio web"
+              aria-label={t(
+                'restaurants.list.card.openWebsite',
+              )}
             >
-
               <ExternalIcon />
-
             </a>
-
           )}
 
         </div>
@@ -453,36 +603,53 @@ function RestaurantCard({
   );
 }
 
-
-/* =========================================================
-   RENT A CAR
-   ========================================================= */
-
 function formatCarType(
-  value: string | null | undefined,
+  value:
+    string |
+    null |
+    undefined,
 ) {
-  if (!value) {
-    return 'Movilidad';
+  if (
+    !value
+  ) {
+    return i18n.t(
+      'cars.common.types.mobility',
+    );
   }
 
-  const normalized = value
-    .trim()
-    .toLowerCase()
-    .replace(/_/g, ' ');
+  const normalized =
+    value
+      .trim()
+      .toLowerCase()
+      .replace(
+        /_/g,
+        ' ',
+      );
 
-  if (normalized === 'car rental') {
-    return 'Rent a Car';
+  if (
+    normalized ===
+    'car rental'
+  ) {
+    return i18n.t(
+      'cars.common.types.carRental',
+    );
   }
 
-  if (normalized === 'car sharing') {
-    return 'Car sharing';
+  if (
+    normalized ===
+    'car sharing'
+  ) {
+    return i18n.t(
+      'cars.common.types.carSharing',
+    );
   }
 
   return value;
 }
 
 function normalize(
-  value: string,
+  value:
+    string,
 ) {
   return value
     .trim()
@@ -490,37 +657,52 @@ function normalize(
 }
 
 function getCarTypes(
-  car: CarSummary,
+  car:
+    CarSummary,
 ) {
-  return car.types ?? [];
+  return (
+    car.types ??
+    []
+  );
 }
 
-
-/* =========================================================
-   TARJETA DE RENT A CAR
-   ========================================================= */
-
 interface CarPlanCardProps {
-  car: CarSummary;
-  index: number;
+  car:
+    CarSummary;
+
+  index:
+    number;
 }
 
 function CarPlanCard({
   car,
   index,
 }: CarPlanCardProps) {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const brand =
     car.brand?.trim() ??
     '';
 
   const name =
     car.name?.trim() ||
-    'Servicio de movilidad';
+    t(
+      'cars.list.card.serviceFallback',
+    );
 
   const showBrand =
-    Boolean(brand) &&
-    normalize(brand) !==
-      normalize(name);
+    Boolean(
+      brand,
+    ) &&
+    normalize(
+      brand,
+    ) !==
+      normalize(
+        name,
+      );
 
   const mapsUrl =
     car.links?.maps ??
@@ -532,7 +714,9 @@ function CarPlanCard({
 
   const address =
     car.address?.trim() ||
-    'Dirección no disponible';
+    t(
+      'cars.list.card.addressUnavailable',
+    );
 
   const typeLabel =
     formatCarType(
@@ -558,6 +742,7 @@ function CarPlanCard({
       <div
         className={`gt-car-result-visual ${visualClass}`}
       >
+
         <WishlistHeart
           item={{
             key:
@@ -576,20 +761,20 @@ function CarPlanCard({
               `/cars/${car.id}`,
 
             metadata: {
-              tipo:
+              type:
                 typeLabel,
 
-              marca:
+              brand:
                 showBrand
                   ? brand
                   : null,
 
-              sitioWeb:
+              website:
                 Boolean(
                   websiteUrl,
                 ),
 
-              mapa:
+              map:
                 Boolean(
                   mapsUrl,
                 ),
@@ -608,6 +793,7 @@ function CarPlanCard({
         <span>
           {typeLabel}
         </span>
+
       </div>
 
       <div className="gt-car-result-content">
@@ -624,17 +810,22 @@ function CarPlanCard({
 
           {showBrand && (
             <p className="gt-car-result-brand">
+
               <BuildingIcon />
+
               {brand}
+
             </p>
           )}
 
           <div className="gt-car-result-location">
+
             <LocationIcon />
 
             <span>
               {address}
             </span>
+
           </div>
 
           <div className="gt-car-result-tags">
@@ -642,21 +833,33 @@ function CarPlanCard({
             {websiteUrl && (
               <span>
                 <GlobeIcon />
-                Sitio web
+
+                {t(
+                  'cars.list.card.website',
+                )}
               </span>
             )}
 
             {mapsUrl && (
               <span>
                 <MapIcon />
-                Ubicación
+
+                {t(
+                  'cars.list.card.location',
+                )}
               </span>
             )}
 
-            {getCarTypes(car).map(
-              (carType) => (
+            {getCarTypes(
+              car,
+            ).map(
+              (
+                carType,
+              ) => (
                 <span
-                  key={carType}
+                  key={
+                    carType
+                  }
                 >
                   {formatCarType(
                     carType,
@@ -666,23 +869,31 @@ function CarPlanCard({
             )}
 
           </div>
+
         </div>
 
         <div className="gt-car-result-actions">
 
           <span className="gt-car-result-action-label">
-            Más información
+            {t(
+              'cars.list.card.moreInformation',
+            )}
           </span>
 
           <strong>
-            Consulta el proveedor
+            {t(
+              'cars.list.card.checkProvider',
+            )}
           </strong>
 
           <Link
             to={`/cars/${car.id}`}
             className="gt-car-detail-button"
           >
-            Ver detalles
+            {t(
+              'cars.list.card.viewDetails',
+            )}
+
             <ArrowIcon />
           </Link>
 
@@ -690,25 +901,39 @@ function CarPlanCard({
 
             {mapsUrl && (
               <a
-                href={mapsUrl}
+                href={
+                  mapsUrl
+                }
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Ver ubicación en el mapa"
+                aria-label={t(
+                  'cars.list.card.viewMapAria',
+                )}
               >
                 <MapIcon />
-                Mapa
+
+                {t(
+                  'cars.list.card.map',
+                )}
               </a>
             )}
 
             {websiteUrl && (
               <a
-                href={websiteUrl}
+                href={
+                  websiteUrl
+                }
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Abrir sitio web"
+                aria-label={t(
+                  'cars.list.card.openWebsiteAria',
+                )}
               >
                 <ExternalIcon />
-                Web
+
+                {t(
+                  'cars.list.card.web',
+                )}
               </a>
             )}
 
@@ -722,525 +947,542 @@ function CarPlanCard({
   );
 }
 
-
-/* =========================================================
-   PÁGINA
-   ========================================================= */
-
 function TravelPlanPage() {
+  const {
+    t,
+  } =
+    useTranslation();
 
-  const [flights, setFlights] =
-    useState<FlightOffer[]>([]);
+  const [
+    flights,
+    setFlights,
+  ] =
+    useState<
+      FlightOffer[]
+    >([]);
 
-  const [hotels, setHotels] =
-    useState<HotelSummary[]>([]);
+  const [
+    hotels,
+    setHotels,
+  ] =
+    useState<
+      HotelSummary[]
+    >([]);
 
-  const [restaurants, setRestaurants] =
-    useState<Restaurant[]>([]);
+  const [
+    restaurants,
+    setRestaurants,
+  ] =
+    useState<
+      Restaurant[]
+    >([]);
 
-  const [cars, setCars] =
-    useState<CarSummary[]>([]);
-
-
-  /* =====================================================
-     AUTENTICACIÓN / WISHLIST
-     ===================================================== */
+  const [
+    cars,
+    setCars,
+  ] =
+    useState<
+      CarSummary[]
+    >([]);
 
   const {
     isAuthenticated,
     login,
-  } = useAuth();
+  } =
+    useAuth();
 
   const {
     toggle,
     isSaved,
-  } = useWishlist();
+  } =
+    useWishlist();
 
+  const [
+    isLoading,
+    setIsLoading,
+  ] =
+    useState(
+      false,
+    );
 
-  /* =====================================================
-     ESTADOS DE CARGA
-     ===================================================== */
+  const [
+    isLoadingFlights,
+    setIsLoadingFlights,
+  ] =
+    useState(
+      false,
+    );
 
-  const [isLoading, setIsLoading] =
-    useState(false);
+  const [
+    isLoadingHotels,
+    setIsLoadingHotels,
+  ] =
+    useState(
+      false,
+    );
 
-  const [isLoadingFlights, setIsLoadingFlights] =
-    useState(false);
+  const [
+    isLoadingRestaurants,
+    setIsLoadingRestaurants,
+  ] =
+    useState(
+      false,
+    );
 
-  const [isLoadingHotels, setIsLoadingHotels] =
-    useState(false);
+  const [
+    isLoadingCars,
+    setIsLoadingCars,
+  ] =
+    useState(
+      false,
+    );
 
-  const [isLoadingRestaurants, setIsLoadingRestaurants] =
-    useState(false);
-
-  const [isLoadingCars, setIsLoadingCars] =
-    useState(false);
-
-
-  /* =====================================================
-     ESTADOS GENERALES
-     ===================================================== */
-
-  const [error, setError] =
-    useState<string | null>(null);
-
-  const [hasSearched, setHasSearched] =
-    useState(false);
-
-
-  /*
-   * Se conserva porque ya forma parte
-   * de la lógica actual.
-   */
-
-  const [selectedFlight, setSelectedFlight] =
-    useState<FlightOffer | null>(null);
-
-
-  /* =====================================================
-     INFORMACIÓN DE HOTELES
-     ===================================================== */
-
-  const [hotelMeta, setHotelMeta] =
-    useState<HotelSearchMeta | null>(
+  const [
+    error,
+    setError,
+  ] =
+    useState<
+      string |
+      null
+    >(
       null,
     );
 
+  const [
+    hasSearched,
+    setHasSearched,
+  ] =
+    useState(
+      false,
+    );
+
+  const [
+    selectedFlight,
+    setSelectedFlight,
+  ] =
+    useState<
+      FlightOffer |
+      null
+    >(
+      null,
+    );
+
+  const [
+    hotelMeta,
+    setHotelMeta,
+  ] =
+    useState<
+      HotelSearchMeta |
+      null
+    >(
+      null,
+    );
 
   const [
     hotelSearchContext,
     setHotelSearchContext,
-  ] = useState<{
-    checkin: string;
-    checkout?: string;
-    adults: string;
-    currency: string;
-  } | null>(null);
+  ] =
+    useState<{
+      checkin:
+        string;
 
+      checkout?:
+        string;
 
-  /* =====================================================
-     MEJOR PRECIO / MÁS RÁPIDO
-     ===================================================== */
+      adults:
+        string;
+
+      currency:
+        string;
+    } | null>(
+      null,
+    );
 
   const lowestPrice =
-    flights.length > 0
+    flights.length >
+    0
       ? Math.min(
           ...flights.map(
-            (flight) =>
+            (
+              flight,
+            ) =>
               flight.price,
           ),
         )
       : null;
 
-
   const durationValues =
     flights
       .map(
-        (flight) =>
+        (
+          flight,
+        ) =>
           flight.durationMinutes,
       )
       .filter(
         (
           duration,
-        ): duration is number =>
-          duration !== null,
+        ):
+          duration is number =>
+            duration !==
+            null,
       );
 
-
   const shortestDuration =
-    durationValues.length > 0
+    durationValues.length >
+    0
       ? Math.min(
           ...durationValues,
         )
       : null;
 
-
-  /* =====================================================
-     BUSCAR PLAN DE VIAJE
-     ===================================================== */
-
-  const handleSearch = async (
-    params: TravelPlanSearchParams,
-  ) => {
-
-    try {
-
-      /* -----------------------------------------------
-         INICIO
-         ----------------------------------------------- */
-
-      setIsLoading(true);
-
-      setError(null);
-
-      setHasSearched(true);
-
-
-      /* Limpiar resultados anteriores */
-
-      setFlights([]);
-
-      setHotels([]);
-
-      setRestaurants([]);
-
-      setCars([]);
-
-      setSelectedFlight(null);
-
-      setHotelMeta(null);
-
-
-      /* Activar estados de carga */
-
-      setIsLoadingFlights(true);
-
-      setIsLoadingHotels(true);
-
-      setIsLoadingRestaurants(true);
-
-      setIsLoadingCars(true);
-
-
-      /* -----------------------------------------------
-         GUARDAR DATOS PARA HOTELES
-         ----------------------------------------------- */
-
-      setHotelSearchContext({
-
-        checkin:
-          params.departureAt,
-
-        checkout:
-          params.returnAt,
-
-        adults:
-          '2',
-
-        currency:
-          params.currency,
-
-      });
-
-
-      /* -----------------------------------------------
-         OBTENER DESTINO
-         ----------------------------------------------- */
-
-      const destination =
-        await getDestinationByIata(
-          params.destination,
+  const handleSearch =
+    async (
+      params:
+        TravelPlanSearchParams,
+    ) => {
+      try {
+        setIsLoading(
+          true,
         );
 
+        setError(
+          null,
+        );
 
-      const destinationCity =
-        destination.cityName;
+        setHasSearched(
+          true,
+        );
 
+        setFlights(
+          [],
+        );
 
-      const destinationCountry =
-        destination.countryCode;
+        setHotels(
+          [],
+        );
 
+        setRestaurants(
+          [],
+        );
 
-      /*
-       * Ya conocemos el destino.
-       * Las búsquedas empiezan
-       * independientemente.
-       */
+        setCars(
+          [],
+        );
 
-      setIsLoading(false);
+        setSelectedFlight(
+          null,
+        );
 
+        setHotelMeta(
+          null,
+        );
 
-      /* =================================================
-         VUELOS
-         ================================================= */
+        setIsLoadingFlights(
+          true,
+        );
 
-      searchFlights({
+        setIsLoadingHotels(
+          true,
+        );
 
-        origin:
-          params.origin,
+        setIsLoadingRestaurants(
+          true,
+        );
 
-        destination:
-          params.destination,
+        setIsLoadingCars(
+          true,
+        );
 
-        departureAt:
-          params.departureAt,
+        setHotelSearchContext({
+          checkin:
+            params.departureAt,
 
-        returnAt:
-          params.returnAt,
+          checkout:
+            params.returnAt,
 
-        currency:
-          params.currency,
+          adults:
+            '2',
 
-        limit:
-          10,
+          currency:
+            params.currency,
+        });
 
-      })
-        .then(
-          (
-            flightsResponse,
-          ) => {
+        const destination =
+          await getDestinationByIata(
+            params.destination,
+          );
 
-            setFlights(
-              flightsResponse.data,
-            );
+        const destinationCity =
+          destination.cityName;
 
-          },
-        )
-        .catch(
-          (
-            flightError,
-          ) => {
+        const destinationCountry =
+          destination.countryCode;
 
-            console.error(
-              'Error buscando vuelos:',
+        setIsLoading(
+          false,
+        );
+
+        searchFlights({
+          origin:
+            params.origin,
+
+          destination:
+            params.destination,
+
+          departureAt:
+            params.departureAt,
+
+          returnAt:
+            params.returnAt,
+
+          currency:
+            params.currency,
+
+          limit:
+            10,
+        })
+          .then(
+            (
+              response,
+            ) => {
+              setFlights(
+                response.data,
+              );
+            },
+          )
+          .catch(
+            (
               flightError,
-            );
+            ) => {
+              console.error(
+                'Error searching flights:',
+                flightError,
+              );
 
-            setFlights([]);
-
-          },
-        )
-        .finally(() => {
-
-          setIsLoadingFlights(
-            false,
+              setFlights(
+                [],
+              );
+            },
+          )
+          .finally(
+            () => {
+              setIsLoadingFlights(
+                false,
+              );
+            },
           );
 
-        });
+        searchHotels({
+          cityName:
+            destinationCity,
 
+          countryCode:
+            destinationCountry,
 
-      /* =================================================
-         HOTELES
-         ================================================= */
+          limit:
+            6,
+        })
+          .then(
+            (
+              response,
+            ) => {
+              setHotels(
+                response.data,
+              );
 
-      searchHotels({
-
-        cityName:
-          destinationCity,
-
-        countryCode:
-          destinationCountry,
-
-        limit:
-          6,
-
-      })
-        .then(
-          (
-            hotelsResponse,
-          ) => {
-
-            setHotels(
-              hotelsResponse.data,
-            );
-
-            setHotelMeta(
-              hotelsResponse.meta,
-            );
-
-          },
-        )
-        .catch(
-          (
-            hotelError,
-          ) => {
-
-            console.error(
-              'Error buscando hoteles:',
+              setHotelMeta(
+                response.meta,
+              );
+            },
+          )
+          .catch(
+            (
               hotelError,
-            );
+            ) => {
+              console.error(
+                'Error searching hotels:',
+                hotelError,
+              );
 
-            setHotels([]);
-
-          },
-        )
-        .finally(() => {
-
-          setIsLoadingHotels(
-            false,
+              setHotels(
+                [],
+              );
+            },
+          )
+          .finally(
+            () => {
+              setIsLoadingHotels(
+                false,
+              );
+            },
           );
 
-        });
+        searchRestaurants({
+          cityName:
+            destinationCity,
 
+          countryCode:
+            destinationCountry,
 
-      /* =================================================
-         RESTAURANTES
-         ================================================= */
+          limit:
+            6,
 
-      searchRestaurants({
-
-        cityName:
-          destinationCity,
-
-        countryCode:
-          destinationCountry,
-
-        limit:
-          6,
-
-        type:
-          'restaurant',
-
-      })
-        .then(
-          (
-            restaurantsResponse,
-          ) => {
-
-            setRestaurants(
-              restaurantsResponse.data,
-            );
-
-          },
-        )
-        .catch(
-          (
-            restaurantError,
-          ) => {
-
-            console.error(
-              'Error buscando restaurantes:',
+          type:
+            'restaurant',
+        })
+          .then(
+            (
+              response,
+            ) => {
+              setRestaurants(
+                response.data,
+              );
+            },
+          )
+          .catch(
+            (
               restaurantError,
-            );
+            ) => {
+              console.error(
+                'Error searching restaurants:',
+                restaurantError,
+              );
 
-            setRestaurants([]);
-
-          },
-        )
-        .finally(() => {
-
-          setIsLoadingRestaurants(
-            false,
+              setRestaurants(
+                [],
+              );
+            },
+          )
+          .finally(
+            () => {
+              setIsLoadingRestaurants(
+                false,
+              );
+            },
           );
 
-        });
+        searchCars({
+          cityName:
+            destinationCity,
 
+          countryCode:
+            destinationCountry,
 
-      /* =================================================
-         RENT A CAR
-         ================================================= */
+          limit:
+            6,
 
-      searchCars({
-
-        cityName:
-          destinationCity,
-
-        countryCode:
-          destinationCountry,
-
-        limit:
-          6,
-
-        type:
-          'car_rental',
-
-      })
-        .then(
-          (
-            carsResponse,
-          ) => {
-
-            setCars(
-              carsResponse.data,
-            );
-
-          },
-        )
-        .catch(
-          (
-            carError,
-          ) => {
-
-            console.error(
-              'Error buscando Rent a Car:',
+          type:
+            'car_rental',
+        })
+          .then(
+            (
+              response,
+            ) => {
+              setCars(
+                response.data,
+              );
+            },
+          )
+          .catch(
+            (
               carError,
-            );
+            ) => {
+              console.error(
+                'Error searching rental cars:',
+                carError,
+              );
 
-            setCars([]);
-
-          },
-        )
-        .finally(() => {
-
-          setIsLoadingCars(
-            false,
+              setCars(
+                [],
+              );
+            },
+          )
+          .finally(
+            () => {
+              setIsLoadingCars(
+                false,
+              );
+            },
           );
+      } catch (
+        searchError
+      ) {
+        console.error(
+          'Error loading destination:',
+          searchError,
+        );
 
-        });
+        setError(
+          'travelPlan.errors.destination',
+        );
 
+        setFlights(
+          [],
+        );
 
-    } catch (searchError) {
+        setHotels(
+          [],
+        );
 
-      console.error(
-        'Error obteniendo el destino:',
-        searchError,
-      );
+        setRestaurants(
+          [],
+        );
 
+        setCars(
+          [],
+        );
 
-      setError(
-        'No fue posible obtener el destino seleccionado. Intenta nuevamente.',
-      );
+        setSelectedFlight(
+          null,
+        );
 
+        setIsLoading(
+          false,
+        );
 
-      setFlights([]);
+        setIsLoadingFlights(
+          false,
+        );
 
-      setHotels([]);
+        setIsLoadingHotels(
+          false,
+        );
 
-      setRestaurants([]);
+        setIsLoadingRestaurants(
+          false,
+        );
 
-      setCars([]);
-
-      setSelectedFlight(null);
-
-      setIsLoading(false);
-
-      setIsLoadingFlights(false);
-
-      setIsLoadingHotels(false);
-
-      setIsLoadingRestaurants(false);
-
-      setIsLoadingCars(false);
-
-    }
-  };
-
-
-  /* =====================================================
-     URL DEL DETALLE DEL HOTEL
-     ===================================================== */
+        setIsLoadingCars(
+          false,
+        );
+      }
+    };
 
   const buildHotelDetailUrl = (
-    hotelId: string,
+    hotelId:
+      string,
   ) => {
-
     const params =
       new URLSearchParams();
-
 
     if (
       hotelSearchContext?.checkin
     ) {
-
       params.set(
         'checkin',
         hotelSearchContext.checkin,
       );
-
     }
-
 
     if (
       hotelSearchContext?.checkout
     ) {
-
       params.set(
         'checkout',
         hotelSearchContext.checkout,
       );
-
     }
-
 
     params.set(
       'adults',
@@ -1248,36 +1490,28 @@ function TravelPlanPage() {
         '2',
     );
 
-
     params.set(
       'currency',
       hotelSearchContext?.currency ||
         'USD',
     );
 
-
     return `/hotels/${hotelId}?${params.toString()}`;
   };
 
-
-  /* =====================================================
-     WISHLIST HOTEL
-     ===================================================== */
-
   const handleWishlist = (
-    hotel: HotelSummary,
+    hotel:
+      HotelSummary,
   ) => {
-
-    if (!isAuthenticated) {
-
+    if (
+      !isAuthenticated
+    ) {
       login();
 
       return;
     }
 
-
     toggle({
-
       key:
         `hotel:${hotel.id}`,
 
@@ -1292,8 +1526,12 @@ function TravelPlanPage() {
           hotel.city,
           hotel.country,
         ]
-          .filter(Boolean)
-          .join(', '),
+          .filter(
+            Boolean,
+          )
+          .join(
+            ', ',
+          ),
 
       imageUrl:
         hotel.mainPhoto ||
@@ -1306,39 +1544,31 @@ function TravelPlanPage() {
         ),
 
       metadata: {
-
-        ciudad:
+        city:
           hotel.city ??
           null,
 
-        país:
+        country:
           hotel.country ??
           null,
 
-        estrellas:
+        stars:
           hotel.starRating ??
           null,
 
-        valoración:
+        rating:
           hotel.rating ??
           null,
 
-        cadena:
+        chain:
           hotel.chain ??
           null,
-
       },
-
     });
   };
 
-
   return (
     <main className="travel-plan-page">
-
-      {/* =================================================
-          BUSCADOR
-          ================================================= */}
 
       <TravelPlanSearchForm
         onSearch={
@@ -1346,104 +1576,83 @@ function TravelPlanPage() {
         }
       />
 
-
-      {/* =================================================
-          CARGANDO DESTINO
-          ================================================= */}
-
       {isLoading && (
-
         <section className="travel-plan-status">
 
           <h2>
-            Estamos preparando tu viaje...
+            {t(
+              'travelPlan.status.preparingTitle',
+            )}
           </h2>
 
           <p>
-            Estamos identificando tu destino
-            y preparando las búsquedas.
+            {t(
+              'travelPlan.status.preparingDescription',
+            )}
           </p>
 
         </section>
-
       )}
-
-
-      {/* =================================================
-          ERROR
-          ================================================= */}
 
       {error && (
-
         <section className="travel-plan-status">
 
           <h2>
-            Ocurrió un problema
+            {t(
+              'travelPlan.errors.title',
+            )}
           </h2>
 
           <p>
-            {error}
+            {t(
+              error,
+            )}
           </p>
 
         </section>
-
       )}
-
-
-      {/* =================================================
-          RESULTADOS
-          ================================================= */}
 
       {!error &&
         hasSearched &&
         !isLoading && (
-
         <section className="travel-plan-content">
-
-
-          {/* =================================================
-              01 · VUELOS
-              ================================================= */}
 
           <section className="travel-plan-results">
 
             <div className="travel-plan-results-heading">
 
               <h2>
-                Vuelos disponibles
+                {t(
+                  'travelPlan.sections.flights.title',
+                )}
               </h2>
 
               <p>
-                Elige la opción que mejor
-                se adapte a tu viaje.
+                {t(
+                  'travelPlan.sections.flights.description',
+                )}
               </p>
 
             </div>
 
-
             {isLoadingFlights ? (
-
               <div className="travel-plan-empty">
-
                 <p>
-                  Buscando vuelos...
+                  {t(
+                    'travelPlan.sections.flights.loading',
+                  )}
                 </p>
-
               </div>
-
-            ) : flights.length === 0 ? (
-
+            ) : flights.length ===
+              0 ? (
               <div className="travel-plan-empty">
-
                 <p>
-                  No encontramos vuelos
-                  para esta búsqueda.
+                  {t(
+                    'travelPlan.sections.flights.empty',
+                  )}
                 </p>
-
               </div>
-
             ) : (
-
               <div className="travel-plan-flight-list">
 
                 {flights.map(
@@ -1451,13 +1660,11 @@ function TravelPlanPage() {
                     flight,
                     index,
                   ) => {
-
                     const isBestPrice =
                       lowestPrice !==
                         null &&
                       flight.price ===
                         lowestPrice;
-
 
                     const isFastest =
                       shortestDuration !==
@@ -1467,13 +1674,10 @@ function TravelPlanPage() {
                       flight.durationMinutes ===
                         shortestDuration;
 
-
                     const flightWishlistKey =
                       `flight:${flight.origin}-${flight.destination}-${flight.departureAt}-${flight.flightNumber ?? index}`;
 
-
                     return (
-
                       <article
                         key={`${flight.flightNumber ?? 'flight'}-${index}`}
                         className={
@@ -1489,49 +1693,46 @@ function TravelPlanPage() {
                           <div className="gt-flight-badges">
 
                             {isBestPrice && (
-
                               <span className="gt-flight-badge gt-flight-badge-price">
-                                Mejor precio
+                                {t(
+                                  'flights.card.bestPrice',
+                                )}
                               </span>
-
                             )}
-
 
                             {isFastest && (
-
                               <span className="gt-flight-badge gt-flight-badge-fast">
-                                Más rápido
+                                {t(
+                                  'flights.results.fastest',
+                                )}
                               </span>
-
                             )}
-
 
                             {flight.transfers ===
                               0 && (
-
                               <span className="gt-flight-badge gt-flight-badge-direct">
-                                Directo
+                                {t(
+                                  'flights.card.direct',
+                                )}
                               </span>
-
                             )}
 
                           </div>
 
-
                           <div className="gt-flight-card-top-actions">
 
                             <span className="gt-flight-result-index">
-                              Opción{' '}
-                              {index + 1}
+                              {t(
+                                'flights.card.option',
+                              )}{' '}
+
+                              {index +
+                                1}
                             </span>
 
-
                             <WishlistHeart
-
                               className="gt-flight-wishlist-heart"
-
                               item={{
-
                                 key:
                                   flightWishlistKey,
 
@@ -1550,55 +1751,49 @@ function TravelPlanPage() {
                                   '/flights',
 
                                 metadata: {
-
-                                  aerolínea:
+                                  airline:
                                     formatAirlineName(
                                       flight.airlineName,
                                     ),
 
-                                  vuelo:
+                                  flightNumber:
                                     flight.flightNumber ??
                                     null,
 
-                                  salida:
+                                  departure:
                                     formatDate(
                                       flight.departureAt,
                                     ) ||
                                     null,
 
-                                  duración:
+                                  duration:
                                     formatDuration(
                                       flight.durationMinutes,
                                     ),
 
-                                  escalas:
+                                  stops:
                                     formatTransfers(
                                       flight.transfers,
                                     ),
 
-                                  precio:
+                                  price:
                                     formatPrice(
                                       flight.price,
+                                      flight.currency,
                                     ),
-
                                 },
-
                               }}
-
                             />
 
                           </div>
 
                         </div>
 
-
                         <div className="gt-flight-card-main">
-
 
                           <div className="gt-flight-airline">
 
                             <div className="gt-airline-logo">
-
                               {flight.airline
                                 ?.slice(
                                   0,
@@ -1606,41 +1801,33 @@ function TravelPlanPage() {
                                 )
                                 .toUpperCase() ||
                                 'GT'}
-
                             </div>
-
 
                             <div>
 
                               <strong>
-
                                 {formatAirlineName(
                                   flight.airlineName,
                                 )}
-
                               </strong>
 
-
                               {flight.flightNumber && (
-
                                 <span>
+                                  {t(
+                                    'flights.card.flight',
+                                  )}{' '}
 
-                                  Vuelo{' '}
                                   {
                                     flight.flightNumber
                                   }
-
                                 </span>
-
                               )}
 
                             </div>
 
                           </div>
 
-
                           <div className="gt-flight-route">
-
 
                             <div className="gt-flight-route-point">
 
@@ -1649,41 +1836,31 @@ function TravelPlanPage() {
                               </span>
 
                               <strong>
-
                                 {formatTime(
                                   flight.departureAt,
                                 )}
-
                               </strong>
 
                               <small>
-
                                 {flight.originAirport ||
                                   flight.origin}
-
                               </small>
 
                               <small>
-
                                 {formatDate(
                                   flight.departureAt,
                                 )}
-
                               </small>
 
                             </div>
 
-
                             <div className="gt-flight-route-middle">
 
                               <span>
-
                                 {formatDuration(
                                   flight.durationMinutes,
                                 )}
-
                               </span>
-
 
                               <div className="gt-flight-route-track">
 
@@ -1699,17 +1876,13 @@ function TravelPlanPage() {
 
                               </div>
 
-
                               <strong>
-
                                 {formatTransfers(
                                   flight.transfers,
                                 )}
-
                               </strong>
 
                             </div>
-
 
                             <div className="gt-flight-route-point gt-flight-route-destination">
 
@@ -1722,53 +1895,48 @@ function TravelPlanPage() {
                               </strong>
 
                               <small>
-
                                 {flight.destinationAirport ||
                                   flight.destination}
-
                               </small>
 
-
                               {flight.returnAt && (
-
                                 <small>
-
-                                  Regreso{' '}
+                                  {t(
+                                    'flights.common.return',
+                                  )}{' '}
 
                                   {formatDate(
                                     flight.returnAt,
                                   )}
-
                                 </small>
-
                               )}
 
                             </div>
 
                           </div>
 
-
                           <div className="gt-flight-price">
 
                             <span>
-                              Desde
+                              {t(
+                                'flights.results.from',
+                              )}
                             </span>
 
                             <strong>
-
                               {formatPrice(
                                 flight.price,
+                                flight.currency,
                               )}
-
                             </strong>
 
                             <small>
-                              por viajero
+                              {t(
+                                'flights.card.perTraveler',
+                              )}
                             </small>
 
-
                             {flight.deeplink ? (
-
                               <a
                                 href={
                                   flight.deeplink
@@ -1777,111 +1945,99 @@ function TravelPlanPage() {
                                 rel="noopener noreferrer"
                                 className="gt-flight-offer-button"
                               >
-
-                                Ver oferta
+                                {t(
+                                  'flights.card.viewOffer',
+                                )}
 
                                 <ArrowIcon />
-
                               </a>
-
                             ) : (
-
                               <button
                                 type="button"
                                 className="gt-flight-offer-button"
                                 disabled
                               >
-
-                                No disponible
-
+                                {t(
+                                  'flights.card.unavailable',
+                                )}
                               </button>
-
                             )}
 
                           </div>
 
                         </div>
 
-
                         <div className="gt-flight-card-footer">
 
                           <span>
-
                             <InfoIcon />
 
-                            Precio sujeto a disponibilidad del proveedor
-
+                            {t(
+                              'flights.card.priceDisclaimer',
+                            )}
                           </span>
 
                         </div>
 
                       </article>
-
                     );
-
                   },
                 )}
 
               </div>
-
             )}
 
           </section>
-
-
-          {/* =================================================
-              02 · HOSPEDAJE
-              ================================================= */}
 
           <section className="travel-plan-service-section">
 
             <div className="travel-plan-results-heading">
 
               <h2>
-                Hospedajes para tu viaje
+                {t(
+                  'travelPlan.sections.hotels.title',
+                )}
               </h2>
 
               <p>
-
                 {hotels.length}{' '}
 
-                {hotels.length === 1
-                  ? 'alojamiento encontrado'
-                  : 'alojamientos encontrados'}
-
+                {hotels.length ===
+                1
+                  ? t(
+                      'travelPlan.sections.hotels.oneFound',
+                    )
+                  : t(
+                      'travelPlan.sections.hotels.manyFound',
+                    )}
               </p>
 
             </div>
 
-
             {isLoadingHotels ? (
-
               <div className="travel-plan-empty">
-
                 <p>
-                  Buscando hospedajes...
+                  {t(
+                    'travelPlan.sections.hotels.loading',
+                  )}
                 </p>
-
               </div>
-
-            ) : hotels.length === 0 ? (
-
+            ) : hotels.length ===
+              0 ? (
               <div className="travel-plan-empty">
-
                 <p>
-                  No encontramos hospedajes
-                  para este destino.
+                  {t(
+                    'travelPlan.sections.hotels.empty',
+                  )}
                 </p>
-
               </div>
-
             ) : (
-
               <div className="hotel-results-grid">
 
                 {hotels.map(
-                  (hotel) => {
-
+                  (
+                    hotel,
+                  ) => {
                     const wishlistKey =
                       `hotel:${hotel.id}`;
 
@@ -1890,19 +2046,18 @@ function TravelPlanPage() {
                         wishlistKey,
                       );
 
-
                     return (
-
                       <article
                         className="hotel-card"
-                        key={hotel.id}
+                        key={
+                          hotel.id
+                        }
                       >
 
                         <div className="hotel-card-image">
 
                           {hotel.mainPhoto ||
                           hotel.thumbnail ? (
-
                             <img
                               src={
                                 hotel.mainPhoto ||
@@ -1914,15 +2069,13 @@ function TravelPlanPage() {
                               }
                               loading="lazy"
                             />
-
                           ) : (
-
                             <div className="hotel-image-placeholder">
-                              Sin imagen
+                              {t(
+                                'hotels.list.card.noImage',
+                              )}
                             </div>
-
                           )}
-
 
                           <button
                             type="button"
@@ -1938,121 +2091,113 @@ function TravelPlanPage() {
                             }
                             aria-label={
                               saved
-                                ? `Eliminar ${hotel.name} de Wishlist`
-                                : `Guardar ${hotel.name} en Wishlist`
+                                ? t(
+                                    'wishlist.heart.removeAria',
+                                    {
+                                      title:
+                                        hotel.name,
+                                    },
+                                  )
+                                : t(
+                                    'wishlist.heart.saveAria',
+                                    {
+                                      title:
+                                        hotel.name,
+                                    },
+                                  )
                             }
                             title={
                               saved
-                                ? 'Eliminar de Wishlist'
-                                : 'Guardar en Wishlist'
+                                ? t(
+                                    'wishlist.heart.remove',
+                                  )
+                                : t(
+                                    'wishlist.heart.save',
+                                  )
                             }
                           >
-
                             <HeartIcon />
-
                           </button>
 
                         </div>
-
 
                         <div className="hotel-card-content">
 
                           <div className="hotel-card-main">
 
-
                             {hotel.starRating && (
-
                               <span className="hotel-stars">
-
                                 {renderStars(
                                   hotel.starRating,
                                 )}
-
                               </span>
-
                             )}
-
 
                             <h3>
                               {hotel.name}
                             </h3>
 
-
                             <p className="hotel-location">
-
                               {[
                                 hotel.city,
                                 hotel.country,
                               ]
-                                .filter(Boolean)
-                                .join(', ')}
-
+                                .filter(
+                                  Boolean,
+                                )
+                                .join(
+                                  ', ',
+                                )}
                             </p>
 
-
                             {hotel.address && (
-
                               <p className="hotel-address">
-
                                 {hotel.address}
-
                               </p>
-
                             )}
-
 
                             <div className="hotel-card-meta">
 
                               {hotel.rating !==
                                 null && (
-
                                 <span className="hotel-rating">
-
                                   {hotel.rating.toFixed(
                                     1,
                                   )}
-
                                 </span>
-
                               )}
-
 
                               {hotel.reviewCount !==
                                 null && (
-
                                 <span>
-
                                   {
                                     hotel.reviewCount
                                   }{' '}
 
                                   {hotel.reviewCount ===
-                                    1
-                                    ? 'reseña'
-                                    : 'reseñas'}
-
+                                  1
+                                    ? t(
+                                        'hotels.list.card.review',
+                                      )
+                                    : t(
+                                        'hotels.list.card.reviews',
+                                      )}
                                 </span>
-
                               )}
 
-
                               {hotel.chain && (
-
                                 <span>
                                   {hotel.chain}
                                 </span>
-
                               )}
 
                             </div>
 
                           </div>
 
-
                           <div className="hotel-card-actions">
 
                             {hotel.links.map && (
-
                               <a
                                 href={
                                   hotel.links.map
@@ -2061,100 +2206,81 @@ function TravelPlanPage() {
                                 rel="noopener noreferrer"
                                 className="hotel-map-link"
                               >
-
-                                Ver en mapa
-
+                                {t(
+                                  'hotels.list.card.viewMap',
+                                )}
                               </a>
-
                             )}
 
-
-                            <a
-                              href={
+                            <Link
+                              to={
                                 buildHotelDetailUrl(
                                   hotel.id,
                                 )
                               }
                               className="hotel-detail-button"
                             >
-
-                              Ver disponibilidad
-
-                            </a>
+                              {t(
+                                'travelPlan.sections.hotels.availability',
+                              )}
+                            </Link>
 
                           </div>
 
                         </div>
 
                       </article>
-
                     );
-
                   },
                 )}
 
               </div>
-
             )}
 
-
             {hotelMeta?.disclaimer && (
-
               <p className="hotel-disclaimer">
-
                 {hotelMeta.disclaimer}
-
               </p>
-
             )}
 
           </section>
-
-
-          {/* =================================================
-              03 · RESTAURANTES
-              ================================================= */}
 
           <section className="travel-plan-service-section">
 
             <div className="travel-plan-results-heading">
 
-            
               <h2>
-                Lugares para comer
+                {t(
+                  'travelPlan.sections.restaurants.title',
+                )}
               </h2>
 
               <p>
-                Descubre restaurantes y opciones gastronómicas
-                disponibles en tu destino.
+                {t(
+                  'travelPlan.sections.restaurants.description',
+                )}
               </p>
 
             </div>
 
-
             {isLoadingRestaurants ? (
-
               <div className="travel-plan-empty">
-
                 <p>
-                  Buscando restaurantes...
+                  {t(
+                    'travelPlan.sections.restaurants.loading',
+                  )}
                 </p>
-
               </div>
-
-            ) : restaurants.length === 0 ? (
-
+            ) : restaurants.length ===
+              0 ? (
               <div className="travel-plan-empty">
-
                 <p>
-                  No encontramos restaurantes
-                  para este destino.
+                  {t(
+                    'travelPlan.sections.restaurants.empty',
+                  )}
                 </p>
-
               </div>
-
             ) : (
-
               <div className="gt-restaurants-grid">
 
                 {restaurants.map(
@@ -2162,7 +2288,6 @@ function TravelPlanPage() {
                     restaurant,
                     index,
                   ) => (
-
                     <RestaurantCard
                       key={
                         restaurant.id
@@ -2174,61 +2299,50 @@ function TravelPlanPage() {
                         index
                       }
                     />
-
                   ),
                 )}
 
               </div>
-
             )}
 
           </section>
-
-
-          {/* =================================================
-              04 · RENT A CAR
-              ================================================= */}
 
           <section className="travel-plan-service-section">
 
             <div className="travel-plan-results-heading">
 
-
               <h2>
-                Movilidad en tu destino
+                {t(
+                  'travelPlan.sections.cars.title',
+                )}
               </h2>
 
               <p>
-                Opciones de alquiler de
-                vehículos.
+                {t(
+                  'travelPlan.sections.cars.description',
+                )}
               </p>
 
             </div>
 
-
             {isLoadingCars ? (
-
               <div className="travel-plan-empty">
-
                 <p>
-                  Buscando opciones de transporte...
+                  {t(
+                    'travelPlan.sections.cars.loading',
+                  )}
                 </p>
-
               </div>
-
-            ) : cars.length === 0 ? (
-
+            ) : cars.length ===
+              0 ? (
               <div className="travel-plan-empty">
-
                 <p>
-                  No encontramos opciones de
-                  Rent a Car para este destino.
+                  {t(
+                    'travelPlan.sections.cars.empty',
+                  )}
                 </p>
-
               </div>
-
             ) : (
-
               <div className="gt-cars-results-list">
 
                 {cars.map(
@@ -2236,118 +2350,113 @@ function TravelPlanPage() {
                     car,
                     index,
                   ) => (
-
                     <CarPlanCard
-                      key={car.id}
-                      car={car}
-                      index={index}
+                      key={
+                        car.id
+                      }
+                      car={
+                        car
+                      }
+                      index={
+                        index
+                      }
                     />
-
                   ),
                 )}
 
               </div>
-
             )}
 
           </section>
-
-
-          {/* =================================================
-              05 · RESUMEN
-              ================================================= */}
 
           <section className="travel-plan-summary">
 
             <div className="travel-plan-results-heading">
 
               <h2>
-                Tu plan de viaje
+                {t(
+                  'travelPlan.summary.title',
+                )}
               </h2>
 
               <p>
-                Todo lo encontrado para
-                organizar tu viaje desde
-                un solo lugar.
+                {t(
+                  'travelPlan.summary.description',
+                )}
               </p>
 
             </div>
 
-
             <div className="travel-plan-summary-grid">
 
-
-              {/* VUELO */}
-
               <div>
 
                 <span>
-                  Vuelo
+                  {t(
+                    'travelPlan.summary.flight',
+                  )}
                 </span>
 
                 <strong>
-
                   {selectedFlight
                     ? `${selectedFlight.origin} → ${selectedFlight.destination}`
-                    : 'No seleccionado'}
-
+                    : t(
+                        'travelPlan.summary.notSelected',
+                      )}
                 </strong>
 
               </div>
 
-
-              {/* HOSPEDAJES */}
-
               <div>
 
                 <span>
-                  Hospedajes
+                  {t(
+                    'travelPlan.summary.hotels',
+                  )}
                 </span>
 
                 <strong>
-
                   {isLoadingHotels
-                    ? 'Buscando...'
+                    ? t(
+                        'common.searching',
+                      )
                     : hotels.length}
-
                 </strong>
 
               </div>
 
-
-              {/* RESTAURANTES */}
-
               <div>
 
                 <span>
-                  Restaurantes
+                  {t(
+                    'travelPlan.summary.restaurants',
+                  )}
                 </span>
 
                 <strong>
-
                   {isLoadingRestaurants
-                    ? 'Buscando...'
+                    ? t(
+                        'common.searching',
+                      )
                     : restaurants.length}
-
                 </strong>
 
               </div>
 
-
-              {/* RENT A CAR */}
-
               <div>
 
                 <span>
-                  Rent a Car
+                  {t(
+                    'travelPlan.summary.cars',
+                  )}
                 </span>
 
                 <strong>
-
                   {isLoadingCars
-                    ? 'Buscando...'
+                    ? t(
+                        'common.searching',
+                      )
                     : cars.length}
-
                 </strong>
 
               </div>
@@ -2357,17 +2466,11 @@ function TravelPlanPage() {
           </section>
 
         </section>
-
       )}
 
     </main>
   );
 }
-
-
-/* =========================================================
-   ICONOS
-   ========================================================= */
 
 function PlaneIcon() {
   return (
@@ -2383,7 +2486,6 @@ function PlaneIcon() {
   );
 }
 
-
 function ArrowIcon() {
   return (
     <svg
@@ -2396,7 +2498,6 @@ function ArrowIcon() {
   );
 }
 
-
 function InfoIcon() {
   return (
     <svg
@@ -2408,14 +2509,11 @@ function InfoIcon() {
         cy="12"
         r="9"
       />
-
       <path d="M12 11v6" />
-
       <path d="M12 7h.01" />
     </svg>
   );
 }
-
 
 function HeartIcon() {
   return (
@@ -2427,11 +2525,6 @@ function HeartIcon() {
     </svg>
   );
 }
-
-
-/* =========================================================
-   ICONOS DE RESTAURANTES
-   ========================================================= */
 
 function CarIcon() {
   return (
@@ -2455,7 +2548,6 @@ function CarIcon() {
   );
 }
 
-
 function GlobeIcon() {
   return (
     <svg
@@ -2473,7 +2565,6 @@ function GlobeIcon() {
   );
 }
 
-
 function BuildingIcon() {
   return (
     <svg
@@ -2481,12 +2572,10 @@ function BuildingIcon() {
       aria-hidden="true"
     >
       <path d="M4 21V5h10v16M14 9h6v12M2 21h20" />
-
       <path d="M8 9h2M8 13h2M8 17h2M17 13h1M17 17h1" />
     </svg>
   );
 }
-
 
 function RestaurantIcon() {
   return (
@@ -2495,18 +2584,13 @@ function RestaurantIcon() {
       aria-hidden="true"
     >
       <path d="M7 3v7" />
-
       <path d="M4 3v7a3 3 0 0 0 6 0V3" />
-
       <path d="M7 10v11" />
-
       <path d="M17 3v18" />
-
       <path d="M17 3c-2 1.5-3 3.5-3 6h3" />
     </svg>
   );
 }
-
 
 function LocationIcon() {
   return (
@@ -2525,7 +2609,6 @@ function LocationIcon() {
   );
 }
 
-
 function MapIcon() {
   return (
     <svg
@@ -2533,14 +2616,11 @@ function MapIcon() {
       aria-hidden="true"
     >
       <path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z" />
-
       <path d="M9 3v15" />
-
       <path d="M15 6v15" />
     </svg>
   );
 }
-
 
 function ExternalIcon() {
   return (
@@ -2549,13 +2629,10 @@ function ExternalIcon() {
       aria-hidden="true"
     >
       <path d="M14 5h5v5" />
-
       <path d="M10 14 19 5" />
-
       <path d="M19 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" />
     </svg>
   );
 }
-
 
 export default TravelPlanPage;

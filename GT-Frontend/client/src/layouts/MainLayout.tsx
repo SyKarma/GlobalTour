@@ -3,86 +3,121 @@ import {
 } from 'react';
 
 import {
-  useWishlist,
-} from '../hooks/useWishlist';
-
-import {
   NavLink,
   Outlet,
 } from 'react-router-dom';
+
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import {
+  useWishlist,
+} from '../hooks/useWishlist';
 
 import {
   useAuth,
 } from '../hooks/useAuth';
 
 import CurrencySelector from '../components/currency/CurrencySelector';
+import LanguageSelector from '../components/LanguageSelector';
 
 const navigation = [
   {
-    label: 'Explorar',
-    path: '/',
-    end: true,
+    labelKey:
+      'nav.explore',
+    path:
+      '/',
+    end:
+      true,
   },
   {
-    label: 'Vuelos',
-    path: '/flights',
+    labelKey:
+      'nav.flights',
+    path:
+      '/flights',
   },
   {
-    label: 'Hospedaje',
-    path: '/hotels',
+    labelKey:
+      'nav.hotels',
+    path:
+      '/hotels',
   },
   {
-    label: 'Restaurantes',
-    path: '/restaurants',
+    labelKey:
+      'nav.restaurants',
+    path:
+      '/restaurants',
   },
   {
-    label: 'Rent a Car',
-    path: '/cars',
+    labelKey:
+      'nav.cars',
+    path:
+      '/cars',
   },
-
   {
-  label: 'Wishlist',
-  path: '/wishlist',
-},
+    labelKey:
+      'nav.wishlist',
+    path:
+      '/wishlist',
+  },
   {
-    label: 'Dashboard',
-    path: '/dashboard',
+    labelKey:
+      'nav.dashboard',
+    path:
+      '/dashboard',
   },
-
-   {
-    label: 'Plan de Viaje',
-    path: '/travel-plan',
+  {
+    labelKey:
+      'nav.travelPlan',
+    path:
+      '/travel-plan',
   },
-  
 ];
 
 function MainLayout() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const {
     user,
     isLoading,
     isAuthenticated,
     login,
     logout,
-  } = useAuth();
+  } =
+    useAuth();
 
   const {
-  count: wishlistCount,
-} = useWishlist();
+    count:
+      wishlistCount,
+  } =
+    useWishlist();
 
   const [
     isUserMenuOpen,
     setIsUserMenuOpen,
-  ] = useState(false);
+  ] =
+    useState(false);
 
   const [
     isMobileMenuOpen,
     setIsMobileMenuOpen,
-  ] = useState(false);
+  ] =
+    useState(false);
 
-  const closeMenus = () => {
-    setIsMobileMenuOpen(false);
-    setIsUserMenuOpen(false);
-  };
+  const closeMenus =
+    () => {
+      setIsMobileMenuOpen(
+        false,
+      );
+
+      setIsUserMenuOpen(
+        false,
+      );
+    };
 
   const handleLogout =
     async () => {
@@ -90,9 +125,11 @@ function MainLayout() {
         await logout();
 
         closeMenus();
-      } catch (error) {
+      } catch (
+        error
+      ) {
         console.error(
-          'Error al cerrar sesión:',
+          'Error logout:',
           error,
         );
       }
@@ -101,19 +138,16 @@ function MainLayout() {
   return (
     <div className="gt-app-shell">
 
-      {/* =========================================
-          NAVBAR
-      ========================================== */}
-
       <header className="gt-header">
-        <div className="gt-navbar">
 
-          {/* BRAND */}
+        <div className="gt-navbar">
 
           <NavLink
             to="/"
             className="gt-brand"
-            onClick={closeMenus}
+            onClick={
+              closeMenus
+            }
           >
             <span className="gt-brand-symbol">
               <GlobeIcon />
@@ -127,11 +161,12 @@ function MainLayout() {
             </span>
           </NavLink>
 
-          {/* DESKTOP NAVIGATION */}
-
           <nav className="gt-desktop-nav">
+
             {navigation.map(
-              (item) => (
+              (
+                item,
+              ) => (
                 <NavLink
                   key={
                     item.path
@@ -150,28 +185,39 @@ function MainLayout() {
                       : 'gt-nav-link'
                   }
                 >
-                  {
-                    item.label
-                  }
+                  {t(
+                    item.labelKey,
+                  )}
                 </NavLink>
               ),
             )}
+
           </nav>
 
-          {/* DESKTOP ACTIONS */}
-
           <div className="gt-nav-actions">
+
             <div className="gt-currency-wrapper">
+              <span className="gt-control-label">
+                {t(
+                  'common.currency',
+                )}
+              </span>
+
               <CurrencySelector />
             </div>
 
+            <LanguageSelector />
+
             {isLoading ? (
               <div className="gt-auth-loading">
-                Cargando...
+                {t(
+                  'common.loading',
+                )}
               </div>
             ) : isAuthenticated &&
               user ? (
               <div className="gt-user-menu">
+
                 <button
                   type="button"
                   className="gt-user-trigger"
@@ -187,6 +233,7 @@ function MainLayout() {
                     isUserMenuOpen
                   }
                 >
+
                   {user.avatarUrl ? (
                     <img
                       src={
@@ -200,14 +247,19 @@ function MainLayout() {
                   ) : (
                     <span className="gt-user-avatar gt-user-avatar-fallback">
                       {user.displayName
-                        .charAt(0)
+                        .charAt(
+                          0,
+                        )
                         .toUpperCase()}
                     </span>
                   )}
 
                   <span className="gt-user-text">
+
                     <small>
-                      Hola
+                      {t(
+                        'common.hello',
+                      )}
                     </small>
 
                     <strong>
@@ -215,6 +267,7 @@ function MainLayout() {
                         user.displayName
                       }
                     </strong>
+
                   </span>
 
                   <ChevronIcon />
@@ -222,7 +275,9 @@ function MainLayout() {
 
                 {isUserMenuOpen && (
                   <div className="gt-user-dropdown">
+
                     <div className="gt-user-dropdown-header">
+
                       {user.avatarUrl ? (
                         <img
                           src={
@@ -255,27 +310,33 @@ function MainLayout() {
                           }
                         </span>
                       </div>
+
                     </div>
 
                     <div className="gt-dropdown-divider" />
 
                     <NavLink
-  to="/wishlist"
-  className="gt-dropdown-link"
-  onClick={
-    closeMenus
-  }
->
-  <HeartIcon />
+                      to="/wishlist"
+                      className="gt-dropdown-link"
+                      onClick={
+                        closeMenus
+                      }
+                    >
+                      <HeartIcon />
 
-  Mi Wishlist
+                      {t(
+                        'user.wishlist',
+                      )}
 
-  {wishlistCount > 0 && (
-    <span className="gt-wishlist-nav-badge">
-      {wishlistCount}
-    </span>
-  )}
-</NavLink>
+                      {wishlistCount >
+                        0 && (
+                        <span className="gt-wishlist-nav-badge">
+                          {
+                            wishlistCount
+                          }
+                        </span>
+                      )}
+                    </NavLink>
 
                     <NavLink
                       to="/dashboard"
@@ -286,7 +347,9 @@ function MainLayout() {
                     >
                       <DashboardIcon />
 
-                      Mi Dashboard
+                      {t(
+                        'user.dashboard',
+                      )}
                     </NavLink>
 
                     <button
@@ -298,10 +361,14 @@ function MainLayout() {
                     >
                       <LogoutIcon />
 
-                      Cerrar sesión
+                      {t(
+                        'common.logout',
+                      )}
                     </button>
+
                   </div>
                 )}
+
               </div>
             ) : (
               <button
@@ -314,13 +381,14 @@ function MainLayout() {
                 <GoogleIcon />
 
                 <span>
-                  Continuar con Google
+                  {t(
+                    'common.continueWithGoogle',
+                  )}
                 </span>
               </button>
             )}
-          </div>
 
-          {/* MOBILE BUTTON */}
+          </div>
 
           <button
             type="button"
@@ -333,7 +401,9 @@ function MainLayout() {
                   !current,
               )
             }
-            aria-label="Abrir menú"
+            aria-label={t(
+              'common.openMenu',
+            )}
             aria-expanded={
               isMobileMenuOpen
             }
@@ -344,17 +414,18 @@ function MainLayout() {
               <MenuIcon />
             )}
           </button>
-        </div>
 
-        {/* =========================================
-            MOBILE NAVIGATION
-        ========================================== */}
+        </div>
 
         {isMobileMenuOpen && (
           <div className="gt-mobile-panel">
+
             <nav className="gt-mobile-navigation">
+
               {navigation.map(
-                (item) => (
+                (
+                  item,
+                ) => (
                   <NavLink
                     key={
                       item.path
@@ -376,30 +447,50 @@ function MainLayout() {
                         : 'gt-mobile-link'
                     }
                   >
-                    {
-                      item.label
-                    }
+                    {t(
+                      item.labelKey,
+                    )}
 
                     <ArrowIcon />
                   </NavLink>
                 ),
               )}
+
             </nav>
 
             <div className="gt-mobile-controls">
+
               <div className="gt-mobile-currency">
+
                 <span>
-                  Moneda
+                  {t(
+                    'common.currency',
+                  )}
                 </span>
 
                 <CurrencySelector />
+
+              </div>
+
+              <div className="gt-mobile-language">
+
+                <span>
+                  {t(
+                    'common.language',
+                  )}
+                </span>
+
+                <LanguageSelector />
+
               </div>
 
               {!isLoading &&
                 (isAuthenticated &&
                 user ? (
                   <div className="gt-mobile-user">
+
                     <div className="gt-mobile-user-info">
+
                       {user.avatarUrl ? (
                         <img
                           src={
@@ -432,6 +523,7 @@ function MainLayout() {
                           }
                         </small>
                       </div>
+
                     </div>
 
                     <button
@@ -441,8 +533,11 @@ function MainLayout() {
                         handleLogout
                       }
                     >
-                      Cerrar sesión
+                      {t(
+                        'common.logout',
+                      )}
                     </button>
+
                   </div>
                 ) : (
                   <button
@@ -454,29 +549,28 @@ function MainLayout() {
                   >
                     <GoogleIcon />
 
-                    Continuar con Google
+                    {t(
+                      'common.continueWithGoogle',
+                    )}
                   </button>
                 ))}
+
             </div>
           </div>
         )}
-      </header>
 
-      {/* =========================================
-          PAGE
-      ========================================== */}
+      </header>
 
       <div className="page-container gt-page-container">
         <Outlet />
       </div>
 
-      {/* =========================================
-          GLOBAL FOOTER
-      ========================================== */}
-
       <footer className="gt-footer">
+
         <div className="gt-footer-inner">
+
           <div className="gt-footer-brand">
+
             <NavLink
               to="/"
               className="gt-brand gt-footer-logo"
@@ -494,69 +588,94 @@ function MainLayout() {
             </NavLink>
 
             <p>
-              Tu viaje completo en un solo lugar.
-              Compara, descubre y organiza mejores
-              experiencias.
+              {t(
+                'footer.description',
+              )}
             </p>
+
           </div>
 
           <div className="gt-footer-column">
+
             <strong>
-              Explorar
+              {t(
+                'footer.explore',
+              )}
             </strong>
 
             <NavLink to="/flights">
-              Vuelos
+              {t(
+                'nav.flights',
+              )}
             </NavLink>
 
             <NavLink to="/hotels">
-              Hospedaje
+              {t(
+                'nav.hotels',
+              )}
             </NavLink>
 
             <NavLink to="/restaurants">
-              Restaurantes
+              {t(
+                'nav.restaurants',
+              )}
             </NavLink>
 
             <NavLink to="/cars">
-              Rent a Car
+              {t(
+                'nav.cars',
+              )}
             </NavLink>
+
           </div>
 
           <div className="gt-footer-column">
+
             <strong>
               GlobalTour
             </strong>
 
             <NavLink to="/">
-              Inicio
+              {t(
+                'footer.home',
+              )}
             </NavLink>
 
             <NavLink to="/dashboard">
-              Dashboard
+              {t(
+                'nav.dashboard',
+              )}
             </NavLink>
+
+            <NavLink to="/wishlist">
+              {t(
+                'nav.wishlist',
+              )}
+            </NavLink>
+
           </div>
+
         </div>
 
         <div className="gt-footer-bottom">
+
           <span>
             © 2026 GlobalTour
           </span>
 
           <span>
-            Diseñado para viajeros que quieren
-            comparar mejor.
+            {t(
+              'footer.designedFor',
+            )}
           </span>
+
         </div>
+
       </footer>
+
     </div>
   );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function GlobeIcon() {
   return (

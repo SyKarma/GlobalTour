@@ -8,6 +8,10 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
 import HotelSearchForm from '../components/hotels/HotelSearchForm';
 import WishlistHeart from '../components/wishlist/WishlistHeart';
 
@@ -25,12 +29,6 @@ import type {
   HotelSearchMeta,
   HotelSummary,
 } from '../types/hotel.types';
-
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
 
 function renderStars(
   stars: number | null,
@@ -55,13 +53,89 @@ function renderStars(
   );
 }
 
-/*
- * =========================================
- * PAGE
- * =========================================
- */
+function getLocale(
+  language:
+    | string
+    | undefined,
+) {
+  const normalized =
+    language
+      ?.split('-')[0] ??
+    'es';
+
+  if (
+    normalized ===
+    'en'
+  ) {
+    return 'en-US';
+  }
+
+  if (
+    normalized ===
+    'pt'
+  ) {
+    return 'pt-BR';
+  }
+
+  return 'es-CR';
+}
+
+function formatStayDate(
+  value: string,
+  locale: string,
+) {
+  const match =
+    value.match(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+    );
+
+  if (!match) {
+    return value;
+  }
+
+  const [
+    ,
+    year,
+    month,
+    day,
+  ] = match;
+
+  const date =
+    new Date(
+      Date.UTC(
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+      ),
+    );
+
+  return new Intl.DateTimeFormat(
+    locale,
+    {
+      day:
+        '2-digit',
+
+      month:
+        'short',
+
+      year:
+        'numeric',
+
+      timeZone:
+        'UTC',
+    },
+  ).format(
+    date,
+  );
+}
 
 function HotelsPage() {
+  const {
+    t,
+    i18n,
+  } =
+    useTranslation();
+
   const [
     searchParams,
     setSearchParams,
@@ -105,12 +179,6 @@ function HotelsPage() {
       string | null
     >(null);
 
-  /*
-   * =========================================
-   * URL PARAMS
-   * =========================================
-   */
-
   const cityName =
     searchParams.get(
       'cityName',
@@ -142,14 +210,14 @@ function HotelsPage() {
   const hasSearch =
     Boolean(
       cityName &&
-      countryCode,
+        countryCode,
     );
 
-  /*
-   * =========================================
-   * CURRENCY SYNC
-   * =========================================
-   */
+  const locale =
+    getLocale(
+      i18n.resolvedLanguage ??
+        i18n.language,
+    );
 
   useEffect(() => {
     if (!hasSearch) {
@@ -191,12 +259,6 @@ function HotelsPage() {
     selectedCurrency,
     setSearchParams,
   ]);
-
-  /*
-   * =========================================
-   * LOAD HOTELS
-   * =========================================
-   */
 
   useEffect(() => {
     let isCancelled =
@@ -269,7 +331,7 @@ function HotelsPage() {
           }
 
           console.error(
-            'Error al buscar hoteles:',
+            'Error searching hotels:',
             requestError,
           );
 
@@ -282,7 +344,7 @@ function HotelsPage() {
           );
 
           setError(
-            'No pudimos obtener los alojamientos en este momento.',
+            'hotels.list.errors.loadMessage',
           );
         } finally {
           if (
@@ -306,15 +368,8 @@ function HotelsPage() {
     countryCode,
   ]);
 
-  /*
-   * =========================================
-   * DETAIL URL
-   * =========================================
-   */
-
   const buildHotelDetailUrl = (
-    hotelId:
-      string,
+    hotelId: string,
   ) => {
     const params =
       new URLSearchParams();
@@ -346,18 +401,8 @@ function HotelsPage() {
     return `/hotels/${hotelId}?${params.toString()}`;
   };
 
-  /*
-   * =========================================
-   * RENDER
-   * =========================================
-   */
-
   return (
     <main className="hotels-page">
-
-      {/* =====================================
-          HERO
-      ====================================== */}
 
       <section
         className="gt-hotel-photo-hero"
@@ -371,112 +416,130 @@ function HotelsPage() {
         <div className="gt-hotel-photo-glow" />
 
         <div className="gt-hotel-photo-content">
+
           <span className="gt-hotel-photo-eyebrow">
-            GLOBALTOUR · HOSPEDAJE
+            {t(
+              'hotels.list.hero.eyebrow',
+            )}
           </span>
 
           <h1>
             {cityName
-              ? `Encuentra hospedaje en ${cityName}`
-              : 'Encuentra tu hospedaje'}
+              ? t(
+                  'hotels.list.hero.cityTitle',
+                  {
+                    city:
+                      cityName,
+                  },
+                )
+              : t(
+                  'hotels.list.hero.title',
+                )}
           </h1>
 
           <p>
-            Busca y compara alojamientos
-            para encontrar el lugar ideal
-            para tu próximo viaje.
+            {t(
+              'hotels.list.hero.description',
+            )}
           </p>
 
           <div className="gt-hotel-hero-badges">
+
             <span>
-              Hospedajes
+              {t(
+                'hotels.list.hero.badges.stays',
+              )}
             </span>
 
             <span>
-              Destinos
+              {t(
+                'hotels.list.hero.badges.destinations',
+              )}
             </span>
 
             <span>
-              Explora opciones
+              {t(
+                'hotels.list.hero.badges.explore',
+              )}
             </span>
+
           </div>
+
         </div>
       </section>
-
-      {/* =====================================
-          SEARCH
-      ====================================== */}
 
       <section className="hotels-search-section">
         <HotelSearchForm />
       </section>
 
-      {/* =====================================
-          START
-      ====================================== */}
-
       {!hasSearch && (
         <section className="hotels-empty-start">
+
           <span className="gt-hotel-empty-eyebrow">
-            PLANEA TU ESTADÍA
+            {t(
+              'hotels.list.start.eyebrow',
+            )}
           </span>
 
           <h2>
-            ¿Dónde quieres hospedarte?
+            {t(
+              'hotels.list.start.title',
+            )}
           </h2>
 
           <p>
-            Selecciona un destino,
-            las fechas de tu estadía y
-            la cantidad de huéspedes
-            para comenzar.
+            {t(
+              'hotels.list.start.description',
+            )}
           </p>
+
         </section>
       )}
-
-      {/* =====================================
-          LOADING
-      ====================================== */}
 
       {hasSearch &&
         isLoading && (
           <section className="hotels-status">
+
             <div className="gt-hotel-loader" />
 
             <h2>
-              Buscando alojamientos...
+              {t(
+                'hotels.list.loading.title',
+              )}
             </h2>
 
             <p>
-              Estamos consultando opciones
-              disponibles en{' '}
-
-              {cityName}.
+              {t(
+                'hotels.list.loading.description',
+                {
+                  city:
+                    cityName,
+                },
+              )}
             </p>
+
           </section>
         )}
-
-      {/* =====================================
-          ERROR
-      ====================================== */}
 
       {hasSearch &&
         !isLoading &&
         error && (
           <section className="hotels-status hotels-error">
+
             <h2>
-              No pudimos realizar la búsqueda
+              {t(
+                'hotels.list.errors.title',
+              )}
             </h2>
 
             <p>
-              {error}
+              {t(
+                error,
+              )}
             </p>
+
           </section>
         )}
-
-      {/* =====================================
-          EMPTY
-      ====================================== */}
 
       {hasSearch &&
         !isLoading &&
@@ -484,20 +547,21 @@ function HotelsPage() {
         hotels.length ===
           0 && (
           <section className="hotels-status">
+
             <h2>
-              No encontramos alojamientos
+              {t(
+                'hotels.list.empty.title',
+              )}
             </h2>
 
             <p>
-              Prueba con otro destino
-              o vuelve a intentarlo más tarde.
+              {t(
+                'hotels.list.empty.description',
+              )}
             </p>
+
           </section>
         )}
-
-      {/* =====================================
-          RESULTS
-      ====================================== */}
 
       {hasSearch &&
         !isLoading &&
@@ -505,10 +569,15 @@ function HotelsPage() {
         hotels.length >
           0 && (
           <>
+
             <section className="hotels-results-heading">
+
               <div>
+
                 <span className="gt-hotel-results-eyebrow">
-                  HOSPEDAJES ENCONTRADOS
+                  {t(
+                    'hotels.list.results.eyebrow',
+                  )}
                 </span>
 
                 <h2>
@@ -518,18 +587,28 @@ function HotelsPage() {
 
                   {hotels.length ===
                   1
-                    ? 'alojamiento encontrado'
-                    : 'alojamientos encontrados'}
+                    ? t(
+                        'hotels.list.results.oneFound',
+                      )
+                    : t(
+                        'hotels.list.results.manyFound',
+                      )}
                 </h2>
 
                 {checkin &&
                   checkout && (
                     <p>
-                      {checkin}
+                      {formatStayDate(
+                        checkin,
+                        locale,
+                      )}
 
                       {' — '}
 
-                      {checkout}
+                      {formatStayDate(
+                        checkout,
+                        locale,
+                      )}
 
                       {' · '}
 
@@ -537,28 +616,35 @@ function HotelsPage() {
 
                       {adults ===
                       '1'
-                        ? 'adulto'
-                        : 'adultos'}
+                        ? t(
+                            'hotels.list.results.adult',
+                          )
+                        : t(
+                            'hotels.list.results.adults',
+                          )}
 
                       {' · '}
 
-                      {currency}
+                      {
+                        currency
+                      }
                     </p>
                   )}
+
               </div>
 
               {meta?.stale && (
                 <span className="hotel-cache-warning">
-                  Datos almacenados temporalmente
+                  {t(
+                    'hotels.list.results.cached',
+                  )}
                 </span>
               )}
+
             </section>
 
-            {/* =================================
-                HOTEL GRID
-            ================================== */}
-
             <section className="hotel-results-grid">
+
               {hotels.map(
                 (
                   hotel,
@@ -576,11 +662,8 @@ function HotelsPage() {
                       }
                     >
 
-                      {/* =========================
-                          IMAGE
-                      ========================== */}
-
                       <div className="hotel-card-image">
+
                         {hotel.mainPhoto ||
                         hotel.thumbnail ? (
                           <img
@@ -597,14 +680,12 @@ function HotelsPage() {
                         ) : (
                           <div className="hotel-image-placeholder">
                             <span>
-                              Sin imagen disponible
+                              {t(
+                                'hotels.list.card.noImage',
+                              )}
                             </span>
                           </div>
                         )}
-
-                        {/* =========================
-                            WISHLIST
-                        ========================== */}
 
                         <WishlistHeart
                           item={{
@@ -638,38 +719,34 @@ function HotelsPage() {
                               detailUrl,
 
                             metadata: {
-                              ciudad:
+                              city:
                                 hotel.city ??
                                 null,
 
-                              país:
+                              country:
                                 hotel.country ??
                                 null,
 
-                              estrellas:
+                              stars:
                                 hotel.starRating ??
                                 null,
 
-                              valoración:
+                              rating:
                                 hotel.rating ??
                                 null,
 
-                              cadena:
+                              chain:
                                 hotel.chain ??
                                 null,
                             },
                           }}
                         />
+
                       </div>
 
-                      {/* =========================
-                          CONTENT
-                      ========================== */}
-
                       <div className="hotel-card-content">
-                        <div className="hotel-card-main">
 
-                          {/* STARS */}
+                        <div className="hotel-card-main">
 
                           {hotel.starRating && (
                             <span className="hotel-stars">
@@ -679,15 +756,11 @@ function HotelsPage() {
                             </span>
                           )}
 
-                          {/* NAME */}
-
                           <h3>
                             {
                               hotel.name
                             }
                           </h3>
-
-                          {/* LOCATION */}
 
                           <p className="hotel-location">
                             {[
@@ -702,8 +775,6 @@ function HotelsPage() {
                               )}
                           </p>
 
-                          {/* ADDRESS */}
-
                           {hotel.address && (
                             <p className="hotel-address">
                               {
@@ -711,8 +782,6 @@ function HotelsPage() {
                               }
                             </p>
                           )}
-
-                          {/* META */}
 
                           <div className="hotel-card-meta">
 
@@ -734,8 +803,12 @@ function HotelsPage() {
 
                                 {hotel.reviewCount ===
                                 1
-                                  ? 'reseña'
-                                  : 'reseñas'}
+                                  ? t(
+                                      'hotels.list.card.review',
+                                    )
+                                  : t(
+                                      'hotels.list.card.reviews',
+                                    )}
                               </span>
                             )}
 
@@ -748,26 +821,23 @@ function HotelsPage() {
                             )}
 
                           </div>
-                        </div>
 
-                        {/* =========================
-                            ACTIONS
-                        ========================== */}
+                        </div>
 
                         <div className="hotel-card-actions">
 
-                          {hotel.links
-                            .map && (
+                          {hotel.links.map && (
                             <a
                               href={
-                                hotel.links
-                                  .map
+                                hotel.links.map
                               }
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hotel-map-link"
                             >
-                              Ver en mapa
+                              {t(
+                                'hotels.list.card.viewMap',
+                              )}
                             </a>
                           )}
 
@@ -777,21 +847,21 @@ function HotelsPage() {
                             }
                             className="hotel-detail-button"
                           >
-                            Ver detalles
+                            {t(
+                              'hotels.list.card.viewDetails',
+                            )}
                           </Link>
 
                         </div>
+
                       </div>
 
                     </article>
                   );
                 },
               )}
-            </section>
 
-            {/* =================================
-                DISCLAIMER
-            ================================== */}
+            </section>
 
             {meta?.disclaimer && (
               <p className="hotel-disclaimer">

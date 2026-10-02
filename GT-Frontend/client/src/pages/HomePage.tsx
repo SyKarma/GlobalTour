@@ -9,8 +9,11 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import TripSearchForm from '../components/trip/TripSearchForm';
+import {
+  useTranslation,
+} from 'react-i18next';
 
+import TripSearchForm from '../components/trip/TripSearchForm';
 import HotelSearchForm from '../components/hotels/HotelSearchForm';
 
 type SearchTab =
@@ -19,10 +22,19 @@ type SearchTab =
   | 'restaurants'
   | 'cars';
 
-const popularDestinations = [
+interface PopularDestination {
+  city: string;
+  countryKey: string;
+  iata: string;
+  price: string;
+  image: string;
+}
+
+const popularDestinations: PopularDestination[] = [
   {
     city: 'Miami',
-    country: 'Estados Unidos',
+    countryKey:
+      'home.destinations.countries.unitedStates',
     iata: 'MIA',
     price: '$295',
     image:
@@ -30,7 +42,8 @@ const popularDestinations = [
   },
   {
     city: 'Madrid',
-    country: 'España',
+    countryKey:
+      'home.destinations.countries.spain',
     iata: 'MAD',
     price: '$620',
     image:
@@ -38,7 +51,8 @@ const popularDestinations = [
   },
   {
     city: 'Cancún',
-    country: 'México',
+    countryKey:
+      'home.destinations.countries.mexico',
     iata: 'CUN',
     price: '$340',
     image:
@@ -46,7 +60,8 @@ const popularDestinations = [
   },
   {
     city: 'Bogotá',
-    country: 'Colombia',
+    countryKey:
+      'home.destinations.countries.colombia',
     iata: 'BOG',
     price: '$280',
     image:
@@ -54,52 +69,14 @@ const popularDestinations = [
   },
 ];
 
-const experiences = [
-  {
-    title: 'Vuelos',
-    description:
-      'Encuentra rutas y compara opciones para tu próximo destino.',
-    route: '/flights',
-    eyebrow: 'Explora el mundo',
-    icon: '✈',
-    className:
-      'gt-experience-flight',
-  },
-  {
-    title: 'Hospedaje',
-    description:
-      'Encuentra dónde quedarte y organiza cada noche del viaje.',
-    route: '/hotels',
-    eyebrow: 'Descansa mejor',
-    icon: '⌂',
-    className:
-      'gt-experience-hotel',
-  },
-  {
-    title: 'Restaurantes',
-    description:
-      'Descubre lugares para comer cerca de tus destinos.',
-    route: '/restaurants',
-    eyebrow: 'Sabores locales',
-    icon: '◉',
-    className:
-      'gt-experience-food',
-  },
-  {
-    title: 'Rent a Car',
-    description:
-      'Encuentra opciones de movilidad y explora a tu ritmo.',
-    route: '/cars',
-    eyebrow: 'Muévete libremente',
-    icon: '→',
-    className:
-      'gt-experience-car',
-  },
-];
-
 function HomePage() {
   const location =
     useLocation();
+
+  const {
+    t,
+  } =
+    useTranslation();
 
   const [
     activeTab,
@@ -116,6 +93,89 @@ function HomePage() {
     useState<
       string | null
     >(null);
+
+  const experiences: ExperienceItem[] = [
+    {
+      title:
+        t(
+          'home.experiences.items.flights.title',
+        ),
+      description:
+        t(
+          'home.experiences.items.flights.description',
+        ),
+      route:
+        '/flights',
+      eyebrow:
+        t(
+          'home.experiences.items.flights.eyebrow',
+        ),
+      icon:
+        '✈',
+      className:
+        'gt-experience-flight',
+    },
+    {
+      title:
+        t(
+          'home.experiences.items.hotels.title',
+        ),
+      description:
+        t(
+          'home.experiences.items.hotels.description',
+        ),
+      route:
+        '/hotels',
+      eyebrow:
+        t(
+          'home.experiences.items.hotels.eyebrow',
+        ),
+      icon:
+        '⌂',
+      className:
+        'gt-experience-hotel',
+    },
+    {
+      title:
+        t(
+          'home.experiences.items.restaurants.title',
+        ),
+      description:
+        t(
+          'home.experiences.items.restaurants.description',
+        ),
+      route:
+        '/restaurants',
+      eyebrow:
+        t(
+          'home.experiences.items.restaurants.eyebrow',
+        ),
+      icon:
+        '◉',
+      className:
+        'gt-experience-food',
+    },
+    {
+      title:
+        t(
+          'home.experiences.items.cars.title',
+        ),
+      description:
+        t(
+          'home.experiences.items.cars.description',
+        ),
+      route:
+        '/cars',
+      eyebrow:
+        t(
+          'home.experiences.items.cars.eyebrow',
+        ),
+      icon:
+        '→',
+      className:
+        'gt-experience-car',
+    },
+  ];
 
   /*
    * =========================================
@@ -225,39 +285,46 @@ function HomePage() {
         <div className="gt-home-hero-glow gt-glow-two" />
 
         <div className="gt-home-hero-inner">
+
           <div className="gt-home-copy">
+
             <div className="gt-home-badge">
               <span className="gt-home-badge-dot" />
 
-              Todo tu viaje,
-              en un solo lugar
+              {t(
+                'home.hero.badge',
+              )}
             </div>
 
             <h1>
-              Tu próxima historia
+              {t(
+                'home.hero.titlePrimary',
+              )}
 
               <span>
-                comienza aquí.
+                {t(
+                  'home.hero.titleAccent',
+                )}
               </span>
             </h1>
 
             <p>
-              Compara vuelos,
-              encuentra hospedaje,
-              descubre restaurantes
-              y organiza tu transporte
-              desde una sola
-              experiencia.
+              {t(
+                'home.hero.description',
+              )}
             </p>
 
             <div className="gt-home-proof">
+
               <div>
                 <strong>
                   4
                 </strong>
 
                 <span>
-                  servicios conectados
+                  {t(
+                    'home.hero.servicesConnected',
+                  )}
                 </span>
               </div>
 
@@ -269,7 +336,9 @@ function HomePage() {
                 </strong>
 
                 <span>
-                  plataforma
+                  {t(
+                    'home.hero.platform',
+                  )}
                 </span>
               </div>
 
@@ -281,19 +350,26 @@ function HomePage() {
                 </strong>
 
                 <span>
-                  para explorar
+                  {t(
+                    'home.hero.availableToExplore',
+                  )}
                 </span>
               </div>
+
             </div>
           </div>
 
           <div className="gt-hero-visual">
+
             <div className="gt-hero-image-card">
               <div className="gt-hero-image-overlay" />
 
               <div className="gt-hero-image-content">
+
                 <span>
-                  Recomendado
+                  {t(
+                    'home.hero.recommended',
+                  )}
                 </span>
 
                 <div>
@@ -302,37 +378,52 @@ function HomePage() {
                   </strong>
 
                   <small>
-                    España · MAD
+                    {t(
+                      'home.destinations.countries.spain',
+                    )}{' '}
+                    · MAD
                   </small>
                 </div>
+
               </div>
             </div>
 
             <div className="gt-floating-card gt-floating-flight">
+
               <span className="gt-floating-icon">
                 ✈
               </span>
 
               <div>
                 <small>
-                  Próximo vuelo
+                  {t(
+                    'home.hero.nextFlight',
+                  )}
                 </small>
 
                 <strong>
                   SJO → MAD
                 </strong>
               </div>
+
             </div>
 
             <div className="gt-floating-card gt-floating-saving">
+
               <small>
-                Explora más
+                {t(
+                  'home.hero.exploreMore',
+                )}
               </small>
 
               <strong>
-                Todo en un lugar
+                {t(
+                  'home.hero.allInOnePlace',
+                )}
               </strong>
+
             </div>
+
           </div>
         </div>
 
@@ -345,7 +436,9 @@ function HomePage() {
           id="home-flight-search"
         >
           <div className="gt-home-search-shell">
+
             <div className="gt-home-search-tabs">
+
               <button
                 type="button"
                 className={
@@ -362,7 +455,9 @@ function HomePage() {
               >
                 <PlaneIcon />
 
-                Vuelos
+                {t(
+                  'nav.flights',
+                )}
               </button>
 
               <button
@@ -381,7 +476,9 @@ function HomePage() {
               >
                 <HotelIcon />
 
-                Hospedaje
+                {t(
+                  'nav.hotels',
+                )}
               </button>
 
               <button
@@ -400,7 +497,9 @@ function HomePage() {
               >
                 <RestaurantIcon />
 
-                Restaurantes
+                {t(
+                  'nav.restaurants',
+                )}
               </button>
 
               <button
@@ -419,11 +518,15 @@ function HomePage() {
               >
                 <CarIcon />
 
-                Rent a Car
+                {t(
+                  'nav.cars',
+                )}
               </button>
+
             </div>
 
             <div className="gt-home-search-content">
+
               {activeTab ===
                 'flights' && (
                 <TripSearchForm
@@ -441,11 +544,19 @@ function HomePage() {
               {activeTab ===
                 'restaurants' && (
                 <ModuleSearchShortcut
-                  eyebrow="Descubre sabores"
-                  title="¿Dónde quieres comer?"
-                  description="Busca restaurantes por ciudad, tipo de cocina y ubicación."
+                  eyebrow={t(
+                    'home.search.restaurants.eyebrow',
+                  )}
+                  title={t(
+                    'home.search.restaurants.title',
+                  )}
+                  description={t(
+                    'home.search.restaurants.description',
+                  )}
                   route="/restaurants"
-                  buttonText="Buscar restaurantes"
+                  buttonText={t(
+                    'home.search.restaurants.button',
+                  )}
                   icon={
                     <RestaurantIcon />
                   }
@@ -455,16 +566,25 @@ function HomePage() {
               {activeTab ===
                 'cars' && (
                 <ModuleSearchShortcut
-                  eyebrow="Explora a tu ritmo"
-                  title="Encuentra movilidad en tu destino"
-                  description="Busca agencias y opciones de Rent a Car en la ciudad que visitarás."
+                  eyebrow={t(
+                    'home.search.cars.eyebrow',
+                  )}
+                  title={t(
+                    'home.search.cars.title',
+                  )}
+                  description={t(
+                    'home.search.cars.description',
+                  )}
                   route="/cars"
-                  buttonText="Buscar Rent a Car"
+                  buttonText={t(
+                    'home.search.cars.button',
+                  )}
                   icon={
                     <CarIcon />
                   }
                 />
               )}
+
             </div>
           </div>
         </div>
@@ -475,24 +595,29 @@ function HomePage() {
       ========================================== */}
 
       <section className="gt-home-section gt-destinations-section">
+
         <div className="gt-section-heading">
+
           <div>
             <span className="gt-section-eyebrow">
-              Inspiración
+              {t(
+                'home.destinations.eyebrow',
+              )}
             </span>
 
             <h2>
-              Destinos que vale
-              la pena explorar
+              {t(
+                'home.destinations.title',
+              )}
             </h2>
           </div>
 
           <div className="gt-section-heading-side">
+
             <p>
-              Empieza por algunos
-              de los destinos favoritos
-              para planear tu próxima
-              aventura.
+              {t(
+                'home.destinations.description',
+              )}
             </p>
 
             <button
@@ -502,14 +627,18 @@ function HomePage() {
                 handleExploreFlights
               }
             >
-              Explorar vuelos
+              {t(
+                'home.destinations.exploreFlights',
+              )}
 
               <ArrowIcon />
             </button>
+
           </div>
         </div>
 
         <div className="gt-destination-grid">
+
           {popularDestinations.map(
             (
               destination,
@@ -535,9 +664,11 @@ function HomePage() {
                   )
                 }
               >
+
                 <div className="gt-destination-overlay" />
 
                 <div className="gt-destination-top">
+
                   <span className="gt-destination-iata">
                     {
                       destination.iata
@@ -545,18 +676,22 @@ function HomePage() {
                   </span>
 
                   <span className="gt-destination-price">
-                    desde{' '}
+                    {t(
+                      'home.destinations.from',
+                    )}{' '}
                     {
                       destination.price
                     }
                   </span>
+
                 </div>
 
                 <div className="gt-destination-content">
+
                   <span>
-                    {
-                      destination.country
-                    }
+                    {t(
+                      destination.countryKey,
+                    )}
                   </span>
 
                   <h3>
@@ -566,14 +701,20 @@ function HomePage() {
                   </h3>
 
                   <div className="gt-destination-cta">
-                    Explorar destino
+
+                    {t(
+                      'home.destinations.exploreDestination',
+                    )}
 
                     <ArrowIcon />
+
                   </div>
+
                 </div>
               </button>
             ),
           )}
+
         </div>
       </section>
 
@@ -582,26 +723,33 @@ function HomePage() {
       ========================================== */}
 
       <section className="gt-home-section gt-experience-section">
+
         <div className="gt-section-heading">
+
           <div>
             <span className="gt-section-eyebrow">
-              Una plataforma
+              {t(
+                'home.experiences.eyebrow',
+              )}
             </span>
 
             <h2>
-              Todo lo que necesitas
-              para viajar
+              {t(
+                'home.experiences.title',
+              )}
             </h2>
           </div>
 
           <p>
-            Cada etapa del viaje
-            conectada en una
-            experiencia simple.
+            {t(
+              'home.experiences.description',
+            )}
           </p>
+
         </div>
 
         <div className="gt-experience-grid">
+
           {experiences.map(
             (
               experience,
@@ -614,7 +762,7 @@ function HomePage() {
                   <button
                     type="button"
                     key={
-                      experience.title
+                      experience.route
                     }
                     className={`gt-experience-card ${experience.className}`}
                     onClick={
@@ -636,7 +784,7 @@ function HomePage() {
                     experience.route
                   }
                   key={
-                    experience.title
+                    experience.route
                   }
                   className={`gt-experience-card ${experience.className}`}
                 >
@@ -649,6 +797,7 @@ function HomePage() {
               );
             },
           )}
+
         </div>
       </section>
 
@@ -657,58 +806,85 @@ function HomePage() {
       ========================================== */}
 
       <section className="gt-home-section">
+
         <div className="gt-value-banner">
+
           <div className="gt-value-banner-copy">
+
             <span className="gt-section-eyebrow gt-section-eyebrow-light">
-              Viajar puede ser más simple
+              {t(
+                'home.value.eyebrow',
+              )}
             </span>
 
             <h2>
-              Menos pestañas.
+              {t(
+                'home.value.titleLine1',
+              )}
+
               <br />
-              Más viaje.
+
+              {t(
+                'home.value.titleLine2',
+              )}
             </h2>
 
             <p>
-              GlobalTour reúne
-              la información que
-              necesitas para que
-              puedas concentrarte
-              en elegir, comparar
-              y disfrutar.
+              {t(
+                'home.value.description',
+              )}
             </p>
 
             <Link
               to="/dashboard"
               className="gt-light-button"
             >
-              Ver mi Dashboard
+              {t(
+                'home.value.dashboardButton',
+              )}
 
               <ArrowIcon />
             </Link>
+
           </div>
 
           <div className="gt-value-features">
+
             <ValueFeature
               number="01"
-              title="Centralizado"
-              description="Vuelos, alojamiento, comida y movilidad desde un mismo lugar."
+              title={t(
+                'home.value.features.centralized.title',
+              )}
+              description={t(
+                'home.value.features.centralized.description',
+              )}
             />
 
             <ValueFeature
               number="02"
-              title="Más contexto"
-              description="Compara diferentes opciones antes de tomar una decisión."
+              title={t(
+                'home.value.features.context.title',
+              )}
+              description={t(
+                'home.value.features.context.description',
+              )}
             />
 
             <ValueFeature
               number="03"
-              title="Tu actividad"
-              description="Visualiza tendencias y búsquedas desde el Dashboard."
+              title={t(
+                'home.value.features.activity.title',
+              )}
+              description={t(
+                'home.value.features.activity.description',
+              )}
             />
+
           </div>
+
         </div>
       </section>
+
     </main>
   );
 }
@@ -792,11 +968,13 @@ function ModuleSearchShortcut({
 }: ModuleSearchShortcutProps) {
   return (
     <div className="gt-module-shortcut">
+
       <div className="gt-module-shortcut-icon">
         {icon}
       </div>
 
       <div className="gt-module-shortcut-copy">
+
         <span>
           {eyebrow}
         </span>
@@ -808,6 +986,7 @@ function ModuleSearchShortcut({
         <p>
           {description}
         </p>
+
       </div>
 
       <Link
@@ -818,6 +997,7 @@ function ModuleSearchShortcut({
 
         <ArrowIcon />
       </Link>
+
     </div>
   );
 }
@@ -841,6 +1021,7 @@ function ValueFeature({
 }: ValueFeatureProps) {
   return (
     <div className="gt-value-feature">
+
       <span>
         {number}
       </span>
@@ -854,6 +1035,7 @@ function ValueFeature({
           {description}
         </p>
       </div>
+
     </div>
   );
 }
@@ -909,11 +1091,13 @@ function CarIcon() {
     >
       <path d="m5 16-1-4 2-5h12l2 5-1 4" />
       <path d="M4 16h16v3H4z" />
+
       <circle
         cx="7"
         cy="17"
         r="1"
       />
+
       <circle
         cx="17"
         cy="17"
