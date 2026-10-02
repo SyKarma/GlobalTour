@@ -10,6 +10,7 @@ import { EnvironmentVariables } from './config/env.validation';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   const config = app.get(ConfigService<EnvironmentVariables, true>);
 
   app.setGlobalPrefix('api');
