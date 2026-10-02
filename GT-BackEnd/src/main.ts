@@ -16,7 +16,10 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-    origin: config.get('CORS_ORIGIN', { infer: true }),
+    origin: [
+      'http://localhost:5173',
+      'https://globaltour-six.vercel.app',
+    ],
     credentials: true,
   });
   app.useGlobalPipes(
