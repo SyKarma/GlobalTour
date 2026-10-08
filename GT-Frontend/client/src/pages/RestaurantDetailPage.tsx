@@ -9,6 +9,12 @@ import {
 } from 'react-router-dom';
 
 import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
+
+import {
   getRestaurantById,
 } from '../services/restaurants.service';
 
@@ -17,6 +23,11 @@ import type {
 } from '../types/restaurant.types';
 
 function RestaurantDetailPage() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const navigate =
     useNavigate();
 
@@ -31,9 +42,9 @@ function RestaurantDetailPage() {
     restaurant,
     setRestaurant,
   ] =
-    useState<RestaurantDetail | null>(
-      null,
-    );
+    useState<
+      RestaurantDetail | null
+    >(null);
 
   const [
     isLoading,
@@ -47,47 +58,29 @@ function RestaurantDetailPage() {
     error,
     setError,
   ] =
-    useState<string | null>(
-      null,
-    );
+    useState<
+      string | null
+    >(null);
 
-  /*
-   * =========================================
-   * BACK
-   * =========================================
-   */
+  const handleBack =
+    () => {
+      if (
+        window.history.length >
+        1
+      ) {
+        navigate(
+          -1,
+        );
 
-  const handleBack = () => {
-    if (
-      window.history.length >
-      1
-    ) {
+        return;
+      }
+
       navigate(
-        -1,
+        '/restaurants',
       );
-
-      return;
-    }
-
-    navigate(
-      '/restaurants',
-    );
-  };
-
-  /*
-   * =========================================
-   * LOAD RESTAURANT
-   * =========================================
-   */
+    };
 
   useEffect(() => {
-    /*
-     * Si no existe ID no modificamos
-     * estado dentro del effect.
-     *
-     * El caso se maneja directamente
-     * en el render.
-     */
     if (!id) {
       return;
     }
@@ -128,7 +121,7 @@ function RestaurantDetailPage() {
           requestError
         ) {
           console.error(
-            'Error al cargar restaurante:',
+            'Error loading restaurant:',
             requestError,
           );
 
@@ -140,7 +133,7 @@ function RestaurantDetailPage() {
             );
 
             setError(
-              'No fue posible cargar la información de este restaurante.',
+              'restaurants.detail.errors.loadMessage',
             );
           }
         } finally {
@@ -164,30 +157,32 @@ function RestaurantDetailPage() {
     id,
   ]);
 
-  /*
-   * =========================================
-   * INVALID ID
-   * =========================================
-   */
-
   if (!id) {
     return (
       <main className="gt-restaurant-detail-page">
+
         <section className="gt-detail-error-state">
+
           <div className="gt-detail-error-icon gt-detail-error-orange">
             <RestaurantIcon />
           </div>
 
           <span>
-            RESTAURANTES
+            {t(
+              'restaurants.detail.common.eyebrow',
+            )}
           </span>
 
           <h1>
-            No encontramos este restaurante
+            {t(
+              'restaurants.detail.errors.title',
+            )}
           </h1>
 
           <p>
-            No se encontró el identificador del restaurante.
+            {t(
+              'restaurants.detail.errors.missingId',
+            )}
           </p>
 
           <button
@@ -198,42 +193,37 @@ function RestaurantDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'restaurants.detail.common.back',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * LOADING
-   * =========================================
-   */
 
   if (
     isLoading
   ) {
     return (
       <main className="gt-restaurant-detail-page">
+
         <div className="gt-detail-loading-shell">
+
           <div className="gt-detail-loading-hero" />
 
           <div className="gt-detail-loading-grid">
             <div />
-
             <div />
           </div>
+
         </div>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * ERROR
-   * =========================================
-   */
 
   if (
     error ||
@@ -241,22 +231,33 @@ function RestaurantDetailPage() {
   ) {
     return (
       <main className="gt-restaurant-detail-page">
+
         <section className="gt-detail-error-state">
+
           <div className="gt-detail-error-icon gt-detail-error-orange">
             <RestaurantIcon />
           </div>
 
           <span>
-            RESTAURANTES
+            {t(
+              'restaurants.detail.common.eyebrow',
+            )}
           </span>
 
           <h1>
-            No encontramos este restaurante
+            {t(
+              'restaurants.detail.errors.title',
+            )}
           </h1>
 
           <p>
-            {error ??
-              'Este lugar no está disponible.'}
+            {error
+              ? t(
+                  error,
+                )
+              : t(
+                  'restaurants.detail.errors.unavailable',
+                )}
           </p>
 
           <button
@@ -267,18 +268,16 @@ function RestaurantDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'restaurants.detail.common.back',
+            )}
           </button>
+
         </section>
+
       </main>
     );
   }
-
-  /*
-   * =========================================
-   * SAFE DATA
-   * =========================================
-   */
 
   const cuisines =
     (
@@ -327,16 +326,14 @@ function RestaurantDetailPage() {
   return (
     <main className="gt-restaurant-detail-page">
 
-      {/* =====================================
-          HERO
-      ====================================== */}
-
       <section className="gt-restaurant-detail-hero">
+
         <div className="gt-restaurant-detail-pattern gt-restaurant-detail-pattern-one" />
 
         <div className="gt-restaurant-detail-pattern gt-restaurant-detail-pattern-two" />
 
         <div className="gt-restaurant-detail-hero-inner">
+
           <button
             type="button"
             className="gt-detail-back-button gt-detail-back-light"
@@ -346,13 +343,19 @@ function RestaurantDetailPage() {
           >
             <ArrowLeftIcon />
 
-            Volver a resultados
+            {t(
+              'restaurants.detail.common.back',
+            )}
           </button>
 
           <div className="gt-restaurant-detail-hero-grid">
+
             <div className="gt-restaurant-detail-hero-copy">
+
               <span className="gt-restaurant-detail-eyebrow">
-                GLOBALTOUR · GASTRONOMÍA
+                {t(
+                  'restaurants.detail.hero.eyebrow',
+                )}
               </span>
 
               <div className="gt-restaurant-detail-icon">
@@ -366,37 +369,47 @@ function RestaurantDetailPage() {
               </span>
 
               <h1>
-                {restaurant.name}
+                {
+                  restaurant.name
+                }
               </h1>
 
               <p>
                 <LocationIcon />
 
                 {restaurant.address ??
-                  'Dirección no disponible'}
+                  t(
+                    'restaurants.detail.hero.addressUnavailable',
+                  )}
               </p>
 
               {cuisines.length >
                 0 && (
                 <div className="gt-restaurant-detail-cuisines">
+
                   {cuisines.map(
                     (
                       cuisine,
                     ) => (
-                    <span
-                      key={
-                        cuisine
-                      }
-                    >
-                      {cuisine}
-                    </span>
+                      <span
+                        key={
+                          cuisine
+                        }
+                      >
+                        {
+                          cuisine
+                        }
+                      </span>
                     ),
                   )}
+
                 </div>
               )}
+
             </div>
 
             <div className="gt-restaurant-detail-hero-actions">
+
               {mapsUrl && (
                 <a
                   href={
@@ -407,7 +420,9 @@ function RestaurantDetailPage() {
                 >
                   <MapIcon />
 
-                  Ver en mapa
+                  {t(
+                    'restaurants.detail.hero.viewMap',
+                  )}
                 </a>
               )}
 
@@ -421,7 +436,9 @@ function RestaurantDetailPage() {
                 >
                   <ExternalIcon />
 
-                  Sitio web
+                  {t(
+                    'restaurants.detail.hero.website',
+                  )}
                 </a>
               )}
 
@@ -431,153 +448,205 @@ function RestaurantDetailPage() {
                 >
                   <PhoneIcon />
 
-                  Llamar
+                  {t(
+                    'restaurants.detail.hero.call',
+                  )}
                 </a>
               )}
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* =====================================
-          BODY
-      ====================================== */}
-
       <div className="gt-detail-content-shell">
+
         <section className="gt-restaurant-detail-layout">
 
-          {/* MAIN */}
-
           <div className="gt-detail-main-column">
+
             {restaurant.editorialSummary && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
-                  SOBRE EL LUGAR
+                  {t(
+                    'restaurants.detail.about.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Acerca de {restaurant.name}
+                  {t(
+                    'restaurants.detail.about.title',
+                    {
+                      name:
+                        restaurant.name,
+                    },
+                  )}
                 </h2>
 
                 <p className="gt-detail-description">
-                  {restaurant.editorialSummary}
+                  {
+                    restaurant.editorialSummary
+                  }
                 </p>
+
               </article>
             )}
 
             {hours.length >
               0 && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
-                  HORARIO
+                  {t(
+                    'restaurants.detail.hours.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Horario publicado
+                  {t(
+                    'restaurants.detail.hours.title',
+                  )}
                 </h2>
 
                 <div className="gt-detail-hours-list">
+
                   {hours.map(
                     (
                       item,
                       index,
                     ) => (
-                    <div
-                      key={`${item}-${index}`}
-                    >
-                      <ClockIcon />
+                      <div
+                        key={`${item}-${index}`}
+                      >
+                        <ClockIcon />
 
-                      <span>
-                        {item}
-                      </span>
-                    </div>
+                        <span>
+                          {
+                            item
+                          }
+                        </span>
+                      </div>
                     ),
                   )}
+
                 </div>
+
               </article>
             )}
 
             {!hasExtraInformation && (
               <article className="gt-detail-panel gt-detail-empty-panel">
+
                 <InfoIcon />
 
                 <h2>
-                  Información limitada
+                  {t(
+                    'restaurants.detail.limited.title',
+                  )}
                 </h2>
 
                 <p>
-                  OpenStreetMap todavía no dispone de
-                  descripción u horarios adicionales
-                  para este establecimiento.
+                  {t(
+                    'restaurants.detail.limited.description',
+                  )}
                 </p>
+
               </article>
             )}
 
             {cuisines.length >
               0 && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
-                  GASTRONOMÍA
+                  {t(
+                    'restaurants.detail.cuisine.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Cocina disponible
+                  {t(
+                    'restaurants.detail.cuisine.title',
+                  )}
                 </h2>
 
                 <div className="gt-restaurant-detail-food-grid">
+
                   {cuisines.map(
                     (
                       cuisine,
                     ) => (
-                    <div
-                      key={
-                        cuisine
-                      }
-                    >
-                      <FoodIcon />
+                      <div
+                        key={
+                          cuisine
+                        }
+                      >
+                        <FoodIcon />
 
-                      <span>
-                        {cuisine}
-                      </span>
-                    </div>
+                        <span>
+                          {
+                            cuisine
+                          }
+                        </span>
+                      </div>
                     ),
                   )}
+
                 </div>
+
               </article>
             )}
+
           </div>
 
-          {/* SIDEBAR */}
-
           <aside className="gt-detail-sidebar">
+
             <article className="gt-detail-panel">
+
               <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
-                INFORMACIÓN
+                {t(
+                  'restaurants.detail.info.eyebrow',
+                )}
               </span>
 
               <h2>
-                Datos del establecimiento
+                {t(
+                  'restaurants.detail.info.title',
+                )}
               </h2>
 
               <div className="gt-detail-info-list">
+
                 <DetailInfo
-                  label="Tipo"
+                  label={t(
+                    'restaurants.detail.info.type',
+                  )}
                   value={formatRestaurantType(
                     restaurant.primaryType,
                   )}
                 />
 
                 <DetailInfo
-                  label="Dirección"
+                  label={t(
+                    'restaurants.detail.info.address',
+                  )}
                   value={
                     restaurant.address ??
-                    'No disponible'
+                    t(
+                      'restaurants.detail.info.unavailable',
+                    )
                   }
                 />
 
                 {hasCoordinates && (
                   <DetailInfo
-                    label="Coordenadas"
+                    label={t(
+                      'restaurants.detail.info.coordinates',
+                    )}
                     value={`${restaurant.latitude}, ${restaurant.longitude}`}
                   />
                 )}
@@ -585,7 +654,9 @@ function RestaurantDetailPage() {
                 {types.length >
                   0 && (
                   <DetailInfo
-                    label="Clasificación"
+                    label={t(
+                      'restaurants.detail.info.classification',
+                    )}
                     value={types
                       .map(
                         formatCuisine,
@@ -595,20 +666,28 @@ function RestaurantDetailPage() {
                       )}
                   />
                 )}
+
               </div>
+
             </article>
 
             {hasContact && (
               <article className="gt-detail-panel">
+
                 <span className="gt-detail-panel-eyebrow gt-detail-panel-eyebrow-orange">
-                  CONTACTO
+                  {t(
+                    'restaurants.detail.contact.eyebrow',
+                  )}
                 </span>
 
                 <h2>
-                  Comunícate con el lugar
+                  {t(
+                    'restaurants.detail.contact.title',
+                  )}
                 </h2>
 
                 <div className="gt-detail-contact-list">
+
                   {restaurant.phone && (
                     <a
                       href={`tel:${restaurant.phone}`}
@@ -616,14 +695,21 @@ function RestaurantDetailPage() {
                       <PhoneIcon />
 
                       <div>
+
                         <span>
-                          Teléfono
+                          {t(
+                            'restaurants.detail.contact.phone',
+                          )}
                         </span>
 
                         <strong>
-                          {restaurant.phone}
+                          {
+                            restaurant.phone
+                          }
                         </strong>
+
                       </div>
+
                     </a>
                   )}
 
@@ -636,26 +722,39 @@ function RestaurantDetailPage() {
                       <PhoneIcon />
 
                       <div>
+
                         <span>
-                          Teléfono internacional
+                          {t(
+                            'restaurants.detail.contact.internationalPhone',
+                          )}
                         </span>
 
                         <strong>
-                          {restaurant.internationalPhone}
+                          {
+                            restaurant.internationalPhone
+                          }
                         </strong>
+
                       </div>
+
                     </a>
                   )}
+
                 </div>
+
               </article>
             )}
 
             <article className="gt-detail-source-card gt-detail-source-orange">
+
               <GlobeIcon />
 
               <div>
+
                 <span>
-                  Fuente
+                  {t(
+                    'restaurants.detail.source.label',
+                  )}
                 </span>
 
                 <strong>
@@ -665,20 +764,20 @@ function RestaurantDetailPage() {
                 <small>
                   © OpenStreetMap contributors
                 </small>
+
               </div>
+
             </article>
+
           </aside>
+
         </section>
+
       </div>
+
     </main>
   );
 }
-
-/*
- * =========================================
- * DETAIL INFO
- * =========================================
- */
 
 interface DetailInfoProps {
   label:
@@ -694,6 +793,7 @@ function DetailInfo({
 }: DetailInfoProps) {
   return (
     <div className="gt-detail-info-row">
+
       <span>
         {label}
       </span>
@@ -701,24 +801,21 @@ function DetailInfo({
       <strong>
         {value}
       </strong>
+
     </div>
   );
 }
 
-/*
- * =========================================
- * FORMATTERS
- * =========================================
- */
-
 function formatRestaurantType(
   value:
-    string |
-    null |
-    undefined,
+    | string
+    | null
+    | undefined,
 ) {
   if (!value) {
-    return 'Gastronomía';
+    return i18n.t(
+      'restaurants.common.types.gastronomy',
+    );
   }
 
   switch (
@@ -731,13 +828,19 @@ function formatRestaurantType(
       )
   ) {
     case 'restaurant':
-      return 'Restaurante';
+      return i18n.t(
+        'restaurants.common.types.restaurant',
+      );
 
     case 'cafe':
-      return 'Café';
+      return i18n.t(
+        'restaurants.common.types.cafe',
+      );
 
     case 'fast_food':
-      return 'Comida rápida';
+      return i18n.t(
+        'restaurants.common.types.fastFood',
+      );
 
     default:
       return value;
@@ -761,12 +864,6 @@ function formatCuisine(
         letter.toUpperCase(),
     );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function RestaurantIcon() {
   return (

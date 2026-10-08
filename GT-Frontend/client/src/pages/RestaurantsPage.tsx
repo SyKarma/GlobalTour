@@ -10,12 +10,20 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
+import {
+  useTranslation,
+} from 'react-i18next';
+
+import i18n from '../i18n';
+
 import RestaurantSearchForm from '../components/restaurants/RestaurantSearchForm';
 
 import type {
   RestaurantAmenity,
   RestaurantSearchValues,
 } from '../components/restaurants/RestaurantSearchForm';
+
+import WishlistHeart from '../components/wishlist/WishlistHeart';
 
 import {
   searchRestaurants,
@@ -40,12 +48,6 @@ type RestaurantSortOption =
   | 'name'
   | 'cuisine';
 
-/*
- * =========================================
- * HELPERS
- * =========================================
- */
-
 function isRestaurantAmenity(
   value: string | null,
 ): value is RestaurantAmenity {
@@ -60,10 +62,15 @@ function isRestaurantAmenity(
 }
 
 function formatRestaurantType(
-  value: string | null,
+  value:
+    | string
+    | null
+    | undefined,
 ) {
   if (!value) {
-    return 'Gastronomía';
+    return i18n.t(
+      'restaurants.common.types.gastronomy',
+    );
   }
 
   switch (
@@ -76,13 +83,19 @@ function formatRestaurantType(
       )
   ) {
     case 'restaurant':
-      return 'Restaurante';
+      return i18n.t(
+        'restaurants.common.types.restaurant',
+      );
 
     case 'cafe':
-      return 'Café';
+      return i18n.t(
+        'restaurants.common.types.cafe',
+      );
 
     case 'fast_food':
-      return 'Comida rápida';
+      return i18n.t(
+        'restaurants.common.types.fastFood',
+      );
 
     default:
       return value;
@@ -120,10 +133,6 @@ function formatRadius(
   return `${meters} m`;
 }
 
-/*
- * Devuelve siempre un arreglo seguro.
- * cuisine puede venir undefined.
- */
 function getRestaurantCuisines(
   restaurant: RestaurantItem,
 ) {
@@ -133,13 +142,12 @@ function getRestaurantCuisines(
   );
 }
 
-/*
- * =========================================
- * PAGE
- * =========================================
- */
-
 function RestaurantsPage() {
+  const {
+    t,
+  } =
+    useTranslation();
+
   const navigate =
     useNavigate();
 
@@ -160,9 +168,9 @@ function RestaurantsPage() {
     meta,
     setMeta,
   ] =
-    useState<RestaurantMeta | null>(
-      null,
-    );
+    useState<
+      RestaurantMeta | null
+    >(null);
 
   const [
     isLoading,
@@ -184,15 +192,11 @@ function RestaurantsPage() {
     sortOption,
     setSortOption,
   ] =
-    useState<RestaurantSortOption>(
+    useState<
+      RestaurantSortOption
+    >(
       'recommended',
     );
-
-  /*
-   * =========================================
-   * URL PARAMS
-   * =========================================
-   */
 
   const cityName =
     searchParams.get(
@@ -238,12 +242,6 @@ function RestaurantsPage() {
     cityName
       .trim()
       .length >= 2;
-
-  /*
-   * =========================================
-   * SEARCH HANDLER
-   * =========================================
-   */
 
   const handleSearch = (
     values:
@@ -305,12 +303,6 @@ function RestaurantsPage() {
     );
   };
 
-  /*
-   * =========================================
-   * LOAD RESTAURANTS
-   * =========================================
-   */
-
   useEffect(() => {
     if (!hasSearch) {
       return;
@@ -342,7 +334,8 @@ function RestaurantsPage() {
 
                 radius,
 
-                limit: 20,
+                limit:
+                  20,
 
                 type:
                   type ||
@@ -385,7 +378,7 @@ function RestaurantsPage() {
           }
 
           console.error(
-            'Error al buscar restaurantes:',
+            'Error searching restaurants:',
             requestError,
           );
 
@@ -398,7 +391,7 @@ function RestaurantsPage() {
           );
 
           setError(
-            'No pudimos obtener restaurantes en este momento.',
+            'restaurants.list.errors.loadMessage',
           );
         } finally {
           if (
@@ -426,12 +419,6 @@ function RestaurantsPage() {
     hasWebsite,
     hasSearch,
   ]);
-
-  /*
-   * =========================================
-   * SORT
-   * =========================================
-   */
 
   const sortedRestaurants =
     useMemo(() => {
@@ -479,12 +466,6 @@ function RestaurantsPage() {
       sortOption,
     ]);
 
-  /*
-   * =========================================
-   * INSIGHTS
-   * =========================================
-   */
-
   const websiteCount =
     useMemo(
       () =>
@@ -498,7 +479,6 @@ function RestaurantsPage() {
                 ?.website,
             ),
         ).length,
-
       [
         restaurants,
       ],
@@ -517,7 +497,6 @@ function RestaurantsPage() {
                 ?.maps,
             ),
         ).length,
-
       [
         restaurants,
       ],
@@ -553,90 +532,111 @@ function RestaurantsPage() {
       restaurants,
     ]);
 
-  /*
-   * =========================================
-   * RENDER
-   * =========================================
-   */
-
   return (
     <main className="gt-restaurants-page">
 
-      {/* =====================================
-          HERO
-      ====================================== */}
-
       <section className="gt-restaurants-hero">
+
         <div className="gt-restaurants-hero-overlay" />
 
         <div className="gt-restaurants-hero-inner">
+
           <span className="gt-restaurants-eyebrow">
-            GLOBALTOUR · RESTAURANTES
+            {t(
+              'restaurants.list.hero.eyebrow',
+            )}
           </span>
 
           <h1>
             {hasSearch
-              ? `Sabores por descubrir en ${cityName}`
-              : 'Descubre el sabor de cada destino'}
+              ? t(
+                  'restaurants.list.hero.cityTitle',
+                  {
+                    city:
+                      cityName,
+                  },
+                )
+              : t(
+                  'restaurants.list.hero.title',
+                )}
           </h1>
 
           <p>
-            Explora restaurantes,
-            cafeterías y opciones
-            gastronómicas cerca de tu
-            próximo destino.
+            {t(
+              'restaurants.list.hero.description',
+            )}
           </p>
 
           <div className="gt-restaurants-hero-pills">
+
             <span>
               <RestaurantIcon />
 
-              Restaurantes
+              {t(
+                'restaurants.list.hero.restaurants',
+              )}
             </span>
 
             <span>
               <CoffeeIcon />
 
-              Cafeterías
+              {t(
+                'restaurants.list.hero.cafes',
+              )}
             </span>
 
             <span>
               <FoodIcon />
 
-              Cocina local
+              {t(
+                'restaurants.list.hero.localCuisine',
+              )}
             </span>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* =====================================
-          SEARCH
-      ====================================== */}
-
       <section className="gt-restaurants-search-section">
+
         <div className="gt-restaurants-search-shell">
+
           <div className="gt-restaurants-search-heading">
+
             <div>
+
               <span>
-                EXPLORAR GASTRONOMÍA
+                {t(
+                  'restaurants.list.search.eyebrow',
+                )}
               </span>
 
               <strong>
-                Encuentra lugares alrededor de tu destino
+                {t(
+                  'restaurants.list.search.title',
+                )}
               </strong>
+
             </div>
 
             {hasSearch && (
               <span className="gt-restaurants-radius-badge">
+
                 <RadiusIcon />
 
-                Radio de{' '}
+                {t(
+                  'restaurants.list.search.radius',
+                )}{' '}
 
                 {formatRadius(
                   radius,
                 )}
+
               </span>
             )}
+
           </div>
 
           <RestaurantSearchForm
@@ -656,115 +656,152 @@ function RestaurantsPage() {
               isLoading
             }
           />
+
         </div>
+
       </section>
 
       <div className="gt-restaurants-content">
 
-        {/* =====================================
-            START
-        ====================================== */}
-
         {!hasSearch && (
           <section className="gt-restaurants-start-state">
+
             <div className="gt-restaurants-start-copy">
+
               <span className="gt-restaurants-section-eyebrow">
-                EXPLORA CON EL PALADAR
+                {t(
+                  'restaurants.list.start.eyebrow',
+                )}
               </span>
 
               <h2>
-                Cada ciudad tiene algo distinto que probar
+                {t(
+                  'restaurants.list.start.title',
+                )}
               </h2>
 
               <p>
-                Busca una ciudad para
-                descubrir restaurantes,
-                cafeterías y sabores
-                disponibles en la zona.
+                {t(
+                  'restaurants.list.start.description',
+                )}
               </p>
+
             </div>
 
             <div className="gt-restaurants-start-grid">
+
               <article className="gt-restaurant-start-card gt-food-card-one">
+
                 <RestaurantIcon />
 
                 <span>
-                  Comer
+                  {t(
+                    'restaurants.list.start.cards.eat.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Restaurantes
+                  {t(
+                    'restaurants.list.start.cards.eat.title',
+                  )}
                 </strong>
 
                 <p>
-                  Descubre lugares para
-                  disfrutar una comida en
-                  tu destino.
+                  {t(
+                    'restaurants.list.start.cards.eat.description',
+                  )}
                 </p>
+
               </article>
 
               <article className="gt-restaurant-start-card gt-food-card-two">
+
                 <CoffeeIcon />
 
                 <span>
-                  Pausa
+                  {t(
+                    'restaurants.list.start.cards.cafe.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Cafeterías
+                  {t(
+                    'restaurants.list.start.cards.cafe.title',
+                  )}
                 </strong>
 
                 <p>
-                  Encuentra cafés y espacios
-                  para hacer una pausa.
+                  {t(
+                    'restaurants.list.start.cards.cafe.description',
+                  )}
                 </p>
+
               </article>
 
               <article className="gt-restaurant-start-card gt-food-card-three">
+
                 <FoodIcon />
 
                 <span>
-                  Descubrir
+                  {t(
+                    'restaurants.list.start.cards.flavors.eyebrow',
+                  )}
                 </span>
 
                 <strong>
-                  Sabores
+                  {t(
+                    'restaurants.list.start.cards.flavors.title',
+                  )}
                 </strong>
 
                 <p>
-                  Filtra por cocina y
-                  encuentra algo diferente.
+                  {t(
+                    'restaurants.list.start.cards.flavors.description',
+                  )}
                 </p>
+
               </article>
+
             </div>
+
           </section>
         )}
-
-        {/* =====================================
-            LOADING
-        ====================================== */}
 
         {hasSearch &&
           isLoading && (
           <section className="gt-restaurants-loading">
+
             <div className="gt-restaurants-loading-heading">
+
               <div className="gt-restaurants-loader" />
 
               <div>
+
                 <h2>
-                  Explorando {cityName}
+                  {t(
+                    'restaurants.list.loading.title',
+                    {
+                      city:
+                        cityName,
+                    },
+                  )}
                 </h2>
 
                 <p>
-                  Estamos buscando lugares
-                  gastronómicos en la zona.
+                  {t(
+                    'restaurants.list.loading.description',
+                  )}
                 </p>
+
               </div>
+
             </div>
 
             <div className="gt-restaurants-skeleton-grid">
+
               {Array.from({
-                length: 6,
+                length:
+                  6,
               }).map(
                 (
                   _,
@@ -786,35 +823,35 @@ function RestaurantsPage() {
                   </div>
                 ),
               )}
+
             </div>
+
           </section>
         )}
-
-        {/* =====================================
-            ERROR
-        ====================================== */}
 
         {hasSearch &&
           !isLoading &&
           error && (
           <section className="gt-restaurants-error-state">
+
             <div>
               !
             </div>
 
             <h2>
-              No pudimos completar la búsqueda
+              {t(
+                'restaurants.list.errors.title',
+              )}
             </h2>
 
             <p>
-              {error}
+              {t(
+                error,
+              )}
             </p>
+
           </section>
         )}
-
-        {/* =====================================
-            EMPTY
-        ====================================== */}
 
         {hasSearch &&
           !isLoading &&
@@ -822,25 +859,25 @@ function RestaurantsPage() {
           restaurants.length ===
             0 && (
           <section className="gt-restaurants-error-state">
+
             <div className="gt-restaurants-empty-icon">
               <SearchIcon />
             </div>
 
             <h2>
-              No encontramos lugares
+              {t(
+                'restaurants.list.empty.title',
+              )}
             </h2>
 
             <p>
-              Intenta aumentar el radio
-              de búsqueda o quitar alguno
-              de los filtros.
+              {t(
+                'restaurants.list.empty.description',
+              )}
             </p>
+
           </section>
         )}
-
-        {/* =====================================
-            RESULTS
-        ====================================== */}
 
         {hasSearch &&
           !isLoading &&
@@ -848,14 +885,15 @@ function RestaurantsPage() {
           restaurants.length >
             0 && (
           <>
-            {/* =================================
-                RESULTS HEADER
-            ================================== */}
 
             <section className="gt-restaurants-results-heading">
+
               <div>
+
                 <span className="gt-restaurants-section-eyebrow">
-                  LUGARES ENCONTRADOS
+                  {t(
+                    'restaurants.list.results.eyebrow',
+                  )}
                 </span>
 
                 <h2>
@@ -870,19 +908,29 @@ function RestaurantsPage() {
                 </h2>
 
                 <p>
-                  {restaurants.length}{' '}
+                  {
+                    restaurants.length
+                  }{' '}
 
                   {restaurants.length ===
                   1
-                    ? 'lugar para explorar'
-                    : 'lugares para explorar'}
+                    ? t(
+                        'restaurants.list.results.onePlace',
+                      )
+                    : t(
+                        'restaurants.list.results.manyPlaces',
+                      )}
                 </p>
+
               </div>
 
               <div className="gt-restaurants-results-meta">
+
                 {meta?.stale && (
                   <span>
-                    Datos en caché
+                    {t(
+                      'restaurants.list.results.cached',
+                    )}
                   </span>
                 )}
 
@@ -892,23 +940,27 @@ function RestaurantsPage() {
                     {
                       meta.matched
                     }{' '}
-                    coincidencias antes del límite
+
+                    {t(
+                      'restaurants.list.results.matchesBeforeLimit',
+                    )}
                   </small>
                 )}
+
               </div>
+
             </section>
 
-            {/* =================================
-                INSIGHTS
-            ================================== */}
-
             <section className="gt-restaurants-insight-grid">
+
               <article>
                 <RestaurantIcon />
 
                 <div>
                   <span>
-                    Resultados
+                    {t(
+                      'restaurants.list.insights.results',
+                    )}
                   </span>
 
                   <strong>
@@ -924,7 +976,9 @@ function RestaurantsPage() {
 
                 <div>
                   <span>
-                    Con sitio web
+                    {t(
+                      'restaurants.list.insights.website',
+                    )}
                   </span>
 
                   <strong>
@@ -940,7 +994,9 @@ function RestaurantsPage() {
 
                 <div>
                   <span>
-                    Con mapa
+                    {t(
+                      'restaurants.list.insights.map',
+                    )}
                   </span>
 
                   <strong>
@@ -956,7 +1012,9 @@ function RestaurantsPage() {
 
                 <div>
                   <span>
-                    Cocinas detectadas
+                    {t(
+                      'restaurants.list.insights.cuisines',
+                    )}
                   </span>
 
                   <strong>
@@ -966,14 +1024,13 @@ function RestaurantsPage() {
                   </strong>
                 </div>
               </article>
+
             </section>
 
-            {/* =================================
-                TOOLBAR
-            ================================== */}
-
             <section className="gt-restaurants-toolbar">
+
               <div className="gt-restaurants-sort">
+
                 <button
                   type="button"
                   className={
@@ -988,7 +1045,9 @@ function RestaurantsPage() {
                     )
                   }
                 >
-                  Recomendados
+                  {t(
+                    'restaurants.list.sort.recommended',
+                  )}
                 </button>
 
                 <button
@@ -1022,64 +1081,68 @@ function RestaurantsPage() {
                     )
                   }
                 >
-                  Más información gastronómica
+                  {t(
+                    'restaurants.list.sort.cuisineInfo',
+                  )}
                 </button>
+
               </div>
 
               <span>
                 {
                   sortedRestaurants.length
                 }{' '}
-                resultados visibles
+
+                {t(
+                  'restaurants.list.results.visibleResults',
+                )}
               </span>
+
             </section>
 
-            {/* =================================
-                RESTAURANT GRID
-            ================================== */}
-
             <section className="gt-restaurants-grid">
+
               {sortedRestaurants.map(
                 (
                   restaurant,
                   index,
                 ) => (
-                <RestaurantCard
-                  key={
-                    restaurant.id
-                  }
-                  restaurant={
-                    restaurant
-                  }
-                  index={
-                    index
-                  }
-                />
+                  <RestaurantCard
+                    key={
+                      restaurant.id
+                    }
+                    restaurant={
+                      restaurant
+                    }
+                    index={
+                      index
+                    }
+                  />
                 ),
               )}
+
             </section>
 
             {meta?.attribution && (
               <p className="gt-restaurants-attribution">
-                Datos de ubicación:{' '}
+                {t(
+                  'restaurants.list.results.locationData',
+                )}{' '}
 
                 {
                   meta.attribution
                 }
               </p>
             )}
+
           </>
         )}
+
       </div>
+
     </main>
   );
 }
-
-/*
- * =========================================
- * RESTAURANT CARD
- * =========================================
- */
 
 interface RestaurantCardProps {
   restaurant:
@@ -1093,11 +1156,11 @@ function RestaurantCard({
   restaurant,
   index,
 }: RestaurantCardProps) {
-  /*
-   * cuisine puede venir undefined,
-   * por eso siempre usamos un arreglo
-   * seguro.
-   */
+  const {
+    t,
+  } =
+    useTranslation();
+
   const cuisines =
     getRestaurantCuisines(
       restaurant,
@@ -1133,41 +1196,92 @@ function RestaurantCard({
       .links
       ?.maps;
 
+  const typeLabel =
+    formatRestaurantType(
+      restaurant.primaryType,
+    );
+
+  const locationFallback =
+    t(
+      'restaurants.list.card.locationFallback',
+    );
+
   return (
     <article className="gt-restaurant-card">
 
-      {/* =====================================
-          VISUAL
-      ====================================== */}
-
       <div className={`gt-restaurant-card-visual ${visualClass}`}>
+
         <div className="gt-restaurant-visual-pattern" />
+
+        <WishlistHeart
+          item={{
+            key:
+              `restaurant:${restaurant.id}`,
+
+            type:
+              'restaurant',
+
+            title:
+              restaurant.name,
+
+            subtitle:
+              restaurant.address ||
+              locationFallback,
+
+            href:
+              `/restaurants/${restaurant.id}`,
+
+            metadata: {
+              tipo:
+                typeLabel,
+
+              cocina:
+                cuisines.length >
+                0
+                  ? cuisines.join(
+                      ', ',
+                    )
+                  : null,
+
+              sitioWeb:
+                Boolean(
+                  websiteUrl,
+                ),
+
+              mapa:
+                Boolean(
+                  mapsUrl,
+                ),
+            },
+          }}
+        />
 
         <RestaurantIcon />
 
         <span>
-          {formatRestaurantType(
-            restaurant.primaryType,
-          )}
+          {
+            typeLabel
+          }
         </span>
 
         {websiteUrl && (
           <div className="gt-restaurant-web-badge">
-            Sitio web
+            {t(
+              'restaurants.list.card.website',
+            )}
           </div>
         )}
+
       </div>
 
-      {/* =====================================
-          BODY
-      ====================================== */}
-
       <div className="gt-restaurant-card-body">
+
         <div className="gt-restaurant-card-heading">
+
           <span>
-            {formatRestaurantType(
-              restaurant.primaryType,
-            )}
+            {
+              typeLabel
+            }
           </span>
 
           <h3>
@@ -1175,52 +1289,54 @@ function RestaurantCard({
               restaurant.name
             }
           </h3>
-        </div>
 
-        {/* CUISINE */}
+        </div>
 
         {cuisines.length >
           0 && (
           <div className="gt-restaurant-cuisine-chips">
+
             {cuisines.map(
               (
                 cuisineName,
               ) => (
-              <span
-                key={
-                  cuisineName
-                }
-              >
-                {
-                  cuisineName
-                }
-              </span>
+                <span
+                  key={
+                    cuisineName
+                  }
+                >
+                  {
+                    cuisineName
+                  }
+                </span>
               ),
             )}
+
           </div>
         )}
 
-        {/* ADDRESS */}
-
         <div className="gt-restaurant-address">
+
           <LocationIcon />
 
           <span>
             {restaurant.address ||
-              'Ubicación disponible en el mapa'}
+              locationFallback}
           </span>
+
         </div>
 
         <div className="gt-restaurant-card-spacer" />
 
-        {/* ACTIONS */}
-
         <div className="gt-restaurant-card-actions">
+
           <Link
             to={`/restaurants/${restaurant.id}`}
             className="gt-restaurant-detail-button"
           >
-            Ver detalles
+            {t(
+              'restaurants.list.card.viewDetails',
+            )}
 
             <ArrowIcon />
           </Link>
@@ -1233,7 +1349,9 @@ function RestaurantCard({
               target="_blank"
               rel="noopener noreferrer"
               className="gt-restaurant-icon-button"
-              aria-label="Ver en mapa"
+              aria-label={t(
+                'restaurants.list.card.viewMap',
+              )}
             >
               <MapIcon />
             </a>
@@ -1247,22 +1365,21 @@ function RestaurantCard({
               target="_blank"
               rel="noopener noreferrer"
               className="gt-restaurant-icon-button"
-              aria-label="Abrir sitio web"
+              aria-label={t(
+                'restaurants.list.card.openWebsite',
+              )}
             >
               <ExternalIcon />
             </a>
           )}
+
         </div>
+
       </div>
+
     </article>
   );
 }
-
-/*
- * =========================================
- * ICONS
- * =========================================
- */
 
 function RestaurantIcon() {
   return (

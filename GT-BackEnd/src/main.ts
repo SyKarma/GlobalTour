@@ -10,13 +10,17 @@ import { EnvironmentVariables } from './config/env.validation';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.getHttpAdapter().getInstance().set('trust proxy', 1);
   const config = app.get(ConfigService<EnvironmentVariables, true>);
 
   app.setGlobalPrefix('api');
   app.use(helmet());
   app.use(cookieParser());
   app.enableCors({
-    origin: config.get('CORS_ORIGIN', { infer: true }),
+    origin: [
+      'http://localhost:5173',
+      'https://globaltour-six.vercel.app',
+    ],
     credentials: true,
   });
   app.useGlobalPipes(

@@ -1,0 +1,975 @@
+{
+  "language": {
+    "selector": "Language",
+    "spanish": "Spanish",
+    "english": "English",
+    "portuguese": "Portuguese"
+  },
+  "nav": {
+    "explore": "Explore",
+    "flights": "Flights",
+    "hotels": "Hotels",
+    "restaurants": "Restaurants",
+    "cars": "Rental Cars",
+    "wishlist": "Wishlist",
+    "dashboard": "Dashboard",
+    "travelPlan": "Travel Plan"
+  },
+  "common": {
+    "hello": "Hello",
+    "currency": "Currency",
+    "language": "Language",
+    "loading": "Loading...",
+    "searching": "Searching...",
+    "search": "Search",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "details": "View details",
+    "back": "Back",
+    "close": "Close",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "save": "Save",
+    "remove": "Remove",
+    "clear": "Clear",
+    "from": "From",
+    "to": "To",
+    "price": "Price",
+    "destination": "Destination",
+    "date": "Date",
+    "results": "Results",
+    "noResults": "No results found",
+    "continueWithGoogle": "Continue with Google",
+    "logout": "Sign out",
+    "openMenu": "Open menu"
+  },
+  "user": {
+    "wishlist": "My Wishlist",
+    "dashboard": "My Dashboard"
+  },
+  "footer": {
+    "description": "Your complete trip in one place. Compare, discover and organize better experiences.",
+    "explore": "Explore",
+    "home": "Home",
+    "designedFor": "Designed for travelers who want to compare better."
+  },
+  "forms": {
+    "flights": {
+      "origin": "Origin",
+      "originPlaceholder": "Where are you flying from?",
+      "destination": "Destination",
+      "destinationPlaceholder": "Where do you want to go?",
+      "departure": "Departure",
+      "departureAria": "Departure date",
+      "return": "Return",
+      "returnAria": "Return date",
+      "search": "Search flights",
+      "editor": {
+        "closeSearch": "Close search",
+        "modifySearch": "Modify search",
+        "tripType": "Trip type",
+        "roundTrip": "Round trip",
+        "oneWay": "One way",
+        "swapLocations": "Swap origin and destination",
+        "departure": "Departure",
+        "departureAria": "Departure date",
+        "return": "Return",
+        "returnAria": "Return date",
+        "search": "Search"
+      }
+    },
+    "hotels": {
+      "destination": "Destination",
+      "destinationPlaceholder": "Where would you like to stay?",
+      "checkin": "Check-in",
+      "checkinAria": "Check-in date",
+      "checkout": "Check-out",
+      "checkoutAria": "Check-out date",
+      "guests": "Guests",
+      "adultsAria": "Number of adults",
+      "adult": "{{count}} adult",
+      "adult_plural": "{{count}} adults",
+      "search": "Search hotels"
+    },
+    "autocomplete": {
+      "searching": "Searching destinations...",
+      "empty": "No destinations found.",
+      "error": "We couldn't search destinations.",
+      "suggestions": "Suggested destinations"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Your whole trip, all in one place",
+      "titlePrimary": "Your next story",
+      "titleAccent": "starts here.",
+      "description": "Compare flights, find hotels, discover restaurants and organize your transportation in one seamless experience.",
+      "servicesConnected": "connected services",
+      "platform": "platform",
+      "availableToExplore": "ready to explore",
+      "recommended": "Recommended",
+      "nextFlight": "Next flight",
+      "exploreMore": "Explore more",
+      "allInOnePlace": "Everything in one place"
+    },
+    "search": {
+      "restaurants": {
+        "eyebrow": "Discover flavors",
+        "title": "Where would you like to eat?",
+        "description": "Search restaurants by city, cuisine and location.",
+        "button": "Search restaurants"
+      },
+      "cars": {
+        "eyebrow": "Explore at your own pace",
+        "title": "Find transportation at your destination",
+        "description": "Search for rental car agencies and mobility options in the city you are visiting.",
+        "button": "Search rental cars"
+      }
+    },
+    "destinations": {
+      "eyebrow": "Inspiration",
+      "title": "Destinations worth exploring",
+      "description": "Start with some favorite destinations to plan your next adventure.",
+      "exploreFlights": "Explore flights",
+      "from": "from",
+      "exploreDestination": "Explore destination",
+      "countries": {
+        "unitedStates": "United States",
+        "spain": "Spain",
+        "mexico": "Mexico",
+        "colombia": "Colombia"
+      }
+    },
+    "experiences": {
+      "eyebrow": "One platform",
+      "title": "Everything you need to travel",
+      "description": "Every stage of your trip connected through one simple experience.",
+      "items": {
+        "flights": {
+          "title": "Flights",
+          "description": "Find routes and compare options for your next destination.",
+          "eyebrow": "Explore the world"
+        },
+        "hotels": {
+          "title": "Hotels",
+          "description": "Find the right place to stay and organize every night of your trip.",
+          "eyebrow": "Rest better"
+        },
+        "restaurants": {
+          "title": "Restaurants",
+          "description": "Discover places to eat near your destinations.",
+          "eyebrow": "Local flavors"
+        },
+        "cars": {
+          "title": "Rental Cars",
+          "description": "Find mobility options and explore at your own pace.",
+          "eyebrow": "Move freely"
+        }
+      }
+    },
+    "value": {
+      "eyebrow": "Travel can be simpler",
+      "titleLine1": "Fewer tabs.",
+      "titleLine2": "More travel.",
+      "description": "GlobalTour brings together the information you need so you can focus on choosing, comparing and enjoying your trip.",
+      "dashboardButton": "View my dashboard",
+      "features": {
+        "centralized": {
+          "title": "Centralized",
+          "description": "Flights, accommodations, food and mobility all in one place."
+        },
+        "context": {
+          "title": "More context",
+          "description": "Compare different options before making a decision."
+        },
+        "activity": {
+          "title": "Your activity",
+          "description": "View trends and searches from your dashboard."
+        }
+      }
+    }
+  },
+  "flights": {
+    "common": {
+      "return": "Return"
+    },
+    "hero": {
+      "eyebrow": "GLOBALTOUR · FLIGHTS",
+      "title": "Find your next flight",
+      "routeDescription": "Compare options, duration, stops and prices to choose the flight that best fits your trip.",
+      "exploreDescription": "Search routes, compare alternatives and find the best way to reach your next destination.",
+      "imageAlt": "View from an airplane window"
+    },
+    "editor": {
+      "eyebrow": "Modify your trip",
+      "title": "Search another route or change the dates"
+    },
+    "start": {
+      "eyebrow": "PLAN YOUR ROUTE",
+      "title": "Where do you want to travel?",
+      "description": "Select an origin, destination and your dates to start comparing flights.",
+      "search": "Search flights",
+      "compareTitle": "Compare",
+      "compareText": "different options",
+      "filterTitle": "Filter",
+      "filterText": "by stops and airline",
+      "chooseTitle": "Choose",
+      "chooseText": "the option you prefer"
+    },
+    "loading": {
+      "title": "Searching for the best options",
+      "description": "We are comparing available flights for your trip."
+    },
+    "errors": {
+      "loadTitle": "We couldn't load the flights",
+      "loadMessage": "We couldn't retrieve flights at this time.",
+      "otherSearch": "Make another search"
+    },
+    "empty": {
+      "title": "No flights found",
+      "description": "Try changing the dates or selecting another route.",
+      "otherRoute": "Search another route"
+    },
+    "results": {
+      "eyebrow": "AVAILABLE OPTIONS",
+      "title": "Find the flight that best fits you",
+      "optionFoundOne": "option found",
+      "optionFoundMany": "options found",
+      "cached": "Temporarily cached data",
+      "from": "From",
+      "bestPriceFound": "Best price found",
+      "directFlights": "Direct flights",
+      "nonstop": "Nonstop",
+      "fastest": "Fastest",
+      "shortestDuration": "Shortest available duration",
+      "visibleResults": "visible results"
+    },
+    "sort": {
+      "recommended": "Recommended",
+      "cheapest": "Cheapest",
+      "fastest": "Fastest",
+      "lowestPrice": "Lowest price",
+      "highestPrice": "Highest price",
+      "shortestDuration": "Shortest duration"
+    },
+    "filters": {
+      "eyebrow": "FILTERS",
+      "title": "Customize your search",
+      "clear": "Clear",
+      "clearFilters": "Clear filters",
+      "stops": "Stops",
+      "allFlights": "All flights",
+      "directOnly": "Direct only",
+      "withStops": "With stops",
+      "airline": "Airline",
+      "allAirlines": "All airlines",
+      "sortBy": "Sort by",
+      "trustTitle": "Compare with confidence",
+      "trustDescription": "GlobalTour centralizes options to help you decide.",
+      "noResultsTitle": "No flights match these filters",
+      "noResultsDescription": "Change the airline or stops filter."
+    },
+    "card": {
+      "bestPrice": "Best price",
+      "direct": "Direct",
+      "option": "Option",
+      "flight": "Flight",
+      "perTraveler": "per traveler",
+      "viewOffer": "View offer",
+      "unavailable": "Unavailable",
+      "priceDisclaimer": "Price subject to provider availability"
+    },
+    "format": {
+      "durationUnavailable": "Duration unavailable",
+      "direct": "Direct",
+      "oneStop": "1 stop",
+      "multipleStops": "{{count}} stops",
+      "airline": "Airline"
+    },
+    "fallback": {
+      "oneWay": {
+        "title": "We couldn't find the exact round trip.",
+        "withPeriod": "Showing available one-way options for {{period}}.",
+        "default": "Showing available one-way options."
+      },
+      "oneWayMonth": {
+        "title": "We couldn't find exact availability for the requested trip.",
+        "withPeriod": "Showing available one-way options during {{period}}.",
+        "default": "Showing alternative one-way options."
+      },
+      "calendar": {
+        "title": "We couldn't find flights for the exact dates.",
+        "withPeriod": "Showing available options during {{period}}.",
+        "default": "Showing available options on nearby dates."
+      }
+    }
+  },
+  "hotels": {
+  "list": {
+    "hero": {
+      "eyebrow": "GLOBALTOUR · HOTELS",
+      "title": "Find your stay",
+      "cityTitle": "Find a place to stay in {{city}}",
+      "description": "Search and compare accommodations to find the ideal place for your next trip.",
+      "badges": {
+        "stays": "Stays",
+        "destinations": "Destinations",
+        "explore": "Explore options"
+      }
+    },
+    "start": {
+      "eyebrow": "PLAN YOUR STAY",
+      "title": "Where would you like to stay?",
+      "description": "Select a destination, your stay dates and the number of guests to get started."
+    },
+    "loading": {
+      "title": "Searching for accommodations...",
+      "description": "We are checking available options in {{city}}."
+    },
+    "errors": {
+      "title": "We couldn't complete the search",
+      "loadMessage": "We couldn't retrieve accommodations at this time."
+    },
+    "empty": {
+      "title": "No accommodations found",
+      "description": "Try another destination or try again later."
+    },
+    "results": {
+      "eyebrow": "ACCOMMODATIONS FOUND",
+      "oneFound": "accommodation found",
+      "manyFound": "accommodations found",
+      "adult": "adult",
+      "adults": "adults",
+      "cached": "Temporarily cached data"
+    },
+    "card": {
+      "noImage": "No image available",
+      "review": "review",
+      "reviews": "reviews",
+      "viewMap": "View on map",
+      "viewDetails": "View details"
+    }
+  },
+  "detail": {
+    "common": {
+      "eyebrow": "ACCOMMODATION",
+      "brandEyebrow": "GLOBALTOUR · HOTELS",
+      "back": "Back to results",
+      "undefinedDate": "Not defined",
+      "locationUnavailable": "Location unavailable",
+      "rating": "Rating",
+      "review": "review",
+      "reviews": "reviews",
+      "viewMap": "View map",
+      "cachedInfo": "Showing temporarily cached information."
+    },
+    "errors": {
+      "title": "We couldn't load this accommodation",
+      "missingId": "The hotel identifier was not found.",
+      "loadMessage": "We couldn't retrieve the accommodation information.",
+      "notAvailable": "The requested accommodation is not available.",
+      "ratesMessage": "We couldn't retrieve rates for the selected dates."
+    },
+    "about": {
+      "eyebrow": "THE ACCOMMODATION",
+      "title": "About {{name}}",
+      "noDescription": "This accommodation does not have a description available.",
+      "chain": "Hotel chain"
+    },
+    "amenities": {
+      "eyebrow": "AMENITIES",
+      "title": "Accommodation amenities",
+      "noInfo": "No amenities information is available."
+    },
+    "stay": {
+      "eyebrow": "YOUR STAY",
+      "title": "Trip summary",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "guests": "Guests",
+      "adult": "adult",
+      "adults": "adults",
+      "currency": "Currency",
+      "noDates": "Search with dates to check rates."
+    },
+    "rates": {
+      "eyebrow": "AVAILABILITY",
+      "title": "Rooms and rates",
+      "description": "Check the available options for your selected dates.",
+      "cached": "Cached rates",
+      "selectDatesTitle": "Select your dates",
+      "selectDatesText": "Return to Hotels and search with check-in and check-out dates.",
+      "errorTitle": "We couldn't check the rates",
+      "emptyTitle": "No availability",
+      "emptyText": "We couldn't find available rooms for these dates.",
+      "roomEyebrow": "ROOM",
+      "roomFallback": "Room",
+      "upTo": "Up to",
+      "person": "person",
+      "people": "people",
+      "indicativePrice": "Indicative price"
+    }
+  }
+},
+"restaurants": {
+  "common": {
+    "types": {
+      "gastronomy": "Food & Dining",
+      "restaurant": "Restaurant",
+      "cafe": "Café",
+      "fastFood": "Fast food"
+    }
+  },
+  "search": {
+    "city": "City",
+    "cityPlaceholder": "E.g. Nicoya",
+    "country": "Country",
+    "countryAria": "Country ISO code",
+    "searching": "Searching...",
+    "button": "Search restaurants",
+    "placeType": "Place type",
+    "types": {
+      "all": "All"
+    },
+    "cuisine": "Cuisine",
+    "cuisinePlaceholder": "E.g. Italian, Japanese...",
+    "area": "Search area",
+    "websiteOnly": "Only places with a website"
+  },
+  "list": {
+    "hero": {
+      "eyebrow": "GLOBALTOUR · RESTAURANTS",
+      "title": "Discover the flavor of every destination",
+      "cityTitle": "Flavors to discover in {{city}}",
+      "description": "Explore restaurants, cafés and dining options near your next destination.",
+      "restaurants": "Restaurants",
+      "cafes": "Cafés",
+      "localCuisine": "Local cuisine"
+    },
+    "search": {
+      "eyebrow": "EXPLORE FOOD & DINING",
+      "title": "Find places around your destination",
+      "radius": "Radius"
+    },
+    "start": {
+      "eyebrow": "EXPLORE THROUGH FOOD",
+      "title": "Every city has something different to taste",
+      "description": "Search for a city to discover restaurants, cafés and flavors available in the area.",
+      "cards": {
+        "eat": {
+          "eyebrow": "Eat",
+          "title": "Restaurants",
+          "description": "Discover places to enjoy a meal at your destination."
+        },
+        "cafe": {
+          "eyebrow": "Take a break",
+          "title": "Cafés",
+          "description": "Find cafés and places to take a break."
+        },
+        "flavors": {
+          "eyebrow": "Discover",
+          "title": "Flavors",
+          "description": "Filter by cuisine and find something different."
+        }
+      }
+    },
+    "loading": {
+      "title": "Exploring {{city}}",
+      "description": "We are searching for dining options in the area."
+    },
+    "errors": {
+      "title": "We couldn't complete the search",
+      "loadMessage": "We couldn't retrieve restaurants at this time."
+    },
+    "empty": {
+      "title": "No places found",
+      "description": "Try increasing the search radius or removing some filters."
+    },
+    "results": {
+      "eyebrow": "PLACES FOUND",
+      "onePlace": "place to explore",
+      "manyPlaces": "places to explore",
+      "cached": "Cached data",
+      "matchesBeforeLimit": "matches before the limit",
+      "visibleResults": "visible results",
+      "locationData": "Location data:"
+    },
+    "insights": {
+      "results": "Results",
+      "website": "With website",
+      "map": "With map",
+      "cuisines": "Cuisines detected"
+    },
+    "sort": {
+      "recommended": "Recommended",
+      "cuisineInfo": "More dining information"
+    },
+    "card": {
+      "locationFallback": "Location available on the map",
+      "website": "Website",
+      "viewDetails": "View details",
+      "viewMap": "View on map",
+      "openWebsite": "Open website"
+    }
+  },
+  "detail": {
+    "common": {
+      "eyebrow": "RESTAURANTS",
+      "back": "Back to results"
+    },
+    "errors": {
+      "title": "We couldn't find this restaurant",
+      "missingId": "The restaurant identifier was not found.",
+      "loadMessage": "We couldn't load this restaurant's information.",
+      "unavailable": "This place is not available."
+    },
+    "hero": {
+      "eyebrow": "GLOBALTOUR · FOOD & DINING",
+      "addressUnavailable": "Address unavailable",
+      "viewMap": "View on map",
+      "website": "Website",
+      "call": "Call"
+    },
+    "about": {
+      "eyebrow": "ABOUT THIS PLACE",
+      "title": "About {{name}}"
+    },
+    "hours": {
+      "eyebrow": "HOURS",
+      "title": "Published hours"
+    },
+    "limited": {
+      "title": "Limited information",
+      "description": "OpenStreetMap does not currently provide an additional description or opening hours for this establishment."
+    },
+    "cuisine": {
+      "eyebrow": "CUISINE",
+      "title": "Available cuisine"
+    },
+    "info": {
+      "eyebrow": "INFORMATION",
+      "title": "Place information",
+      "type": "Type",
+      "address": "Address",
+      "coordinates": "Coordinates",
+      "classification": "Classification",
+      "unavailable": "Unavailable"
+    },
+    "contact": {
+      "eyebrow": "CONTACT",
+      "title": "Contact this place",
+      "phone": "Phone",
+      "internationalPhone": "International phone"
+    },
+    "source": {
+      "label": "Source"
+    }
+  }
+},
+"cars": {
+  "common": {
+    "types": {
+      "mobility": "Mobility",
+      "carRental": "Rental Cars",
+      "carSharing": "Car sharing"
+    }
+  },
+  "search": {
+    "city": "City",
+    "cityPlaceholder": "E.g. Liberia",
+    "country": "Country",
+    "countryAria": "Country ISO code",
+    "searching": "Searching...",
+    "button": "Search mobility",
+    "service": "Service",
+    "services": {
+      "all": "All"
+    },
+    "company": "Company",
+    "companyPlaceholder": "E.g. Adobe, Hertz...",
+    "area": "Search area",
+    "websiteOnly": "Only with website"
+  },
+  "list": {
+    "hero": {
+      "eyebrow": "GLOBALTOUR · RENTAL CARS",
+      "title": "Your destination. Your route. Your freedom.",
+      "cityTitle": "Explore {{city}} your way",
+      "description": "Find rental offices and mobility services near your destination and keep exploring at your own pace.",
+      "realLocations": "Real locations"
+    },
+    "search": {
+      "eyebrow": "SEARCH MOBILITY",
+      "title": "Find options near your destination",
+      "radius": "Radius"
+    },
+    "start": {
+      "eyebrow": "EXPLORE WITHOUT LIMITS",
+      "title": "Find an option to follow your own path",
+      "description": "Search for a city and discover rental offices and mobility alternatives available nearby.",
+      "cards": {
+        "rental": {
+          "eyebrow": "Freedom",
+          "description": "Find rental companies and offices near your destination."
+        },
+        "sharing": {
+          "eyebrow": "Alternatives",
+          "description": "Explore shared mobility services when available."
+        },
+        "location": {
+          "eyebrow": "Location",
+          "title": "Find the location",
+          "description": "Open the provider's location directly on the map."
+        }
+      }
+    },
+    "loading": {
+      "title": "Searching for mobility in {{city}}",
+      "description": "We are exploring providers around your destination."
+    },
+    "errors": {
+      "title": "We couldn't complete the search",
+      "loadMessage": "We couldn't search for mobility options at this time."
+    },
+    "empty": {
+      "title": "No nearby options found",
+      "description": "Try increasing the radius, removing filters or searching another city."
+    },
+    "results": {
+      "eyebrow": "MOBILITY OPTIONS FOUND",
+      "radiusDescription": "Options found within a {{radius}} radius",
+      "cached": "Cached data",
+      "matches": "matches",
+      "visibleResults": "visible results"
+    },
+    "insights": {
+      "results": "Results",
+      "brands": "Brands detected",
+      "website": "With website",
+      "map": "With map"
+    },
+    "sharing": {
+      "title": "We also found car sharing",
+      "one": "option is a shared mobility service.",
+      "many": "options are shared mobility services."
+    },
+    "sort": {
+      "recommended": "Recommended",
+      "information": "More information"
+    },
+    "disclaimer": {
+      "text": "GlobalTour displays rental and mobility service locations. Prices, availability and reservations must be checked directly with the provider."
+    },
+    "card": {
+      "serviceFallback": "Mobility service",
+      "addressUnavailable": "Address unavailable",
+      "website": "Website",
+      "location": "Location",
+      "moreInformation": "More information",
+      "checkProvider": "Check with the provider",
+      "viewDetails": "View details",
+      "map": "Map",
+      "web": "Web",
+      "viewMapAria": "View location on map",
+      "openWebsiteAria": "Open website"
+    }
+  },
+  "detail": {
+    "common": {
+      "eyebrow": "RENTAL CARS",
+      "back": "Back to results",
+      "serviceFallback": "Mobility service"
+    },
+    "errors": {
+      "title": "We couldn't find this location",
+      "missingId": "The location identifier was not found.",
+      "loadMessage": "We couldn't load the information for this location.",
+      "unavailable": "The requested location is not available."
+    },
+    "hero": {
+      "eyebrow": "GLOBALTOUR · MOBILITY",
+      "addressUnavailable": "Address unavailable",
+      "viewMap": "View map",
+      "website": "Website",
+      "call": "Call"
+    },
+    "about": {
+      "eyebrow": "THE PROVIDER",
+      "title": "About this location"
+    },
+    "hours": {
+      "eyebrow": "HOURS",
+      "title": "Published hours"
+    },
+    "notice": {
+      "eyebrow": "IMPORTANT",
+      "title": "Check directly with the provider",
+      "description": "GlobalTour displays rental and mobility locations. Prices, available vehicles and reservations must be verified directly with the company."
+    },
+    "info": {
+      "eyebrow": "INFORMATION",
+      "title": "Provider information",
+      "service": "Service",
+      "brand": "Company / Brand",
+      "address": "Address",
+      "classification": "Classification",
+      "coordinates": "Coordinates",
+      "unavailable": "Unavailable"
+    },
+    "contact": {
+      "eyebrow": "CONTACT",
+      "title": "Contact the provider",
+      "phone": "Phone",
+      "internationalPhone": "International phone"
+    },
+    "source": {
+      "label": "Source"
+    }
+  }
+},
+"wishlist": {
+  "loading": "Loading your favorites...",
+  "guest": {
+    "eyebrow": "GLOBALTOUR · WISHLIST",
+    "title": "Save your favorites",
+    "description": "Sign in to save flights, hotels, restaurants and mobility options you want to review later."
+  },
+  "hero": {
+    "eyebrow": "GLOBALTOUR · YOUR FAVORITES",
+    "title": "My Wishlist",
+    "description": "Save the options you like most and compare them when you're ready to organize your trip.",
+    "savedOne": "saved item",
+    "savedMany": "saved items"
+  },
+  "empty": {
+    "eyebrow": "YOUR LIST IS EMPTY",
+    "title": "Start saving your favorites",
+    "description": "When you find something you like, tap the heart to add it here.",
+    "flights": "Explore flights",
+    "hotels": "View hotels",
+    "restaurants": "Restaurants",
+    "cars": "Rental Cars"
+  },
+  "card": {
+    "remove": "Remove from favorites",
+    "removeAria": "Remove {{title}} from favorites",
+    "saved": "Saved",
+    "viewDetail": "View details"
+  },
+  "heart": {
+    "save": "Save to favorites",
+    "remove": "Remove from favorites",
+    "saveAria": "Save {{title}} to favorites",
+    "removeAria": "Remove {{title}} from favorites"
+  },
+  "types": {
+    "flight": "Flight",
+    "hotel": "Hotel",
+    "restaurant": "Restaurant",
+    "car": "Rental Car",
+    "destination": "Destination"
+  },
+  "metadata": {
+    "type": "Type",
+    "brand": "Brand",
+    "website": "Website",
+    "map": "Map",
+    "city": "City",
+    "country": "Country",
+    "stars": "Stars",
+    "rating": "Rating",
+    "chain": "Chain",
+    "cuisine": "Cuisine",
+    "airline": "Airline",
+    "flightNumber": "Flight number",
+    "departure": "Departure",
+    "duration": "Duration",
+    "stops": "Stops",
+    "price": "Price",
+    "yes": "Yes",
+    "no": "No"
+  }
+},
+"dashboard": {
+  "loading": "Loading analytics dashboard...",
+  "errors": {
+    "title": "We couldn't load the analytics dashboard",
+    "loadMessage": "We couldn't load the dashboard information."
+  },
+  "common": {
+    "searches": "Searches",
+    "noData": "No data"
+  },
+  "sidebar": {
+    "analytics": "Analytics",
+    "dashboard": "Dashboard",
+    "searches": "Searches",
+    "destinations": "Destinations",
+    "services": "Services",
+    "routes": "Routes",
+    "trends": "Trends"
+  },
+  "period": {
+    "current": "Current period",
+    "label": "Period",
+    "lastDays": "Last {{count}} days",
+    "last7": "Last 7 days",
+    "last30": "Last 30 days",
+    "last90": "Last 90 days"
+  },
+  "header": {
+    "title": "Analytics Dashboard",
+    "description": "Search behavior and trends across GlobalTour."
+  },
+  "kpis": {
+    "totalSearches": "Total searches",
+    "selectedPeriod": "In the selected period",
+    "uniqueOrigins": "Unique origins",
+    "originCities": "Departure cities searched",
+    "uniqueDestinations": "Unique destinations",
+    "differentDestinations": "Different destinations searched",
+    "mainRoute": "Top route",
+    "routeSearches": "{{count}} searches",
+    "noRoutes": "No routes have been recorded yet"
+  },
+  "searchTypes": {
+    "flights": "Flights",
+    "hotels": "Hotels",
+    "currency": "Currencies",
+    "destinations": "Destinations",
+    "restaurants": "Restaurants",
+    "cars": "Rental Cars"
+  },
+  "charts": {
+    "searchTypes": {
+      "title": "Searches by type",
+      "description": "Distribution of module usage."
+    },
+    "destinations": {
+      "title": "Most searched destinations",
+      "description": "Cities generating the most user interest."
+    },
+    "trend": {
+      "title": "Search trends",
+      "description": "Number of searches performed each day."
+    },
+    "restaurantCities": {
+      "title": "Restaurants by city",
+      "description": "{{count}} restaurant searches recorded."
+    },
+    "carCities": {
+      "title": "Rental Cars by city",
+      "description": "{{count}} rental car searches recorded."
+    },
+    "routes": {
+      "title": "Popular routes",
+      "description": "Routes with the highest number of searches."
+    },
+    "countries": {
+      "title": "Most searched countries",
+      "description": "Countries receiving the most interest."
+    }
+  },
+  "filters": {
+    "cuisines": {
+      "title": "Most searched cuisines",
+      "description": "Dining preferences used as search filters."
+    },
+    "restaurantTypes": {
+      "title": "Restaurant types",
+      "description": "Most searched types of dining establishments."
+    },
+    "carTypes": {
+      "title": "Mobility types",
+      "description": "Most frequently used Rental Car filters."
+    }
+  },
+  "empty": {
+    "title": "Not enough data",
+    "description": "Charts will appear once searches are recorded."
+  }
+},
+"travelPlan": {
+  "form": {
+    "hero": {
+      "titleLine1": "Plan your trip",
+      "titleLine2": "all in one place",
+      "description": "Find your flight and organize the services you need to enjoy your trip."
+    },
+    "search": {
+      "eyebrow": "TRAVEL PLAN",
+      "title": "Search for your next adventure",
+      "button": "Search flights"
+    },
+    "tripType": {
+      "roundTrip": "Round trip",
+      "oneWay": "One way"
+    },
+    "fields": {
+      "origin": "ORIGIN",
+      "destination": "DESTINATION",
+      "departure": "DEPARTURE",
+      "return": "RETURN",
+      "departureAria": "Departure date",
+      "returnAria": "Return date",
+      "swap": "Swap origin and destination"
+    }
+  },
+  "status": {
+    "preparingTitle": "We're preparing your trip...",
+    "preparingDescription": "We're identifying your destination and preparing the searches."
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "destination": "We couldn't retrieve the selected destination. Please try again."
+  },
+  "sections": {
+    "flights": {
+      "title": "Available flights",
+      "description": "Choose the option that best fits your trip.",
+      "loading": "Searching for flights...",
+      "empty": "We couldn't find flights for this search."
+    },
+    "hotels": {
+      "title": "Hotels for your trip",
+      "oneFound": "accommodation found",
+      "manyFound": "accommodations found",
+      "loading": "Searching for hotels...",
+      "empty": "We couldn't find accommodations for this destination.",
+      "availability": "View availability"
+    },
+    "restaurants": {
+      "title": "Places to eat",
+      "description": "Discover restaurants and dining options available at your destination.",
+      "loading": "Searching for restaurants...",
+      "empty": "We couldn't find restaurants for this destination."
+    },
+    "cars": {
+      "title": "Mobility at your destination",
+      "description": "Rental car and mobility options.",
+      "loading": "Searching for transportation options...",
+      "empty": "We couldn't find rental car options for this destination."
+    }
+  },
+  "summary": {
+    "title": "Your travel plan",
+    "description": "Everything we found to help you organize your trip in one place.",
+    "flight": "Flight",
+    "hotels": "Hotels",
+    "restaurants": "Restaurants",
+    "cars": "Rental Cars",
+    "notSelected": "Not selected"
+  }
+},
+"currencySelector": {
+  "label": "Currency",
+  "selectAria": "Select currency",
+  "searchPlaceholder": "Search currency...",
+  "searchAria": "Search currency",
+  "availableAria": "Available currencies",
+  "noResults": "No currencies found",
+  "errors": {
+    "loadCurrencies": "We couldn't load the available currencies."
+  }
+}
+}

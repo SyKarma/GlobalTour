@@ -15,20 +15,23 @@ import NotFoundPage from '../pages/NotFoundPage';
 import RestaurantsPage from '../pages/RestaurantsPage';
 import RestaurantDetailPage from '../pages/RestaurantDetailPage';
 import CarDetailPage from '../pages/CarDetailPage';
+import WishlistPage from '../pages/WishlistPage';
+import TravelPlanPage from '../pages/TravelPlanPage';
 
 function AppRouter() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
+
         <Route
           path="/"
           element={<HomePage />}
         />
 
         <Route
-  path="/restaurants"
-  element={<RestaurantsPage />}
-/>
+          path="/restaurants"
+          element={<RestaurantsPage />}
+        />
 
         <Route
           path="/restaurants/:id"
@@ -56,19 +59,30 @@ function AppRouter() {
         />
 
         <Route
+          path="/cars/:id"
+          element={<CarDetailPage />}
+        />
+
+        <Route
           path="/dashboard"
           element={<DashboardPage />}
         />
 
         <Route
-          path="/cars/:id"
-          element={<CarDetailPage />}
+          path="/wishlist"
+          element={<WishlistPage />}
+        />
+
+        <Route
+          path="/travel-plan"
+          element={<TravelPlanPage />}
         />
 
         <Route
           path="*"
           element={<NotFoundPage />}
         />
+
       </Route>
     </Routes>
   );

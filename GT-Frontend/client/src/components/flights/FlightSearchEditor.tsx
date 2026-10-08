@@ -3,7 +3,9 @@ import {
   useState,
   type FormEvent,
 } from 'react';
+
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
 import { getDestinationByIata } from '../../services/destinations.service';
@@ -28,6 +30,8 @@ function FlightSearchEditor({
 }: FlightSearchEditorProps) {
   const navigate = useNavigate();
 
+  const { t } = useTranslation();
+
   const { selectedCurrency } = useCurrency();
 
   const [isOpen, setIsOpen] =
@@ -43,10 +47,14 @@ function FlightSearchEditor({
     useState<Destination | null>(null);
 
   const [departureDate, setDepartureDate] =
-    useState(initialDepartureAt || '');
+    useState(
+      initialDepartureAt || '',
+    );
 
   const [returnDate, setReturnDate] =
-    useState(initialReturnAt || '');
+    useState(
+      initialReturnAt || '',
+    );
 
   const [tripType, setTripType] =
     useState<TripType>(
@@ -58,48 +66,52 @@ function FlightSearchEditor({
   useEffect(() => {
     let isCancelled = false;
 
-    const loadDestinations = async () => {
-      try {
-        setIsInitializing(true);
+    const loadDestinations =
+      async () => {
+        try {
+          setIsInitializing(true);
 
-        const [
-          originDestination,
-          destinationDestination,
-        ] = await Promise.all([
-          getDestinationByIata(
-            initialOriginIata,
-          ),
-          getDestinationByIata(
-            initialDestinationIata,
-          ),
-        ]);
+          const [
+            originDestination,
+            destinationDestination,
+          ] = await Promise.all([
+            getDestinationByIata(
+              initialOriginIata,
+            ),
 
-        if (isCancelled) {
-          return;
+            getDestinationByIata(
+              initialDestinationIata,
+            ),
+          ]);
+
+          if (isCancelled) {
+            return;
+          }
+
+          setOrigin(
+            originDestination,
+          );
+
+          setDestination(
+            destinationDestination,
+          );
+        } catch (error) {
+          if (isCancelled) {
+            return;
+          }
+
+          console.error(
+            'Error loading search destinations:',
+            error,
+          );
+        } finally {
+          if (!isCancelled) {
+            setIsInitializing(
+              false,
+            );
+          }
         }
-
-        setOrigin(
-          originDestination,
-        );
-
-        setDestination(
-          destinationDestination,
-        );
-      } catch (error) {
-        if (isCancelled) {
-          return;
-        }
-
-        console.error(
-          'Error cargando los destinos de la búsqueda:',
-          error,
-        );
-      } finally {
-        if (!isCancelled) {
-          setIsInitializing(false);
-        }
-      }
-    };
+      };
 
     void loadDestinations();
 
@@ -116,33 +128,48 @@ function FlightSearchEditor({
   ) => {
     setTripType(value);
 
-    if (value === 'one-way') {
-      setReturnDate('');
-    }
-  };
-
-  const handleDepartureDateChange = (
-    value: string,
-  ) => {
-    setDepartureDate(value);
-
     if (
-      returnDate &&
-      returnDate < value
+      value ===
+      'one-way'
     ) {
       setReturnDate('');
     }
   };
 
-  const handleSwapLocations = () => {
-    const previousOrigin = origin;
+  const handleDepartureDateChange =
+    (
+      value: string,
+    ) => {
+      setDepartureDate(
+        value,
+      );
 
-    setOrigin(destination);
-    setDestination(previousOrigin);
-  };
+      if (
+        returnDate &&
+        returnDate <
+          value
+      ) {
+        setReturnDate('');
+      }
+    };
+
+  const handleSwapLocations =
+    () => {
+      const previousOrigin =
+        origin;
+
+      setOrigin(
+        destination,
+      );
+
+      setDestination(
+        previousOrigin,
+      );
+    };
 
   const handleSubmit = (
-    event: FormEvent<HTMLFormElement>,
+    event:
+      FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
 
@@ -155,7 +182,8 @@ function FlightSearchEditor({
     }
 
     if (
-      tripType === 'round-trip' &&
+      tripType ===
+        'round-trip' &&
       !returnDate
     ) {
       return;
@@ -177,7 +205,8 @@ function FlightSearchEditor({
       });
 
     if (
-      tripType === 'round-trip' &&
+      tripType ===
+        'round-trip' &&
       returnDate
     ) {
       params.set(
@@ -199,12 +228,14 @@ function FlightSearchEditor({
     !destination ||
     !departureDate ||
     (
-      tripType === 'round-trip' &&
+      tripType ===
+        'round-trip' &&
       !returnDate
     );
 
   return (
     <section className="flight-search-editor">
+
       <button
         type="button"
         className="flight-search-edit-button"
@@ -216,20 +247,34 @@ function FlightSearchEditor({
         }
       >
         {isOpen
-          ? 'Cerrar búsqueda'
-          : 'Modificar búsqueda'}
+          ? t(
+              'forms.flights.editor.closeSearch',
+            )
+          : t(
+              'forms.flights.editor.modifySearch',
+            )}
       </button>
 
       {isOpen && (
         <form
           className="flight-search-edit-form"
-          onSubmit={handleSubmit}
+          onSubmit={
+            handleSubmit
+          }
         >
+
           <div className="flight-search-edit-options">
+
             <select
-              value={tripType}
-              aria-label="Tipo de viaje"
-              onChange={(event) =>
+              value={
+                tripType
+              }
+              aria-label={t(
+                'forms.flights.editor.tripType',
+              )}
+              onChange={(
+                event,
+              ) =>
                 handleTripTypeChange(
                   event.target
                     .value as TripType,
@@ -237,21 +282,35 @@ function FlightSearchEditor({
               }
             >
               <option value="round-trip">
-                Ida y vuelta
+                {t(
+                  'forms.flights.editor.roundTrip',
+                )}
               </option>
 
               <option value="one-way">
-                Solo ida
+                {t(
+                  'forms.flights.editor.oneWay',
+                )}
               </option>
             </select>
+
           </div>
 
           <div className="flight-search-edit-fields">
+
             <DestinationAutocomplete
-              label="Origen"
-              placeholder="¿Desde dónde viajas?"
-              value={origin}
-              onChange={setOrigin}
+              label={t(
+                'forms.flights.origin',
+              )}
+              placeholder={t(
+                'forms.flights.originPlaceholder',
+              )}
+              value={
+                origin
+              }
+              onChange={
+                setOrigin
+              }
               excludeIata={
                 destination?.cityIata
               }
@@ -260,7 +319,9 @@ function FlightSearchEditor({
             <button
               type="button"
               className="swap-button"
-              aria-label="Intercambiar origen y destino"
+              aria-label={t(
+                'forms.flights.editor.swapLocations',
+              )}
               onClick={
                 handleSwapLocations
               }
@@ -273,18 +334,29 @@ function FlightSearchEditor({
             </button>
 
             <DestinationAutocomplete
-              label="Destino"
-              placeholder="¿A dónde quieres ir?"
-              value={destination}
-              onChange={setDestination}
+              label={t(
+                'forms.flights.destination',
+              )}
+              placeholder={t(
+                'forms.flights.destinationPlaceholder',
+              )}
+              value={
+                destination
+              }
+              onChange={
+                setDestination
+              }
               excludeIata={
                 origin?.cityIata
               }
             />
 
             <label className="search-box search-date">
+
               <span>
-                Salida
+                {t(
+                  'forms.flights.editor.departure',
+                )}
               </span>
 
               <input
@@ -292,20 +364,29 @@ function FlightSearchEditor({
                 value={
                   departureDate
                 }
-                aria-label="Fecha de salida"
-                onChange={(event) =>
+                aria-label={t(
+                  'forms.flights.editor.departureAria',
+                )}
+                onChange={(
+                  event,
+                ) =>
                   handleDepartureDateChange(
-                    event.target.value,
+                    event.target
+                      .value,
                   )
                 }
               />
+
             </label>
 
             {tripType ===
               'round-trip' && (
               <label className="search-box search-date">
+
                 <span>
-                  Regreso
+                  {t(
+                    'forms.flights.editor.return',
+                  )}
                 </span>
 
                 <input
@@ -317,13 +398,19 @@ function FlightSearchEditor({
                     departureDate ||
                     undefined
                   }
-                  aria-label="Fecha de regreso"
-                  onChange={(event) =>
+                  aria-label={t(
+                    'forms.flights.editor.returnAria',
+                  )}
+                  onChange={(
+                    event,
+                  ) =>
                     setReturnDate(
-                      event.target.value,
+                      event.target
+                        .value,
                     )
                   }
                 />
+
               </label>
             )}
 
@@ -334,11 +421,15 @@ function FlightSearchEditor({
                 isSearchDisabled
               }
             >
-              Buscar
+              {t(
+                'forms.flights.editor.search',
+              )}
             </button>
+
           </div>
         </form>
       )}
+
     </section>
   );
 }
