@@ -50,7 +50,7 @@ export interface HotelRate {
 }
 
 export interface HotelSearchParams {
-  countryCode: string;
+  countryCode?: string;
   cityName: string;
   limit?: number;
 }
@@ -60,6 +60,9 @@ export interface HotelSearchMeta {
   stale: boolean;
   unavailable: boolean;
   total: number;
+  cityName?: string;
+  countryCode?: string | null;
+  countryName?: string | null;
   disclaimer: string;
 }
 
@@ -105,4 +108,4 @@ export interface HotelRatesMeta {
 export interface HotelRatesResponse {
   data: HotelRatesData;
   meta: HotelRatesMeta;
-}
+}

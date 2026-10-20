@@ -1,7 +1,13 @@
 import AppRouter from './routes/AppRouter';
+import SelectEnhancer from './components/common/SelectEnhancer';
 
 function App() {
-  return <AppRouter />;
+  return (
+    <>
+      <AppRouter />
+      <SelectEnhancer />
+    </>
+  );
 }
 
-export default App;
+export default App;

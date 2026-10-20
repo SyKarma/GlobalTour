@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -15,8 +16,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { User } from '../database/entities/user.entity';
+import { AUTH_RETURN_COOKIE_NAME } from './auth.constants';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { GoogleAuthGuard } from './google-auth.guard';
@@ -45,12 +47,20 @@ export class AuthController {
   @ApiOperation({
     summary: 'Google OAuth callback',
     description:
-      'Sets an httpOnly JWT cookie and redirects to FRONTEND_URL/?auth=success.',
+      'Sets an httpOnly JWT cookie and redirects back to the page the login started from (or FRONTEND_URL) with ?auth=success.',
   })
-  googleCallback(@CurrentUser() user: User, @Res() res: Response): void {
+  googleCallback(
+    @CurrentUser() user: User,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): void {
     const token = this.auth.signToken(user);
+    const cookies = req.cookies as Record<string, string> | undefined;
+    const returnTo = cookies?.[AUTH_RETURN_COOKIE_NAME];
+
     res.cookie(this.auth.cookieName(), token, this.auth.cookieOptions());
-    res.redirect(this.auth.frontendRedirectUrl());
+    res.clearCookie(AUTH_RETURN_COOKIE_NAME, this.auth.returnCookieOptions());
+    res.redirect(this.auth.frontendRedirectUrl(returnTo));
   }
 
   @Get('me')

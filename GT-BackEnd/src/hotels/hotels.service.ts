@@ -3,7 +3,9 @@ import { AppCacheService } from '../common/cache/app-cache.service';
 import { CacheProvider } from '../database/enums';
 import { HotelRatesDto } from './dto/hotel-rates.dto';
 import { SearchHotelsDto } from './dto/search-hotels.dto';
-import { LiteApiClient } from './liteapi.client';
+import { LiteApiClient, LiteApiSearchParams } from './liteapi.client';
+import { NominatimClient } from '../restaurants/nominatim.client';
+import type { GeocodedPlace } from '../restaurants/nominatim.types';
 import {
   LiteApiHotel,
   LiteApiHotelRates,
@@ -15,6 +17,15 @@ import {
 const LIST_TTL_MS = 24 * 60 * 60 * 1000;
 const DETAIL_TTL_MS = 24 * 60 * 60 * 1000;
 const RATES_TTL_MS = 60 * 60 * 1000;
+const GEOCODE_TTL_MS = 24 * 60 * 60 * 1000;
+/** Radius used when hotels are searched around the city's coordinates. */
+const NEARBY_RADIUS_M = 10_000;
+
+type ResolvedLocation = {
+  cityName: string;
+  countryCode: string | null;
+  place: GeocodedPlace | null;
+};
 
 export type HotelLinks = {
   self: string;
@@ -62,36 +73,122 @@ export class HotelsService {
   constructor(
     private readonly liteapi: LiteApiClient,
     private readonly cache: AppCacheService,
+    private readonly nominatim: NominatimClient,
   ) {}
 
+  /**
+   * Search hotels by city. The country code is optional: when it is missing
+   * the city is geocoded (OpenStreetMap Nominatim) to find its country, and
+   * if LiteAPI has nothing under that city name we fall back to a search
+   * around the city's coordinates.
+   */
   async search(query: SearchHotelsDto) {
     const limit = query.limit ?? 20;
+    const location = await this.resolveLocation(query);
     const key = AppCacheService.hashKey([
       'liteapi',
       'search',
-      'v2',
-      query.countryCode,
-      query.cityName,
+      'v3',
+      location.countryCode ?? '',
+      location.cityName.toLowerCase(),
+      location.place?.latitude ?? '',
+      location.place?.longitude ?? '',
       limit,
     ]);
 
     const cached = await this.cache.get<LiteApiListResponse>(key);
     if (cached && !cached.stale) {
-      return this.toSearchResult(cached.value, 'cache', false);
+      return this.toSearchResult(cached.value, location, 'cache', false);
     }
 
     try {
-      const live = await this.liteapi.searchHotels({
-        countryCode: query.countryCode,
-        cityName: query.cityName,
-        limit,
-      });
+      const live = await this.fetchHotels(location, limit);
       await this.cache.set(key, live, CacheProvider.LITEAPI, LIST_TTL_MS);
-      return this.toSearchResult(live, 'liteapi', false);
+      return this.toSearchResult(live, location, 'liteapi', false);
     } catch (error) {
       if (cached) {
         this.logger.warn('Serving hotel search from stale cache');
-        return this.toSearchResult(cached.value, 'cache', true);
+        return this.toSearchResult(cached.value, location, 'cache', true);
+      }
+      throw error;
+    }
+  }
+
+  private async fetchHotels(
+    location: ResolvedLocation,
+    limit: number,
+  ): Promise<LiteApiListResponse> {
+    const attempts: LiteApiSearchParams[] = [];
+    if (location.countryCode) {
+      attempts.push({
+        countryCode: location.countryCode,
+        cityName: location.cityName,
+        limit,
+      });
+    }
+    if (location.place) {
+      attempts.push({
+        latitude: location.place.latitude,
+        longitude: location.place.longitude,
+        radius: NEARBY_RADIUS_M,
+        limit,
+      });
+    }
+
+    let last: LiteApiListResponse = { data: [], total: 0 };
+    for (const params of attempts) {
+      last = await this.liteapi.searchHotels(params);
+      if ((last.data ?? []).length > 0) {
+        return last;
+      }
+    }
+    return last;
+  }
+
+  private async resolveLocation(
+    query: SearchHotelsDto,
+  ): Promise<ResolvedLocation> {
+    const cityName = query.cityName.trim();
+    if (query.countryCode) {
+      return { cityName, countryCode: query.countryCode, place: null };
+    }
+
+    const place = await this.geocode(cityName);
+    if (!place) {
+      throw new NotFoundException(`Place ${cityName} was not found`);
+    }
+
+    return {
+      // Prefer the geocoded name so inputs like "Paris, France" become "Paris".
+      cityName: place.name || cityName,
+      countryCode: place.countryCode,
+      place,
+    };
+  }
+
+  private async geocode(cityName: string): Promise<GeocodedPlace | null> {
+    // Same cache key the restaurants/cars searches use, so lookups are shared.
+    const key = AppCacheService.hashKey([
+      'nominatim',
+      'geocode',
+      'v1',
+      cityName.toLowerCase(),
+      '',
+    ]);
+    const cached = await this.cache.get<GeocodedPlace>(key);
+    if (cached && !cached.stale) {
+      return cached.value;
+    }
+
+    try {
+      const live = await this.nominatim.geocode({ cityName });
+      if (live) {
+        await this.cache.set(key, live, CacheProvider.OVERPASS, GEOCODE_TTL_MS);
+      }
+      return live;
+    } catch (error) {
+      if (cached) {
+        return cached.value;
       }
       throw error;
     }
@@ -174,6 +271,7 @@ export class HotelsService {
 
   private toSearchResult(
     payload: LiteApiListResponse,
+    location: ResolvedLocation,
     source: 'liteapi' | 'cache',
     stale: boolean,
   ) {
@@ -188,6 +286,9 @@ export class HotelsService {
         stale,
         unavailable: data.length === 0,
         total: payload.total ?? data.length,
+        cityName: location.cityName,
+        countryCode: location.countryCode,
+        countryName: location.place?.countryName ?? null,
         disclaimer: 'Prices are indicative reference points, not bookable quotes.',
       },
     };

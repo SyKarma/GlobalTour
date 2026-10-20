@@ -20,6 +20,8 @@ import { CAR_AMENITIES } from './car.types';
 import { SearchCarsDto } from './dto/search-cars.dto';
 
 const LIST_TTL_MS = 24 * 60 * 60 * 1000;
+/** Backup results are kept less time so Overpass is tried again soon. */
+const BACKUP_TTL_MS = 60 * 60 * 1000;
 const DETAIL_TTL_MS = 24 * 60 * 60 * 1000;
 const OSM_ID = /^(node|way|relation)-(\d+)$/;
 const ATTRIBUTION = '© OpenStreetMap contributors';
@@ -112,7 +114,62 @@ export class CarsService {
         this.logger.warn('Serving car search from stale cache');
         return this.toSearchResult(cached.value, area, query, 'cache', true);
       }
+
+      const backup = await this.searchWithNominatim(
+        area.latitude,
+        area.longitude,
+        radiusMeters,
+      );
+      if (backup) {
+        await this.cache.set(
+          key,
+          backup,
+          CacheProvider.OVERPASS,
+          BACKUP_TTL_MS,
+        );
+        return this.toSearchResult(backup, area, query, 'overpass', false);
+      }
       throw error;
+    }
+  }
+
+  private async lookupWithNominatim(
+    type: OverpassElementType,
+    id: number,
+  ): Promise<OverpassElement | null> {
+    try {
+      return await this.nominatim.lookupElement(type, id);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Used only when every Overpass mirror failed and nothing is cached.
+   */
+  private async searchWithNominatim(
+    latitude: number,
+    longitude: number,
+    radiusMeters: number,
+  ): Promise<OverpassResponse | null> {
+    try {
+      const backup = await this.nominatim.searchAmenitiesNear({
+        latitude,
+        longitude,
+        radiusMeters,
+        amenities: [...CAR_AMENITIES],
+      });
+      this.logger.warn(
+        `Overpass unavailable; served ${backup.elements?.length ?? 0} car places from Nominatim`,
+      );
+      return backup;
+    } catch (backupError) {
+      this.logger.warn(
+        `Nominatim backup failed: ${
+          backupError instanceof Error ? backupError.message : backupError
+        }`,
+      );
+      return null;
     }
   }
 
@@ -161,6 +218,23 @@ export class CarsService {
         },
       };
     } catch (error) {
+      if (!cached && !(error instanceof NotFoundException)) {
+        const backup = await this.lookupWithNominatim(
+          parsed.type,
+          parsed.id,
+        );
+        if (backup) {
+          return {
+            data: this.toDetail(backup),
+            meta: {
+              source: 'overpass' as const,
+              stale: false,
+              attribution: ATTRIBUTION,
+              disclaimer: DISCLAIMER,
+            },
+          };
+        }
+      }
       if (cached) {
         return {
           data: this.toDetail(cached.value),

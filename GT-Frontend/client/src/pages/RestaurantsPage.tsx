@@ -203,11 +203,6 @@ function RestaurantsPage() {
       'cityName',
     ) ?? '';
 
-  const countryCode =
-    searchParams.get(
-      'countryCode',
-    ) ?? '';
-
   const typeParam =
     searchParams.get(
       'type',
@@ -254,15 +249,6 @@ function RestaurantsPage() {
       'cityName',
       values.cityName,
     );
-
-    if (
-      values.countryCode
-    ) {
-      params.set(
-        'countryCode',
-        values.countryCode,
-      );
-    }
 
     params.set(
       'radius',
@@ -327,10 +313,6 @@ function RestaurantsPage() {
               {
                 cityName:
                   cityName.trim(),
-
-                countryCode:
-                  countryCode.trim() ||
-                  undefined,
 
                 radius,
 
@@ -412,7 +394,6 @@ function RestaurantsPage() {
     };
   }, [
     cityName,
-    countryCode,
     radius,
     type,
     cuisine,
@@ -640,10 +621,9 @@ function RestaurantsPage() {
           </div>
 
           <RestaurantSearchForm
-            key={`${cityName}-${countryCode}-${type}-${cuisine}-${radius}-${hasWebsite}`}
+            key={`${cityName}-${type}-${cuisine}-${radius}-${hasWebsite}`}
             initialValues={{
               cityName,
-              countryCode,
               type,
               cuisine,
               radius,
@@ -902,9 +882,7 @@ function RestaurantsPage() {
 
                   {meta?.countryName
                     ? `, ${meta.countryName}`
-                    : countryCode
-                      ? `, ${countryCode}`
-                      : ''}
+                    : ''}
                 </h2>
 
                 <p>
@@ -1541,4 +1519,4 @@ function ArrowIcon() {
   );
 }
 
-export default RestaurantsPage;
+export default RestaurantsPage;

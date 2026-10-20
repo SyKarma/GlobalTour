@@ -51,8 +51,8 @@ export class SearchHistoryService {
     });
   }
 
-  recordHotel(query: SearchHotelsDto): void {
-    void this.recordHotelAsync(query);
+  recordHotel(query: SearchHotelsDto, resolvedCountryCode?: string | null): void {
+    void this.recordHotelAsync(query, resolvedCountryCode);
   }
 
   recordDestination(
@@ -119,10 +119,14 @@ export class SearchHistoryService {
     });
   }
 
-  private async recordHotelAsync(query: SearchHotelsDto): Promise<void> {
+  private async recordHotelAsync(
+    query: SearchHotelsDto,
+    resolvedCountryCode?: string | null,
+  ): Promise<void> {
+    const countryCode = query.countryCode ?? resolvedCountryCode ?? null;
     const destinationIata = await this.findCityIata(
       query.cityName,
-      query.countryCode,
+      countryCode,
     );
 
     await this.insert({
@@ -130,7 +134,7 @@ export class SearchHistoryService {
       destinationIata,
       queryJson: {
         cityName: query.cityName,
-        countryCode: query.countryCode,
+        countryCode,
       },
     });
   }
@@ -162,16 +166,23 @@ export class SearchHistoryService {
 
   private async findCityIata(
     cityName: string,
-    countryCode: string,
+    countryCode: string | null,
   ): Promise<string | null> {
     try {
-      const row = await this.destinations
+      const qb = this.destinations
         .createQueryBuilder('destination')
-        .where('LOWER(destination.cityName) = LOWER(:cityName)', { cityName })
-        .andWhere('destination.countryCode = :countryCode', { countryCode })
-        .getOne();
+        .where('LOWER(destination.cityName) = LOWER(:cityName)', { cityName });
 
-      return row?.cityIata ?? null;
+      if (countryCode) {
+        qb.andWhere('destination.countryCode = :countryCode', { countryCode });
+        const row = await qb.getOne();
+        return row?.cityIata ?? null;
+      }
+
+      // Without a country, only attribute the search when the city is unambiguous.
+      const rows = await qb.getMany();
+      const countries = new Set(rows.map((row) => row.countryCode));
+      return countries.size === 1 ? (rows[0]?.cityIata ?? null) : null;
     } catch (error: unknown) {
       this.logger.warn(
         `Hotel city lookup failed: ${

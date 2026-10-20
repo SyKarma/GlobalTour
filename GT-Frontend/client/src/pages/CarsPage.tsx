@@ -236,11 +236,6 @@ function CarsPage() {
       'cityName',
     ) ?? '';
 
-  const countryCode =
-    searchParams.get(
-      'countryCode',
-    ) ?? '';
-
   const typeParam =
     searchParams.get(
       'type',
@@ -300,10 +295,6 @@ function CarsPage() {
               {
                 cityName:
                   cityName.trim(),
-
-                countryCode:
-                  countryCode.trim() ||
-                  undefined,
 
                 radius,
 
@@ -387,7 +378,6 @@ function CarsPage() {
     };
   }, [
     cityName,
-    countryCode,
     type,
     q,
     radius,
@@ -406,15 +396,6 @@ function CarsPage() {
       'cityName',
       values.cityName,
     );
-
-    if (
-      values.countryCode
-    ) {
-      params.set(
-        'countryCode',
-        values.countryCode,
-      );
-    }
 
     params.set(
       'radius',
@@ -699,10 +680,9 @@ function CarsPage() {
           </div>
 
           <CarSearchForm
-            key={`${cityName}-${countryCode}-${type}-${q}-${radius}-${hasWebsite}`}
+            key={`${cityName}-${type}-${q}-${radius}-${hasWebsite}`}
             initialValues={{
               cityName,
-              countryCode,
               type,
               q,
               radius,
@@ -969,9 +949,7 @@ function CarsPage() {
 
                   {meta?.countryName
                     ? `, ${meta.countryName}`
-                    : countryCode
-                      ? `, ${countryCode}`
-                      : ''}
+                    : ''}
                 </h2>
 
                 <p>
@@ -1711,4 +1689,4 @@ function InfoIcon() {
   );
 }
 
-export default CarsPage;
+export default CarsPage;

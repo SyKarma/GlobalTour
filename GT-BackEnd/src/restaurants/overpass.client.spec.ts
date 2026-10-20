@@ -58,7 +58,8 @@ describe('OverpassClient', () => {
       amenities: ['car_rental'],
     });
 
-    expect(postForm).toHaveBeenCalledTimes(2);
+    // The preferred mirror first, then the others in parallel.
+    expect(postForm.mock.calls.length).toBeGreaterThanOrEqual(2);
     expect((postForm.mock.calls[0] as [string])[0]).toContain(
       'overpass-api.de',
     );

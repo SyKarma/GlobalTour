@@ -1,4 +1,8 @@
 export type NominatimAddress = {
+  road?: string;
+  house_number?: string;
+  postcode?: string;
+  suburb?: string;
   city?: string;
   town?: string;
   village?: string;
@@ -9,6 +13,10 @@ export type NominatimAddress = {
 };
 
 export type NominatimHit = {
+  osm_type?: string;
+  osm_id?: number;
+  category?: string;
+  extratags?: Record<string, string> | null;
   lat?: string;
   lon?: string;
   name?: string;

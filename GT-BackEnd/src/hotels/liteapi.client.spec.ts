@@ -41,4 +41,19 @@ describe('LiteApiClient', () => {
     expect(url).toContain('cityName=Barcelona');
     expect(options.headers['X-API-Key']).toBe('sand_test');
   });
+
+  it('searches hotels around coordinates when no country is given', async () => {
+    await client.searchHotels({
+      latitude: 9.93,
+      longitude: -84.08,
+      radius: 500,
+      limit: 10,
+    });
+
+    const [url] = getJson.mock.calls[0] as [string];
+    expect(url).toContain('latitude=9.93');
+    expect(url).toContain('longitude=-84.08');
+    expect(url).toContain('radius=1000');
+    expect(url).not.toContain('countryCode');
+  });
 });

@@ -12,12 +12,19 @@ import {
 } from 'class-validator';
 
 export class SearchHotelsDto {
-  @ApiProperty({ example: 'ES' })
+  @ApiPropertyOptional({
+    example: 'ES',
+    description:
+      'Optional ISO country code. When omitted, the city is geocoded to find its country.',
+  })
+  @IsOptional()
   @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.toUpperCase() : undefined,
+    typeof value === 'string' && value.trim()
+      ? value.trim().toUpperCase()
+      : undefined,
   )
   @Matches(/^[A-Z]{2}$/, { message: 'countryCode must be a 2-letter ISO code' })
-  countryCode: string;
+  countryCode?: string;
 
   @ApiProperty({ example: 'Barcelona' })
   @IsString()

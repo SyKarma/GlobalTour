@@ -14,7 +14,6 @@ export type RestaurantAmenity =
 
 export interface RestaurantSearchValues {
   cityName: string;
-  countryCode: string;
   type: RestaurantAmenity | '';
   cuisine: string;
   radius: number;
@@ -48,17 +47,6 @@ function RestaurantSearchForm({
     useState(
       initialValues?.cityName ??
         '',
-    );
-
-  const [
-    countryCode,
-    setCountryCode,
-  ] =
-    useState(
-      (
-        initialValues?.countryCode ??
-        ''
-      ).toUpperCase(),
     );
 
   const [
@@ -102,34 +90,6 @@ function RestaurantSearchForm({
   const cleanCity =
     cityName.trim();
 
-  const cleanCountry =
-    countryCode
-      .trim()
-      .toUpperCase();
-
-  const isCountryValid =
-    cleanCountry.length === 0 ||
-    /^[A-Z]{2}$/.test(
-      cleanCountry,
-    );
-
-  const handleCountryChange = (
-    value: string,
-  ) => {
-    setCountryCode(
-      value
-        .replace(
-          /[^a-zA-Z]/g,
-          '',
-        )
-        .slice(
-          0,
-          2,
-        )
-        .toUpperCase(),
-    );
-  };
-
   const handleSubmit = (
     event:
       FormEvent<HTMLFormElement>,
@@ -137,8 +97,7 @@ function RestaurantSearchForm({
     event.preventDefault();
 
     if (
-      cleanCity.length < 2 ||
-      !isCountryValid
+      cleanCity.length < 2
     ) {
       return;
     }
@@ -146,9 +105,6 @@ function RestaurantSearchForm({
     onSearch({
       cityName:
         cleanCity,
-
-      countryCode:
-        cleanCountry,
 
       type,
 
@@ -211,53 +167,13 @@ function RestaurantSearchForm({
 
         </label>
 
-        <label className="gt-restaurant-main-field gt-restaurant-country">
-
-          <span>
-            {t(
-              'restaurants.search.country',
-            )}
-          </span>
-
-          <div className="gt-restaurant-input-control">
-
-            <GlobeIcon />
-
-            <input
-              type="text"
-              value={
-                countryCode
-              }
-              maxLength={
-                2
-              }
-              autoComplete="off"
-              placeholder="CR"
-              aria-label={t(
-                'restaurants.search.countryAria',
-              )}
-              onChange={(
-                event,
-              ) =>
-                handleCountryChange(
-                  event.target
-                    .value,
-                )
-              }
-            />
-
-          </div>
-
-        </label>
-
         <button
           type="submit"
           className="gt-restaurant-search-button"
           disabled={
             isLoading ||
             cleanCity.length <
-              2 ||
-            !isCountryValid
+              2
           }
         >
           <SearchIcon />
@@ -486,27 +402,6 @@ function LocationIcon() {
   );
 }
 
-function GlobeIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-      />
-
-      <path d="M3 12h18" />
-
-      <path d="M12 3c3 3 4 6 4 9s-1 6-4 9" />
-
-      <path d="M12 3c-3 3-4 6-4 9s1 6 4 9" />
-    </svg>
-  );
-}
-
 function RestaurantIcon() {
   return (
     <svg
@@ -573,4 +468,4 @@ function CheckIcon() {
   );
 }
 
-export default RestaurantSearchForm;
+export default RestaurantSearchForm;

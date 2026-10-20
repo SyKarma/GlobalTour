@@ -19,9 +19,11 @@ const DEFAULT_MIRRORS = [
   'https://overpass.kumi.systems/api/interpreter',
 ];
 const USER_AGENT = 'GlobalTour/1.0 (travel comparison; OSM Overpass POIs)';
-const SEARCH_TIMEOUT_MS = 20_000;
-const DETAIL_TIMEOUT_MS = 12_000;
+const SEARCH_TIMEOUT_MS = 12_000;
+const DETAIL_TIMEOUT_MS = 10_000;
 const FETCH_CAP = 80;
+/** If the preferred mirror is this slow, also ask the other mirrors. */
+const HEDGE_AFTER_MS = 4_000;
 const AMENITY_TAG = /^[a-z0-9_]+$/;
 const BUSY_MESSAGE = 'OpenStreetMap Overpass is busy. Try again in a moment.';
 
@@ -86,46 +88,109 @@ export class OverpassClient {
     return next;
   }
 
-  private async runOnce(
+  /**
+   * Ask the mirror that answered last time first. If it has not answered
+   * after a few seconds (or fails), ask the other mirrors at the same time
+   * and keep the first good answer. Before, each mirror was tried in turn
+   * with a long timeout, so one slow mirror could block a search for more
+   * than a minute.
+   */
+  private runOnce(
     query: string,
     timeoutMs: number,
   ): Promise<OverpassResponse> {
-    let lastError: unknown;
+    const [preferred, ...others] = this.mirrors();
 
-    for (const endpoint of this.mirrors()) {
-      try {
-        const payload = await this.http.postForm<OverpassResponse>(
-          endpoint,
-          { data: query },
-          {
-            timeoutMs,
-            headers: { 'User-Agent': USER_AGENT },
+    return new Promise<OverpassResponse>((resolve, reject) => {
+      let settled = false;
+      let pending = 0;
+      let othersStarted = others.length === 0;
+      const errors: unknown[] = [];
+
+      const finishWithError = () => {
+        if (settled || pending > 0 || !othersStarted) {
+          return;
+        }
+        settled = true;
+        clearTimeout(hedgeTimer);
+        const fatal = errors.find((error) => !isRetryable(error));
+        if (fatal) {
+          reject(fatal);
+          return;
+        }
+        this.logger.warn(
+          `All Overpass mirrors failed: ${errors
+            .map((error) =>
+              error instanceof Error ? error.message : 'unknown error',
+            )
+            .join(' | ')}`,
+        );
+        reject(new ServiceUnavailableException(BUSY_MESSAGE));
+      };
+
+      const start = (endpoint: string) => {
+        pending += 1;
+        this.ask(endpoint, query, timeoutMs).then(
+          (payload) => {
+            pending -= 1;
+            if (settled) {
+              return;
+            }
+            settled = true;
+            clearTimeout(hedgeTimer);
+            this.remember(endpoint);
+            resolve(payload);
+          },
+          (error: unknown) => {
+            pending -= 1;
+            errors.push(error);
+            if (!settled && !isRetryable(error)) {
+              settled = true;
+              clearTimeout(hedgeTimer);
+              reject(error);
+              return;
+            }
+            this.logger.warn(`Overpass ${endpoint} failed`);
+            if (endpoint === preferred) {
+              startOthers();
+            }
+            finishWithError();
           },
         );
+      };
 
-        if (payload.remark && /error|timed out|timeout/i.test(payload.remark)) {
-          throw new ServiceUnavailableException(
-            'OpenStreetMap Overpass timed out',
-          );
+      const startOthers = () => {
+        if (othersStarted || settled) {
+          return;
         }
+        othersStarted = true;
+        others.forEach(start);
+      };
 
-        this.remember(endpoint);
-        return payload;
-      } catch (error) {
-        lastError = error;
-        if (!isRetryable(error)) {
-          throw error;
-        }
-        this.logger.warn(`Overpass ${endpoint} failed, trying another mirror`);
-      }
+      const hedgeTimer = setTimeout(startOthers, HEDGE_AFTER_MS);
+      start(preferred);
+    });
+  }
+
+  private async ask(
+    endpoint: string,
+    query: string,
+    timeoutMs: number,
+  ): Promise<OverpassResponse> {
+    const payload = await this.http.postForm<OverpassResponse>(
+      endpoint,
+      { data: query },
+      {
+        timeoutMs,
+        headers: { 'User-Agent': USER_AGENT },
+      },
+    );
+
+    if (payload.remark && /error|timed out|timeout/i.test(payload.remark)) {
+      throw new ServiceUnavailableException('OpenStreetMap Overpass timed out');
     }
 
-    this.logger.warn(
-      `All Overpass mirrors failed: ${
-        lastError instanceof Error ? lastError.message : 'unknown error'
-      }`,
-    );
-    throw new ServiceUnavailableException(BUSY_MESSAGE);
+    return payload;
   }
 
   private mirrors(): string[] {

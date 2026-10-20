@@ -95,6 +95,21 @@ describe('AuthService', () => {
     );
   });
 
+  it('returns the user to the local page where the login started', () => {
+    expect(
+      service.frontendRedirectUrl('http://localhost:5174/hotels?cityName=Nicoya'),
+    ).toBe('http://localhost:5174/hotels?cityName=Nicoya&auth=success');
+  });
+
+  it('ignores return addresses that are not an allowed frontend', () => {
+    expect(service.frontendRedirectUrl('https://evil.example.com/')).toBe(
+      'http://localhost:5173/?auth=success',
+    );
+    expect(service.frontendRedirectUrl('javascript:alert(1)')).toBe(
+      'http://localhost:5173/?auth=success',
+    );
+  });
+
   it('maps a user to the public profile shape', () => {
     const user = {
       id: 'user-1',

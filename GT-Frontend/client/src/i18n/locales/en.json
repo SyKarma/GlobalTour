@@ -320,7 +320,14 @@
     "start": {
       "eyebrow": "PLAN YOUR STAY",
       "title": "Where would you like to stay?",
-      "description": "Select a destination, your stay dates and the number of guests to get started."
+      "description": "Select a destination, your stay dates and the number of guests to get started.",
+      "search": "Search stays",
+      "compareTitle": "Compare",
+      "compareText": "hotels and stays",
+      "filterTitle": "Review",
+      "filterText": "photos, location and ratings",
+      "chooseTitle": "Choose",
+      "chooseText": "the right place for you"
     },
     "loading": {
       "title": "Searching for accommodations...",

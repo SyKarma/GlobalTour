@@ -320,7 +320,14 @@
     "start": {
       "eyebrow": "PLANEJE SUA ESTADIA",
       "title": "Onde você quer se hospedar?",
-      "description": "Selecione um destino, as datas da estadia e a quantidade de hóspedes para começar."
+      "description": "Selecione um destino, as datas da estadia e a quantidade de hóspedes para começar.",
+      "search": "Buscar hospedagem",
+      "compareTitle": "Compare",
+      "compareText": "hotéis e hospedagens",
+      "filterTitle": "Confira",
+      "filterText": "fotos, localização e avaliações",
+      "chooseTitle": "Escolha",
+      "chooseText": "o lugar ideal para você"
     },
     "loading": {
       "title": "Buscando hospedagens...",

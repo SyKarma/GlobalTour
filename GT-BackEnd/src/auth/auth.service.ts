@@ -4,7 +4,12 @@ import { JwtService } from '@nestjs/jwt';
 import type { CookieOptions } from 'express';
 import { EnvironmentVariables } from '../config/env.validation';
 import { User } from '../database/entities/user.entity';
-import { AUTH_COOKIE_MAX_AGE_MS, AUTH_COOKIE_NAME } from './auth.constants';
+import { createOriginChecker } from '../common/allowed-origins';
+import {
+  AUTH_COOKIE_MAX_AGE_MS,
+  AUTH_COOKIE_NAME,
+  AUTH_RETURN_COOKIE_MAX_AGE_MS,
+} from './auth.constants';
 import {
   GoogleProfileInput,
   JwtPayload,
@@ -61,7 +66,48 @@ export class AuthService {
     };
   }
 
-  frontendRedirectUrl(): string {
+  returnCookieOptions(): CookieOptions {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    return {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: isProduction,
+      path: '/api/auth',
+      maxAge: AUTH_RETURN_COOKIE_MAX_AGE_MS,
+    };
+  }
+
+  /**
+   * Accepts the page the login started from only if it belongs to an
+   * allowed frontend (same list as CORS), so the redirect cannot be abused.
+   */
+  safeReturnTo(returnTo: unknown): string | null {
+    if (typeof returnTo !== 'string' || returnTo.length > 2048) {
+      return null;
+    }
+
+    try {
+      const url = new URL(returnTo);
+      const isAllowed = createOriginChecker({
+        corsOrigin: this.config.get('CORS_ORIGIN', { infer: true }),
+        frontendUrl: this.config.get('FRONTEND_URL', { infer: true }),
+        isProduction: process.env.NODE_ENV === 'production',
+      });
+      return isAllowed(url.origin) ? url.toString() : null;
+    } catch {
+      return null;
+    }
+  }
+
+  frontendRedirectUrl(returnTo?: unknown): string {
+    const safe = this.safeReturnTo(returnTo);
+    if (safe) {
+      const url = new URL(safe);
+      url.searchParams.set('auth', 'success');
+      return url.toString();
+    }
+
     const frontend = this.config.get('FRONTEND_URL', { infer: true });
     return `${frontend.replace(/\/$/, '')}/?auth=success`;
   }

@@ -8,7 +8,17 @@ const API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export const loginWithGoogle = () => {
-  window.location.assign(`${API_URL}/api/auth/google`);
+  // Come back to this same page (and port) after signing in with Google.
+  const returnTo = new URL(window.location.href);
+  returnTo.searchParams.delete('auth');
+
+  const params = new URLSearchParams({
+    returnTo: returnTo.toString(),
+  });
+
+  window.location.assign(
+    `${API_URL}/api/auth/google?${params.toString()}`,
+  );
 };
 
 export const getCurrentUser = async (): Promise<AuthUser> => {
@@ -20,4 +30,4 @@ export const getCurrentUser = async (): Promise<AuthUser> => {
 
 export const logout = async (): Promise<void> => {
   await apiClient.post('/api/auth/logout');
-};
+};

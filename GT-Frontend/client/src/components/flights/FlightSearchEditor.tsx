@@ -18,6 +18,8 @@ interface FlightSearchEditorProps {
   initialDestinationIata: string;
   initialDepartureAt?: string | null;
   initialReturnAt?: string | null;
+  /** Increment to open the editor from outside (e.g. an empty state button). */
+  openRequest?: number;
 }
 
 type TripType = 'round-trip' | 'one-way';
@@ -27,6 +29,7 @@ function FlightSearchEditor({
   initialDestinationIata,
   initialDepartureAt,
   initialReturnAt,
+  openRequest = 0,
 }: FlightSearchEditorProps) {
   const navigate = useNavigate();
 
@@ -36,6 +39,12 @@ function FlightSearchEditor({
 
   const [isOpen, setIsOpen] =
     useState(false);
+
+  useEffect(() => {
+    if (openRequest > 0) {
+      setIsOpen(true);
+    }
+  }, [openRequest]);
 
   const [isInitializing, setIsInitializing] =
     useState(true);
@@ -434,4 +443,4 @@ function FlightSearchEditor({
   );
 }
 
-export default FlightSearchEditor;
+export default FlightSearchEditor;

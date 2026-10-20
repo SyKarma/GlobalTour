@@ -5,7 +5,6 @@ import {
 } from 'react';
 
 import {
-  Link,
   useSearchParams,
 } from 'react-router-dom';
 
@@ -16,6 +15,7 @@ import {
 import i18n from '../i18n';
 
 import FlightSearchEditor from '../components/flights/FlightSearchEditor';
+import TripSearchForm from '../components/trip/TripSearchForm';
 import WishlistHeart from '../components/wishlist/WishlistHeart';
 
 import {
@@ -579,6 +579,50 @@ function FlightsPage() {
         destination,
     );
 
+  // Bumped to ask the on-page search editor to open (instead of
+  // sending the user to the home page search).
+  const [
+    editorOpenRequest,
+    setEditorOpenRequest,
+  ] =
+    useState(0);
+
+  const focusFlightSearch =
+    () => {
+      if (hasRoute) {
+        setEditorOpenRequest(
+          (current) =>
+            current + 1,
+        );
+      }
+
+      const target =
+        document.getElementById(
+          'flight-page-search',
+        );
+
+      target?.scrollIntoView({
+        behavior:
+          'smooth',
+        block:
+          'center',
+      });
+
+      window.setTimeout(
+        () => {
+          target
+            ?.querySelector<HTMLInputElement>(
+              'input',
+            )
+            ?.focus({
+              preventScroll:
+                true,
+            });
+        },
+        450,
+      );
+    };
+
   useEffect(() => {
     const urlCurrency =
       searchParams.get(
@@ -1110,7 +1154,10 @@ function FlightsPage() {
 
       {origin &&
         destination && (
-          <section className="gt-flight-editor-section">
+          <section
+            className="gt-flight-editor-section"
+            id="flight-page-search"
+          >
 
             <div className="gt-flight-search-shell">
 
@@ -1148,12 +1195,26 @@ function FlightsPage() {
                 initialReturnAt={
                   returnAt
                 }
+                openRequest={
+                  editorOpenRequest
+                }
               />
 
             </div>
 
           </section>
         )}
+
+      {!hasRoute && (
+        <section
+          className="gt-flight-page-search"
+          id="flight-page-search"
+        >
+          <div className="gt-flight-page-search-card">
+            <TripSearchForm />
+          </div>
+        </section>
+      )}
 
       <div className="gt-flights-content">
 
@@ -1182,16 +1243,19 @@ function FlightsPage() {
               )}
             </p>
 
-            <Link
-              to="/#home-flight-search"
+            <button
+              type="button"
               className="gt-flight-primary-button"
+              onClick={
+                focusFlightSearch
+              }
             >
               {t(
                 'flights.start.search',
               )}
 
               <ArrowIcon />
-            </Link>
+            </button>
 
             <div className="gt-flight-start-features">
 
@@ -1344,14 +1408,17 @@ function FlightsPage() {
                 )}
               </p>
 
-              <Link
-                to="/#home-flight-search"
+              <button
+                type="button"
                 className="gt-flight-secondary-button"
+                onClick={
+                  focusFlightSearch
+                }
               >
                 {t(
                   'flights.errors.otherSearch',
                 )}
-              </Link>
+              </button>
 
             </section>
           )}
@@ -1379,14 +1446,17 @@ function FlightsPage() {
                 )}
               </p>
 
-              <Link
-                to="/#home-flight-search"
+              <button
+                type="button"
                 className="gt-flight-secondary-button"
+                onClick={
+                  focusFlightSearch
+                }
               >
                 {t(
                   'flights.empty.otherRoute',
                 )}
-              </Link>
+              </button>
 
             </section>
           )}
@@ -2375,4 +2445,4 @@ function InfoIcon() {
   );
 }
 
-export default FlightsPage;
+export default FlightsPage;

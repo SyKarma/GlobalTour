@@ -31,11 +31,13 @@ export class SearchCarsDto {
   @ApiPropertyOptional({
     example: 'CR',
     description:
-      'ISO country code. Required when the city name exists in more than one country.',
+      'Optional ISO country code. Narrows the search when a city name exists in several countries; you can also type "City, Country" in cityName.',
   })
   @IsOptional()
   @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.toUpperCase() : undefined,
+    typeof value === 'string' && value.trim()
+      ? value.trim().toUpperCase()
+      : undefined,
   )
   @Matches(/^[A-Z]{2}$/, { message: 'countryCode must be a 2-letter ISO code' })
   countryCode?: string;

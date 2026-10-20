@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { createOriginChecker } from './common/allowed-origins';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { EnvironmentVariables } from './config/env.validation';
 
@@ -16,11 +17,23 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.use(helmet());
   app.use(cookieParser());
+  const isAllowedOrigin = createOriginChecker({
+    corsOrigin: config.get('CORS_ORIGIN', { infer: true }),
+    frontendUrl: config.get('FRONTEND_URL', { infer: true }),
+    isProduction: process.env.NODE_ENV === 'production',
+  });
+
   app.enableCors({
-    origin: [
-      'http://localhost:5173',
-      'https://globaltour-six.vercel.app',
-    ],
+    origin: (
+      origin: string | undefined,
+      callback: (error: Error | null, allow?: boolean) => void,
+    ) => {
+      if (!origin || isAllowedOrigin(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(null, false);
+    },
     credentials: true,
   });
   app.useGlobalPipes(

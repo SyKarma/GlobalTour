@@ -14,11 +14,11 @@ export class HotelsController {
   ) {}
 
   @Get('search')
-  @ApiOperation({ summary: 'Search hotels by country and city' })
+  @ApiOperation({ summary: 'Search hotels by city (country code optional)' })
   @ApiOkResponse({ description: 'Hotel listings with images and ratings' })
   async search(@Query() query: SearchHotelsDto) {
     const result = await this.hotels.search(query);
-    this.searchHistory.recordHotel(query);
+    this.searchHistory.recordHotel(query, result.meta.countryCode);
     return result;
   }
 

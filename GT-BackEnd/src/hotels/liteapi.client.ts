@@ -8,11 +8,19 @@ import {
   LiteApiRatesResponse,
 } from './liteapi.types';
 
-export type LiteApiSearchParams = {
-  countryCode: string;
-  cityName: string;
-  limit?: number;
-};
+export type LiteApiSearchParams =
+  | {
+      countryCode: string;
+      cityName: string;
+      limit?: number;
+    }
+  | {
+      latitude: number;
+      longitude: number;
+      /** Meters. LiteAPI requires at least 1000. */
+      radius: number;
+      limit?: number;
+    };
 
 export type LiteApiRatesParams = {
   hotelId: string;
@@ -41,8 +49,14 @@ export class LiteApiClient {
 
   searchHotels(params: LiteApiSearchParams): Promise<LiteApiListResponse> {
     const url = new URL(`${this.baseUrl}/data/hotels`);
-    url.searchParams.set('countryCode', params.countryCode);
-    url.searchParams.set('cityName', params.cityName);
+    if ('countryCode' in params) {
+      url.searchParams.set('countryCode', params.countryCode);
+      url.searchParams.set('cityName', params.cityName);
+    } else {
+      url.searchParams.set('latitude', String(params.latitude));
+      url.searchParams.set('longitude', String(params.longitude));
+      url.searchParams.set('radius', String(Math.max(1000, params.radius)));
+    }
     url.searchParams.set('limit', String(params.limit ?? 20));
 
     return this.http.getJson<LiteApiListResponse>(url.toString(), {

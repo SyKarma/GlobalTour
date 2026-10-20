@@ -209,8 +209,7 @@ function HotelsPage() {
 
   const hasSearch =
     Boolean(
-      cityName &&
-        countryCode,
+      cityName?.trim(),
     );
 
   const locale =
@@ -267,8 +266,7 @@ function HotelsPage() {
     const loadHotels =
       async () => {
         if (
-          !cityName ||
-          !countryCode
+          !cityName?.trim()
         ) {
           setHotels(
             [],
@@ -301,8 +299,11 @@ function HotelsPage() {
           const response =
             await searchHotels(
               {
-                cityName,
-                countryCode,
+                cityName:
+                  cityName.trim(),
+                countryCode:
+                  countryCode?.trim() ||
+                  undefined,
                 limit:
                   20,
               },
@@ -468,14 +469,33 @@ function HotelsPage() {
         </div>
       </section>
 
-      <section className="hotels-search-section">
+      <section
+        className="hotels-search-section"
+        id="hotel-page-search"
+      >
         <HotelSearchForm />
       </section>
 
       {!hasSearch && (
-        <section className="hotels-empty-start">
+        <section className="gt-flight-start-state gt-hotel-start-state">
 
-          <span className="gt-hotel-empty-eyebrow">
+          <div className="gt-flight-start-icon">
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M3 18V7" />
+              <path d="M21 18v-5a3 3 0 0 0-3-3h-7v8" />
+              <path d="M3 14h18" />
+              <circle
+                cx="7"
+                cy="11"
+                r="2"
+              />
+            </svg>
+          </div>
+
+          <span>
             {t(
               'hotels.list.start.eyebrow',
             )}
@@ -492,6 +512,85 @@ function HotelsPage() {
               'hotels.list.start.description',
             )}
           </p>
+
+          <button
+            type="button"
+            className="gt-flight-primary-button"
+            onClick={() => {
+              const target =
+                document.getElementById(
+                  'hotel-page-search',
+                );
+
+              target?.scrollIntoView({
+                behavior:
+                  'smooth',
+                block:
+                  'center',
+              });
+
+              window.setTimeout(
+                () => {
+                  target
+                    ?.querySelector<HTMLInputElement>(
+                      'input',
+                    )
+                    ?.focus({
+                      preventScroll:
+                        true,
+                    });
+                },
+                450,
+              );
+            }}
+          >
+            {t(
+              'hotels.list.start.search',
+            )}
+          </button>
+
+          <div className="gt-flight-start-features">
+
+            <div>
+              <strong>
+                {t(
+                  'hotels.list.start.compareTitle',
+                )}
+              </strong>
+              <span>
+                {t(
+                  'hotels.list.start.compareText',
+                )}
+              </span>
+            </div>
+
+            <div>
+              <strong>
+                {t(
+                  'hotels.list.start.filterTitle',
+                )}
+              </strong>
+              <span>
+                {t(
+                  'hotels.list.start.filterText',
+                )}
+              </span>
+            </div>
+
+            <div>
+              <strong>
+                {t(
+                  'hotels.list.start.chooseTitle',
+                )}
+              </strong>
+              <span>
+                {t(
+                  'hotels.list.start.chooseText',
+                )}
+              </span>
+            </div>
+
+          </div>
 
         </section>
       )}
@@ -878,4 +977,4 @@ function HotelsPage() {
   );
 }
 
-export default HotelsPage;
+export default HotelsPage;
