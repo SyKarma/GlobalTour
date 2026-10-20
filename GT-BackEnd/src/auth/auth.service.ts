@@ -2,7 +2,7 @@ import { Injectable, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { CookieOptions } from 'express';
-import { EnvironmentVariables, NodeEnv } from '../config/env.validation';
+import { EnvironmentVariables } from '../config/env.validation';
 import { User } from '../database/entities/user.entity';
 import { AUTH_COOKIE_MAX_AGE_MS, AUTH_COOKIE_NAME } from './auth.constants';
 import {
@@ -50,12 +50,11 @@ export class AuthService {
   }
 
   cookieOptions(): CookieOptions {
-    const isProduction =
-      this.config.get('NODE_ENV', { infer: true }) === NodeEnv.Production;
+    const isProduction = process.env.NODE_ENV === 'production';
 
     return {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: isProduction ? 'none' : 'lax',
       secure: isProduction,
       path: '/',
       maxAge: AUTH_COOKIE_MAX_AGE_MS,

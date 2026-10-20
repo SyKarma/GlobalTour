@@ -62,7 +62,7 @@ describe('AuthService', () => {
     });
   });
 
-  it('sets a lax httpOnly cookie and enables Secure in production', () => {
+  it('uses a lax cookie locally and a secure cross-site cookie in production', () => {
     expect(service.cookieName()).toBe(AUTH_COOKIE_NAME);
     expect(service.cookieOptions()).toMatchObject({
       httpOnly: true,
@@ -71,8 +71,22 @@ describe('AuthService', () => {
       path: '/',
     });
 
-    configValues.NODE_ENV = 'production';
-    expect(service.cookieOptions().secure).toBe(true);
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    try {
+      expect(service.cookieOptions()).toMatchObject({
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: '/',
+      });
+    } finally {
+      if (originalNodeEnv === undefined) {
+        delete process.env.NODE_ENV;
+      } else {
+        process.env.NODE_ENV = originalNodeEnv;
+      }
+    }
   });
 
   it('redirects to the frontend success URL', () => {
