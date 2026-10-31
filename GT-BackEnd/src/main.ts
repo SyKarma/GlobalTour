@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import type { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { createOriginChecker } from './common/allowed-origins';
@@ -15,7 +16,30 @@ async function bootstrap() {
   const config = app.get(ConfigService<EnvironmentVariables, true>);
 
   app.setGlobalPrefix('api');
-  app.use(helmet());
+
+  // Only HTTPS in production: any plain HTTP request is redirected.
+  // Railway/Vercel terminate TLS and tell us the original protocol in
+  // X-Forwarded-Proto ("trust proxy" is enabled above).
+  if (process.env.NODE_ENV === 'production') {
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      // The platform health check calls the service directly over HTTP.
+      if (req.secure || req.path === '/api/health') {
+        next();
+        return;
+      }
+      res.redirect(308, `https://${req.headers.host}${req.originalUrl}`);
+    });
+  }
+
+  app.use(
+    helmet({
+      strictTransportSecurity: {
+        maxAge: 63_072_000,
+        includeSubDomains: true,
+        preload: true,
+      },
+    }),
+  );
   app.use(cookieParser());
   const isAllowedOrigin = createOriginChecker({
     corsOrigin: config.get('CORS_ORIGIN', { infer: true }),

@@ -1,4 +1,17 @@
 {
+  "meta": {
+    "siteName": "GlobalTour",
+    "tagline": "Compare flights, hotels, restaurants and cars",
+    "description": "GlobalTour brings flights, hotels, restaurants and car rentals together in one place to plan your trip.",
+    "hotelDetail": "Hotel details",
+    "restaurantDetail": "Restaurant details",
+    "carDetail": "Car rental details",
+    "notFound": "Page not found",
+    "loading": "Loading…",
+    "mainNavigation": "Main navigation",
+    "mobileNavigation": "Menu navigation",
+    "dashboardNavigation": "Dashboard sections"
+  },
   "language": {
     "selector": "Language",
     "spanish": "Spanish",
@@ -20,6 +33,8 @@
     "currency": "Currency",
     "language": "Language",
     "loading": "Loading...",
+    "loadingSlow": "This is taking a little longer than usual, still loading…",
+    "connectingGoogle": "Connecting to Google…",
     "searching": "Searching...",
     "search": "Search",
     "error": "An error occurred",

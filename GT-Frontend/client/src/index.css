@@ -78,7 +78,7 @@ button {
   font-size: 1.45rem;
   font-weight: 900;
   letter-spacing: -0.045em;
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .nav-links {
@@ -91,7 +91,7 @@ button {
   padding: 10px 14px;
   border-radius: 10px;
 
-  color: #596275;
+  color: #4b5262;
   font-weight: 600;
 
   transition:
@@ -105,7 +105,7 @@ button {
 }
 
 .nav-link.active {
-  color: #2563eb;
+  color: #1248bf;
   background: #edf4ff;
 }
 
@@ -139,7 +139,7 @@ button {
   display: inline-block;
   margin-bottom: 10px;
 
-  color: #2563eb;
+  color: #1248bf;
   font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -158,7 +158,7 @@ button {
 .hero-heading p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
   font-size: 1.05rem;
   line-height: 1.6;
 }
@@ -180,7 +180,7 @@ button {
 .travel-tab {
   padding: 9px 16px;
 
-  color: #596275;
+  color: #4b5262;
   border-radius: 9px;
 
   font-size: 0.9rem;
@@ -272,7 +272,7 @@ button {
 }
 
 .search-box > span {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.72rem;
   font-weight: 700;
 }
@@ -349,7 +349,7 @@ button {
   padding: 0 22px;
 
   color: #ffffff;
-  background: #2563eb;
+  background: #134cca;
 
   border: none;
   border-radius: 10px;
@@ -388,7 +388,7 @@ button {
 }
 
 .explore-heading span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -409,7 +409,7 @@ button {
   max-width: 420px;
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
   line-height: 1.6;
 }
 
@@ -451,14 +451,14 @@ button {
 }
 
 .destination-iata {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.8rem;
   font-weight: 900;
 }
 
 .destination-price {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.75rem;
   font-weight: 600;
@@ -475,11 +475,11 @@ button {
 
 .destination-card p {
   margin: 0;
-  color: #667085;
+  color: #4e5565;
 }
 
 .destination-action {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.86rem;
   font-weight: 800;
@@ -577,7 +577,7 @@ button {
 }
 
 .auth-loading {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.85rem;
   font-weight: 600;
 }
@@ -589,7 +589,7 @@ button {
   border: none;
   border-radius: 10px;
 
-  background: #2563eb;
+  background: #134cca;
   color: #ffffff;
 
   font-weight: 700;
@@ -650,7 +650,7 @@ button {
   align-items: center;
   justify-content: center;
 
-  background: #2563eb;
+  background: #134cca;
   color: #ffffff;
 
   font-size: 0.9rem;
@@ -669,7 +669,7 @@ button {
 }
 
 .user-menu-arrow {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.9rem;
 }
 
@@ -708,7 +708,7 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
 
-  color: #667085;
+  color: #4e5565;
   font-size: 0.78rem;
 }
 
@@ -729,7 +729,7 @@ button {
   border: none;
   border-radius: 8px;
 
-  color: #b42318;
+  color: #a01f15;
 
   font-size: 0.85rem;
   font-weight: 700;
@@ -818,7 +818,7 @@ button {
   width: 44px;
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.85rem;
   font-weight: 900;
@@ -838,14 +838,14 @@ button {
 }
 
 .destination-option-info small {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.78rem;
 }
 
 .destination-empty {
   padding: 16px;
 
-  color: #667085;
+  color: #4e5565;
   text-align: center;
 
   font-size: 0.85rem;
@@ -875,7 +875,7 @@ button {
 .flights-eyebrow {
   margin: 0 0 10px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -895,7 +895,7 @@ button {
 .flights-search-summary {
   margin: 12px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.95rem;
   font-weight: 500;
@@ -926,7 +926,7 @@ button {
 .flights-status p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .flights-error {
@@ -957,7 +957,7 @@ button {
 .flights-results-heading p {
   margin: 5px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.9rem;
 }
@@ -968,7 +968,7 @@ button {
   background: #fff7ed;
   border-radius: 999px;
 
-  color: #9a3412;
+  color: #913111;
 
   font-size: 0.75rem;
   font-weight: 700;
@@ -1039,7 +1039,7 @@ button {
   background: #eff4ff;
   border-radius: 12px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.85rem;
   font-weight: 900;
@@ -1064,7 +1064,7 @@ button {
 }
 
 .flight-airline span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.78rem;
 }
@@ -1106,7 +1106,7 @@ button {
 }
 
 .flight-route-point small {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.72rem;
 }
@@ -1125,13 +1125,13 @@ button {
 }
 
 .flight-route-middle span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.75rem;
 }
 
 .flight-route-middle strong {
-  color: #16a34a;
+  color: #0d602b;
 
   font-size: 0.76rem;
   font-weight: 800;
@@ -1185,7 +1185,7 @@ button {
 }
 
 .flight-price > span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.75rem;
 }
@@ -1209,7 +1209,7 @@ button {
   align-items: center;
   justify-content: center;
 
-  background: #2563eb;
+  background: #134cca;
 
   border: none;
   border-radius: 10px;
@@ -1245,7 +1245,7 @@ button {
 .flight-disclaimer {
   margin: 24px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.75rem;
   text-align: center;
@@ -1317,7 +1317,7 @@ button {
 .flight-route-label {
   margin-bottom: 2px;
 
-  color: #98a2b3 !important;
+  color: #495363 !important;
 
   font-size: 0.68rem !important;
   font-weight: 700;
@@ -1328,7 +1328,7 @@ button {
 .flight-return {
   margin-top: 3px;
 
-  color: #667085 !important;
+  color: #4e5565 !important;
 
   font-size: 0.72rem !important;
 }
@@ -1359,7 +1359,7 @@ button {
 
 .flight-filter-label,
 .flight-filter-select > span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.72rem;
   font-weight: 700;
@@ -1400,7 +1400,7 @@ button {
 }
 
 .flight-filter-button.active {
-  background: #2563eb;
+  background: #134cca;
   border-color: #2563eb;
 
   color: #ffffff;
@@ -1494,7 +1494,7 @@ button {
   background: #f8fafc;
   border-color: #2563eb;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .flight-search-edit-form {
@@ -1628,7 +1628,7 @@ button {
   display: block;
   margin-bottom: 4px;
 
-  color: #92400e;
+  color: #843a0c;
 
   font-size: 0.9rem;
   font-weight: 800;
@@ -1637,7 +1637,7 @@ button {
 .flight-fallback-notice p {
   margin: 0;
 
-  color: #a16207;
+  color: #754705;
 
   font-size: 0.84rem;
   line-height: 1.5;
@@ -1731,7 +1731,7 @@ button {
 .cars-search-placeholder p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.88rem;
 }
@@ -1754,7 +1754,7 @@ button {
 .hotels-eyebrow {
   margin: 0 0 8px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.78rem;
   font-weight: 800;
@@ -1774,7 +1774,7 @@ button {
 .hotels-header > p:last-child {
   margin: 10px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .hotels-search-section {
@@ -1813,7 +1813,7 @@ button {
 .hotels-status p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .hotels-error {
@@ -1842,7 +1842,7 @@ button {
 .hotels-results-heading p {
   margin: 5px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.88rem;
 }
@@ -1853,7 +1853,7 @@ button {
   background: #fff7ed;
   border-radius: 999px;
 
-  color: #9a3412;
+  color: #913111;
 
   font-size: 0.75rem;
   font-weight: 700;
@@ -1928,7 +1928,7 @@ button {
   align-items: center;
   justify-content: center;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.85rem;
   font-weight: 600;
@@ -1970,7 +1970,7 @@ button {
 .hotel-address {
   margin: 5px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.76rem;
 }
@@ -1983,7 +1983,7 @@ button {
   flex-wrap: wrap;
   gap: 8px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.76rem;
 }
@@ -1991,7 +1991,7 @@ button {
 .hotel-rating {
   padding: 5px 7px;
 
-  background: #2563eb;
+  background: #134cca;
   border-radius: 7px;
 
   color: #ffffff;
@@ -2009,7 +2009,7 @@ button {
 }
 
 .hotel-map-link {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.82rem;
   font-weight: 700;
@@ -2024,7 +2024,7 @@ button {
 .hotel-detail-button {
   padding: 10px 14px;
 
-  background: #2563eb;
+  background: #134cca;
 
   border-radius: 9px;
 
@@ -2043,7 +2043,7 @@ button {
 .hotel-disclaimer {
   margin: 24px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.75rem;
   text-align: center;
@@ -2090,7 +2090,7 @@ button {
   display: inline-flex;
   margin-bottom: 24px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.85rem;
   font-weight: 700;
@@ -2125,7 +2125,7 @@ button {
 .hotel-detail-heading p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .hotel-detail-heading-actions {
@@ -2143,14 +2143,14 @@ button {
 .hotel-detail-rating strong {
   padding: 8px 10px;
 
-  background: #2563eb;
+  background: #134cca;
   border-radius: 9px;
 
   color: #ffffff;
 }
 
 .hotel-detail-rating span {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.8rem;
 }
 
@@ -2175,7 +2175,7 @@ button {
   border: 1px solid #fed7aa;
   border-radius: 10px;
 
-  color: #9a3412;
+  color: #913111;
 
   font-size: 0.8rem;
 }
@@ -2226,7 +2226,7 @@ button {
   align-items: center;
   justify-content: center;
 
-  color: #98a2b3;
+  color: #495363;
 }
 
 /* CONTENT */
@@ -2274,13 +2274,13 @@ button {
 .hotel-chain {
   margin: 16px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .hotel-detail-muted {
   margin: 0;
 
-  color: #98a2b3;
+  color: #495363;
 }
 
 .hotel-amenities {
@@ -2326,7 +2326,7 @@ button {
 .hotel-stay-summary > p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 
   line-height: 1.5;
 }
@@ -2346,7 +2346,7 @@ button {
 }
 
 .hotel-stay-row span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.82rem;
 }
@@ -2373,7 +2373,7 @@ button {
 }
 
 .hotel-rates-heading span:first-child {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.72rem;
   font-weight: 800;
@@ -2415,7 +2415,7 @@ button {
 }
 
 .hotel-rate-info span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.82rem;
   font-weight: 700;
@@ -2424,7 +2424,7 @@ button {
 .hotel-rate-info p {
   margin: 7px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.8rem;
 }
@@ -2436,7 +2436,7 @@ button {
 }
 
 .hotel-rate-price span {
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.72rem;
 }
@@ -2451,7 +2451,7 @@ button {
 }
 
 .hotel-rate-price small {
-  color: #98a2b3;
+  color: #495363;
 }
 
 .hotel-rates-status,
@@ -2477,7 +2477,7 @@ button {
 .hotel-detail-status p {
   margin: 0;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .hotel-detail-error {
@@ -2587,7 +2587,7 @@ button {
 }
 
 .currency-selector-label {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.82rem;
   font-weight: 600;
   white-space: nowrap;
@@ -2603,7 +2603,7 @@ button {
   border: 1px solid #dbe5f5;
   border-radius: 12px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   transition:
     background 0.2s ease,
@@ -2642,7 +2642,7 @@ button {
   background: transparent;
   border: none;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font: inherit;
   font-size: 0.88rem;
@@ -2663,7 +2663,7 @@ button {
   width: 18px;
   height: 18px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   pointer-events: none;
 }
@@ -2680,7 +2680,7 @@ button {
   width: 16px;
   height: 16px;
 
-  color: #667085;
+  color: #4e5565;
 
   pointer-events: none;
 
@@ -2734,7 +2734,7 @@ button {
   width: 17px;
   height: 17px;
 
-  color: #98a2b3;
+  color: #495363;
 
   pointer-events: none;
 }
@@ -2768,7 +2768,7 @@ button {
 }
 
 .currency-search-input::placeholder {
-  color: #98a2b3;
+  color: #495363;
 }
 
 .currency-search-input:focus {
@@ -2832,11 +2832,11 @@ button {
 
 .currency-option-selected {
   background: #eef4ff;
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .currency-option-code {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.84rem;
   font-weight: 800;
@@ -2858,20 +2858,20 @@ button {
 
 .currency-option-selected
   .currency-option-name {
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .currency-option-check {
   width: 17px;
   height: 17px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .currency-no-results {
   padding: 22px 14px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.86rem;
 
@@ -2904,14 +2904,14 @@ button {
 
   border-color: #fecdca;
 
-  color: #b42318;
+  color: #a01f15;
 }
 
 .currency-select-error
   .currency-selector-icon,
 .currency-select-error
   .currency-selector-trigger {
-  color: #b42318;
+  color: #a01f15;
 }
 
 /* RESPONSIVE */
@@ -2962,7 +2962,7 @@ button {
   background: #f3f4f6;
   border-radius: 10px;
 
-  color: #667085;
+  color: #4e5565;
   font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -3008,12 +3008,12 @@ button {
 
 .analytics-sidebar-link:hover {
   background: #f5f8ff;
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .analytics-sidebar-link-active {
   background: #eef4ff;
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .analytics-sidebar-info {
@@ -3031,7 +3031,7 @@ button {
 }
 
 .analytics-sidebar-info span {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -3043,7 +3043,7 @@ button {
 }
 
 .analytics-sidebar-info small {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.72rem;
 }
 
@@ -3067,7 +3067,7 @@ button {
   display: block;
   margin-bottom: 6px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.76rem;
   font-weight: 800;
@@ -3088,7 +3088,7 @@ button {
 .dashboard-header p {
   margin: 7px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.92rem;
 }
@@ -3104,7 +3104,7 @@ button {
 }
 
 .dashboard-period-control label {
-  color: #667085;
+  color: #4e5565;
   font-size: 0.82rem;
   font-weight: 700;
 }
@@ -3165,7 +3165,7 @@ button {
 
 .dashboard-kpi-primary {
   background:
-    linear-gradient(135deg, #2563eb, #3b82f6);
+    linear-gradient(135deg, #134cca, #3b82f6);
 }
 
 .dashboard-kpi-secondary {
@@ -3293,7 +3293,7 @@ button {
 .dashboard-panel-header p {
   margin: 5px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.78rem;
 }
@@ -3305,7 +3305,7 @@ button {
 
   border-radius: 20px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.76rem;
   font-weight: 700;
@@ -3359,7 +3359,7 @@ button {
 
   border-radius: 8px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.76rem;
   font-weight: 800;
@@ -3381,7 +3381,7 @@ button {
 .dashboard-ranking-info span {
   overflow: hidden;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.74rem;
 
@@ -3390,7 +3390,7 @@ button {
 }
 
 .dashboard-ranking-count {
-  color: #2563eb;
+  color: #1248bf;
   font-size: 0.9rem;
 }
 
@@ -3405,13 +3405,13 @@ button {
   align-items: center;
   justify-content: center;
 
-  color: #98a2b3;
+  color: #495363;
 
   text-align: center;
 }
 
 .dashboard-empty span {
-  color: #667085;
+  color: #4e5565;
   font-weight: 700;
 }
 
@@ -3441,7 +3441,7 @@ button {
 .dashboard-loading {
   gap: 14px;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .dashboard-loading-spinner {
@@ -3462,14 +3462,15 @@ button {
   }
 }
 
-.dashboard-error h2 {
+.dashboard-error h2,
+.dashboard-error h1 {
   margin-bottom: 6px;
 
   color: #172033;
 }
 
 .dashboard-error p {
-  color: #667085;
+  color: #4e5565;
 }
 
 .dashboard-inline-error {
@@ -3481,7 +3482,7 @@ button {
   border: 1px solid #fecdca;
   border-radius: 10px;
 
-  color: #b42318;
+  color: #a01f15;
 
   font-size: 0.84rem;
 }
@@ -3565,7 +3566,7 @@ button {
 
   margin-bottom: 9px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.75rem;
   font-weight: 800;
@@ -3597,7 +3598,7 @@ button {
 
   margin: 14px 0 30px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 1rem;
   line-height: 1.6;
@@ -3749,7 +3750,7 @@ button {
   background:
     linear-gradient(
       135deg,
-      #2563eb,
+      #134cca,
       #3b82f6
     );
 
@@ -3871,7 +3872,7 @@ button {
 
   margin-bottom: 5px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.7rem;
   font-weight: 800;
@@ -3893,7 +3894,7 @@ button {
 .restaurants-results-header p {
   margin: 6px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.84rem;
 }
@@ -3917,7 +3918,7 @@ button {
 }
 
 .restaurants-search-summary span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
   font-weight: 700;
@@ -4007,7 +4008,7 @@ button {
 
   border-radius: 11px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-card-icon svg {
@@ -4031,7 +4032,7 @@ button {
 
   margin-bottom: 5px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.68rem;
   font-weight: 800;
@@ -4059,7 +4060,7 @@ button {
 }
 
 .restaurant-cuisine span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
   font-weight: 700;
@@ -4082,7 +4083,7 @@ button {
 
   margin-top: 17px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.78rem;
   line-height: 1.45;
@@ -4150,7 +4151,7 @@ button {
 
   border: 1px solid #d8e5fb;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-detail-button:hover {
@@ -4160,7 +4161,7 @@ button {
 }
 
 .restaurant-primary-button {
-  background: #2563eb;
+  background: #134cca;
 
   border: 1px solid #2563eb;
 
@@ -4221,7 +4222,7 @@ button {
 
   border-radius: 16px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurants-welcome-icon svg {
@@ -4246,7 +4247,7 @@ button {
 
   margin: 10px auto 28px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.9rem;
   line-height: 1.55;
@@ -4286,7 +4287,7 @@ button {
 .restaurants-feature-grid span {
   margin-top: 5px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.74rem;
   line-height: 1.45;
@@ -4330,7 +4331,7 @@ button {
 
   border-radius: 50%;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .restaurants-empty-icon svg {
@@ -4354,7 +4355,7 @@ button {
 
   margin: 7px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.84rem;
 }
@@ -4420,7 +4421,7 @@ button {
 .restaurants-attribution {
   margin-top: 22px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.7rem;
 
@@ -4532,7 +4533,7 @@ button {
 
   margin-bottom: 20px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.82rem;
   font-weight: 700;
@@ -4541,7 +4542,7 @@ button {
 }
 
 .restaurant-detail-back:hover {
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-detail-back svg {
@@ -4605,7 +4606,7 @@ button {
   border: 1px solid #d9e6fb;
   border-radius: 15px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-detail-icon svg {
@@ -4624,7 +4625,7 @@ button {
 
   margin-bottom: 6px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.7rem;
   font-weight: 800;
@@ -4666,7 +4667,7 @@ button {
 
   margin-top: 13px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.83rem;
 }
@@ -4715,7 +4716,7 @@ button {
 }
 
 .restaurant-detail-primary-action {
-  background: #2563eb;
+  background: #134cca;
 
   border: 1px solid #2563eb;
 
@@ -4810,7 +4811,7 @@ button {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
   stroke: currentColor;
@@ -4829,7 +4830,7 @@ button {
 .restaurant-detail-panel-heading p {
   margin: 4px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.74rem;
 }
@@ -4909,7 +4910,7 @@ button {
 .restaurant-detail-info-item span {
   margin-bottom: 4px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.68rem;
   font-weight: 750;
@@ -4974,7 +4975,7 @@ button {
 }
 
 .restaurant-detail-contact span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
 }
@@ -5002,7 +5003,7 @@ button {
 }
 
 .restaurant-detail-source span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
   font-weight: 750;
@@ -5017,7 +5018,7 @@ button {
 }
 
 .restaurant-detail-source small {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.68rem;
 }
@@ -5050,7 +5051,7 @@ button {
 
   border-radius: 50%;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-detail-no-info-icon svg {
@@ -5076,7 +5077,7 @@ button {
 
   margin: 7px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.8rem;
   line-height: 1.5;
@@ -5207,7 +5208,7 @@ button {
 
   border-radius: 50%;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .restaurant-detail-error-icon svg {
@@ -5229,7 +5230,7 @@ button {
 .restaurant-detail-error p {
   margin: 8px 0 20px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.85rem;
 }
@@ -5329,7 +5330,7 @@ button {
 
   margin-bottom: 9px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.75rem;
   font-weight: 800;
@@ -5362,7 +5363,7 @@ button {
 
   margin: 14px 0 30px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 1rem;
 
@@ -5473,7 +5474,7 @@ button {
   background:
     linear-gradient(
       135deg,
-      #2563eb,
+      #134cca,
       #3b82f6
     );
 
@@ -5599,7 +5600,7 @@ button {
 }
 
 .car-filter-field input::placeholder {
-  color: #98a2b3;
+  color: #495363;
 }
 
 .car-filter-field input:focus,
@@ -5679,7 +5680,7 @@ button {
 
   margin-bottom: 5px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.7rem;
   font-weight: 800;
@@ -5702,7 +5703,7 @@ button {
 .cars-results-header p {
   margin: 6px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.84rem;
 }
@@ -5732,7 +5733,7 @@ button {
 }
 
 .cars-search-summary span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
   font-weight: 700;
@@ -5851,7 +5852,7 @@ button {
 
   border-radius: 11px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-card-icon svg {
@@ -5877,7 +5878,7 @@ button {
 
   margin-bottom: 5px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.68rem;
   font-weight: 800;
@@ -5904,7 +5905,7 @@ button {
 .car-brand {
   margin: 5px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.76rem;
   font-weight: 600;
@@ -5923,7 +5924,7 @@ button {
 
   margin-top: 20px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.78rem;
 
@@ -6004,7 +6005,7 @@ button {
   border:
     1px solid #d8e5fb;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-detail-button:hover {
@@ -6016,7 +6017,7 @@ button {
 /* WEBSITE */
 
 .car-primary-button {
-  background: #2563eb;
+  background: #134cca;
 
   border:
     1px solid #2563eb;
@@ -6097,7 +6098,7 @@ button {
 
   border-radius: 16px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .cars-welcome-icon svg {
@@ -6128,7 +6129,7 @@ button {
   margin:
     10px auto 28px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.9rem;
 
@@ -6196,7 +6197,7 @@ button {
 .cars-feature-grid span {
   margin-top: 5px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.74rem;
 
@@ -6243,7 +6244,7 @@ button {
 
   border-radius: 50%;
 
-  color: #667085;
+  color: #4e5565;
 
   fill: none;
 
@@ -6267,7 +6268,7 @@ button {
 
   border-radius: 50%;
 
-  color: #667085;
+  color: #4e5565;
 }
 
 .cars-empty-icon svg {
@@ -6294,7 +6295,7 @@ button {
 
   margin: 7px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.84rem;
 
@@ -6392,7 +6393,7 @@ button {
 
   margin: 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.72rem;
 
@@ -6402,7 +6403,7 @@ button {
 .cars-disclaimer span {
   flex-shrink: 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.7rem;
 
@@ -6550,7 +6551,7 @@ button {
 
   margin-bottom: 20px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.82rem;
   font-weight: 700;
@@ -6559,7 +6560,7 @@ button {
 }
 
 .car-detail-back:hover {
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-detail-back svg {
@@ -6622,7 +6623,7 @@ button {
   border: 1px solid #d9e6fb;
   border-radius: 15px;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-detail-icon svg {
@@ -6642,7 +6643,7 @@ button {
 
   margin-bottom: 6px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.7rem;
   font-weight: 800;
@@ -6685,7 +6686,7 @@ button {
 
   margin-top: 13px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.83rem;
 }
@@ -6734,7 +6735,7 @@ button {
 }
 
 .car-detail-primary-action {
-  background: #2563eb;
+  background: #134cca;
 
   border: 1px solid #2563eb;
 
@@ -6830,7 +6831,7 @@ button {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
   stroke: currentColor;
@@ -6849,7 +6850,7 @@ button {
 .car-detail-panel-heading p {
   margin: 4px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.74rem;
 }
@@ -6934,7 +6935,7 @@ button {
 .car-detail-info-item span {
   margin-bottom: 4px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.68rem;
   font-weight: 750;
@@ -7003,7 +7004,7 @@ button {
 }
 
 .car-detail-contact span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
 }
@@ -7037,7 +7038,7 @@ button {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
   stroke: currentColor;
@@ -7056,7 +7057,7 @@ button {
 .car-detail-warning p {
   margin: 5px 0 0;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.72rem;
 
@@ -7081,7 +7082,7 @@ button {
 }
 
 .car-detail-source span {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
   font-weight: 750;
@@ -7096,7 +7097,7 @@ button {
 }
 
 .car-detail-source small {
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.68rem;
 }
@@ -7131,7 +7132,7 @@ button {
 
   border-radius: 50%;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-detail-no-info-icon svg {
@@ -7157,7 +7158,7 @@ button {
 
   margin: 7px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.8rem;
 
@@ -7287,7 +7288,7 @@ button {
 
   border-radius: 50%;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .car-detail-error-icon svg {
@@ -7311,7 +7312,7 @@ button {
 .car-detail-error p {
   margin: 8px 0 20px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.85rem;
 }
@@ -7560,7 +7561,7 @@ button {
 }
 
 .car-location-fields .car-filter-field input::placeholder {
-  color: #8b97a8;
+  color: #4a5462;
 }
 
 .car-location-fields .car-filter-field input:hover {
@@ -7622,7 +7623,7 @@ button {
 }
 
 .restaurant-search-field > input::placeholder {
-  color: #8b97a8;
+  color: #4a5462;
 }
 
 .restaurant-search-field > input:hover {
@@ -7669,7 +7670,7 @@ button {
 }
 
 .restaurant-search-input-wrapper input::placeholder {
-  color: #8b97a8;
+  color: #4a5462;
 }
 
 .restaurant-search-input-wrapper input:hover {
@@ -7923,7 +7924,7 @@ button {
     linear-gradient(
       135deg,
       #0f45d8 0%,
-      #2563eb 55%,
+      #134cca 55%,
       #38bdf8 100%
     );
 
@@ -7976,7 +7977,7 @@ button {
 
 .gt-brand-text strong {
   color:
-    #2563eb;
+    #1248bf;
 
   font-weight:
     900;
@@ -8013,7 +8014,7 @@ button {
     11px;
 
   color:
-    #566176;
+    #4d576a;
 
   font-size:
     0.88rem;
@@ -8041,7 +8042,7 @@ button {
 
 .gt-nav-link-active {
   color:
-    #1746d1;
+    #1642c6;
 
   background:
     #eef4ff;
@@ -8073,7 +8074,7 @@ button {
     999px;
 
   background:
-    #2563eb;
+    #134cca;
 }
 
 
@@ -8115,7 +8116,7 @@ button {
 
 .gt-auth-loading {
   color:
-    #64748b;
+    #4b5869;
 
   font-size:
     0.84rem;
@@ -8163,7 +8164,7 @@ button {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -8309,7 +8310,7 @@ button {
     center;
 
   color:
-    #1d4ed8;
+    #183fb0;
 
   font-size:
     0.9rem;
@@ -8463,7 +8464,7 @@ button {
     center;
 
   color:
-    #1d4ed8;
+    #183fb0;
 
   background:
     #dbeafe;
@@ -8502,7 +8503,7 @@ button {
     nowrap;
 
   color:
-    #8590a3;
+    #4b5463;
 
   font-size:
     0.74rem;
@@ -8590,7 +8591,7 @@ button {
 
 .gt-dropdown-logout {
   color:
-    #dc2626;
+    #a31a1a;
 }
 
 
@@ -9271,7 +9272,7 @@ button {
     block;
 
   color:
-    #8793a8;
+    #495364;
 
   font-size:
     0.68rem;
@@ -9305,7 +9306,7 @@ button {
     #ffffff;
 
   background:
-    #2563eb;
+    #134cca;
 }
 
 .gt-floating-flight {
@@ -9428,7 +9429,7 @@ button {
     11px;
 
   color:
-    #6b768a;
+    #4b5260;
 
   background:
     transparent;
@@ -9479,7 +9480,7 @@ button {
 
 .gt-home-search-tab-active {
   color:
-    #1746d1;
+    #1642c6;
 
   background:
     #edf4ff;
@@ -9618,7 +9619,7 @@ button {
 
 .gt-module-shortcut-copy span {
   color:
-    #2563eb;
+    #1248bf;
 
   font-size:
     0.7rem;
@@ -9649,7 +9650,7 @@ button {
     0;
 
   color:
-    #7a8699;
+    #4a5360;
 
   font-size:
     0.84rem;
@@ -9685,7 +9686,7 @@ button {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -9788,7 +9789,7 @@ button {
     8px;
 
   color:
-    #2563eb;
+    #1248bf;
 
   font-size:
     0.72rem;
@@ -9833,7 +9834,7 @@ button {
     0;
 
   color:
-    #778397;
+    #4b5462;
 
   line-height:
     1.7;
@@ -9864,7 +9865,7 @@ button {
     7px;
 
   color:
-    #1d4ed8;
+    #183fb0;
 
   font-size:
     0.82rem;
@@ -10234,7 +10235,7 @@ button {
     linear-gradient(
       145deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 }
 
@@ -10485,7 +10486,7 @@ button {
     #ffffff;
 
   color:
-    #1746d1;
+    #1642c6;
 
   box-shadow:
     none;
@@ -10627,7 +10628,7 @@ button {
     20px 0 0;
 
   color:
-    #8294b3;
+    #95a4bf;
 
   line-height:
     1.7;
@@ -10657,7 +10658,7 @@ button {
 
 .gt-footer-column a {
   color:
-    #8fa0bb;
+    #94a4be;
 
   font-size:
     0.83rem;
@@ -10701,7 +10702,7 @@ button {
     );
 
   color:
-    #60718e;
+    #97a3b8;
 
   font-size:
     0.72rem;
@@ -10888,7 +10889,7 @@ button {
 
   .gt-mobile-link-active {
     color:
-      #1746d1;
+      #1642c6;
 
     background:
       #edf4ff;
@@ -10929,7 +10930,7 @@ button {
       10px;
 
     color:
-      #64748b;
+      #4b5869;
 
     font-size:
       0.76rem;
@@ -10986,7 +10987,7 @@ button {
       center;
 
     color:
-      #1d4ed8;
+      #183fb0;
 
     background:
       #dbeafe;
@@ -11034,7 +11035,7 @@ button {
       9px;
 
     color:
-      #dc2626;
+      #a31a1a;
 
     background:
       #fff5f5;
@@ -11758,7 +11759,7 @@ button.gt-experience-card {
 
   color: #ffffff;
 
-  background: #2563eb;
+  background: #134cca;
 
   fill: none;
 
@@ -11819,7 +11820,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-search-shell-heading span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: .68rem;
   font-weight: 850;
@@ -11830,7 +11831,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-search-shell-heading strong {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: .78rem;
 }
@@ -11935,7 +11936,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-start-state > span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: .7rem;
   font-weight: 850;
@@ -11967,7 +11968,7 @@ button.gt-experience-card {
     0 auto
     25px;
 
-  color: #718096;
+  color: #495362;
 
   line-height: 1.7;
 }
@@ -11995,7 +11996,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -12051,7 +12052,7 @@ button.gt-experience-card {
 .gt-flight-start-features span {
   margin-top: 3px;
 
-  color: #8c98aa;
+  color: #495463;
 
   font-size: .7rem;
 }
@@ -12094,7 +12095,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #92400e;
+  color: #843a0c;
 
   background: #fef3c7;
 
@@ -12109,7 +12110,7 @@ button.gt-experience-card {
   margin:
     4px 0 0;
 
-  color: #996515;
+  color: #714a0f;
 
   font-size: .8rem;
 }
@@ -12172,7 +12173,7 @@ button.gt-experience-card {
   margin:
     3px 0 0;
 
-  color: #8290a5;
+  color: #485364;
 
   font-size: .8rem;
 }
@@ -12267,7 +12268,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-error-icon {
-  color: #b42318;
+  color: #a01f15;
 
   background: #fee4e2;
 
@@ -12290,7 +12291,7 @@ button.gt-experience-card {
   margin:
     0 0 22px;
 
-  color: #7a8698;
+  color: #4a535f;
 }
 
 .gt-flight-secondary-button {
@@ -12317,7 +12318,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-section-eyebrow {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: .7rem;
   font-weight: 850;
@@ -12351,7 +12352,7 @@ button.gt-experience-card {
 .gt-flight-summary-heading p {
   margin: 0;
 
-  color: #7d899c;
+  color: #4a5361;
 
   font-size: .85rem;
 }
@@ -12409,7 +12410,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-insight-card span {
-  color: #8390a3;
+  color: #4c5767;
 
   font-size: .7rem;
   font-weight: 650;
@@ -12426,7 +12427,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-insight-card small {
-  color: #9aa5b5;
+  color: #4c5768;
 
   font-size: .66rem;
 }
@@ -12478,7 +12479,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #68758a;
+  color: #4e5767;
 
   background: transparent;
 
@@ -12493,7 +12494,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-sort-chip-active {
-  color: #1746d1;
+  color: #1642c6;
 
   background: #edf4ff;
 }
@@ -12501,7 +12502,7 @@ button.gt-experience-card {
 .gt-flight-toolbar > span {
   padding-right: 8px;
 
-  color: #8a96a8;
+  color: #4d5868;
 
   font-size: .72rem;
 }
@@ -12568,7 +12569,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-filter-header span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: .62rem;
   font-weight: 850;
@@ -12591,7 +12592,7 @@ button.gt-experience-card {
 
   border: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   background: transparent;
 
@@ -12627,7 +12628,7 @@ button.gt-experience-card {
 
   gap: 9px;
 
-  color: #64748b;
+  color: #4b5869;
 
   font-size: .77rem;
 
@@ -12691,7 +12692,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -12717,7 +12718,7 @@ button.gt-experience-card {
 .gt-flight-filter-info span {
   margin-top: 3px;
 
-  color: #8592a6;
+  color: #485363;
 
   font-size: .65rem;
 
@@ -12819,19 +12820,19 @@ button.gt-experience-card {
 }
 
 .gt-flight-badge-price {
-  color: #166534;
+  color: #145d30;
 
   background: #dcfce7;
 }
 
 .gt-flight-badge-fast {
-  color: #1d4ed8;
+  color: #183fb0;
 
   background: #dbeafe;
 }
 
 .gt-flight-badge-direct {
-  color: #7c3aed;
+  color: #5913d2;
 
   background: #ede9fe;
 }
@@ -12928,7 +12929,7 @@ button.gt-experience-card {
 .gt-flight-airline span {
   margin-top: 3px;
 
-  color: #909bad;
+  color: #4d5869;
 
   font-size: .67rem;
 }
@@ -12960,7 +12961,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-route-point > span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: .68rem;
   font-weight: 850;
@@ -12982,7 +12983,7 @@ button.gt-experience-card {
 
   text-overflow: ellipsis;
 
-  color: #8a96a8;
+  color: #4d5868;
 
   font-size: .65rem;
 
@@ -13000,7 +13001,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-route-middle > span {
-  color: #8894a7;
+  color: #4d5768;
 
   font-size: .66rem;
 }
@@ -13046,14 +13047,14 @@ button.gt-experience-card {
 
   border-radius: 50%;
 
-  background: #2563eb;
+  background: #134cca;
 }
 
 .gt-flight-route-track svg {
   width: 19px;
   height: 19px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -13083,7 +13084,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-price > span {
-  color: #909aac;
+  color: #4e5869;
 
   font-size: .67rem;
 }
@@ -13100,7 +13101,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-price > small {
-  color: #a2abb9;
+  color: #4e5867;
 
   font-size: .62rem;
 }
@@ -13133,7 +13134,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -13150,7 +13151,7 @@ button.gt-experience-card {
 }
 
 .gt-flight-offer-button:disabled {
-  color: #8c97a8;
+  color: #495361;
 
   background: #eef1f5;
 
@@ -13195,7 +13196,7 @@ button.gt-experience-card {
 
   gap: 6px;
 
-  color: #99a3b2;
+  color: #4b5564;
 
   font-size: .62rem;
 }
@@ -13234,7 +13235,7 @@ button.gt-experience-card {
   width: 36px;
   height: 36px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -13253,7 +13254,7 @@ button.gt-experience-card {
   margin:
     0 0 16px;
 
-  color: #8692a5;
+  color: #495362;
 }
 
 .gt-flight-no-filter-results button {
@@ -13267,7 +13268,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   background: #f7faff;
 
@@ -13288,7 +13289,7 @@ button.gt-experience-card {
 
   border-radius: 12px;
 
-  color: #7e8a9c;
+  color: #48505d;
 
   background: #edf1f6;
 
@@ -13748,7 +13749,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-search-heading span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.67rem;
   font-weight: 850;
@@ -13757,7 +13758,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-search-heading strong {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 0.78rem;
 }
@@ -13841,7 +13842,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-search-field > span {
-  color: #8b96a7;
+  color: #4a5361;
 
   font-size: 0.64rem;
   font-weight: 750;
@@ -13863,7 +13864,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -13917,7 +13918,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -13942,7 +13943,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-search-button:disabled {
-  color: #98a2b3;
+  color: #495363;
 
   background: #e8edf4;
 
@@ -14065,7 +14066,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-start-state > span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.7rem;
   font-weight: 850;
@@ -14099,7 +14100,7 @@ button.gt-experience-card {
   margin:
     0 auto;
 
-  color: #7c899c;
+  color: #495361;
 
   line-height: 1.7;
 }
@@ -14134,7 +14135,7 @@ button.gt-experience-card {
 
   margin-bottom: 10px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -14153,7 +14154,7 @@ button.gt-experience-card {
 
   margin-top: 5px;
 
-  color: #919bac;
+  color: #4a5362;
 
   font-size: 0.68rem;
 
@@ -14206,7 +14207,7 @@ button.gt-experience-card {
   margin:
     3px 0 0;
 
-  color: #8591a4;
+  color: #4a5363;
 }
 
 .gt-hotel-skeleton-list {
@@ -14329,7 +14330,7 @@ button.gt-experience-card {
 
   border-radius: 18px;
 
-  color: #b42318;
+  color: #a01f15;
 
   background: #fee4e2;
 
@@ -14339,7 +14340,7 @@ button.gt-experience-card {
 
 .gt-hotels-error-state
   .gt-hotels-empty-icon {
-  color: #2563eb;
+  color: #1248bf;
 
   background: #dbeafe;
 }
@@ -14359,7 +14360,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-error-state p {
-  color: #7c899c;
+  color: #495361;
 }
 
 
@@ -14378,7 +14379,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-section-eyebrow {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.69rem;
   font-weight: 850;
@@ -14405,7 +14406,7 @@ button.gt-experience-card {
 .gt-hotels-results-heading p {
   margin: 0;
 
-  color: #7f8a9c;
+  color: #4a5360;
 }
 
 .gt-hotels-cache-badge {
@@ -14471,7 +14472,7 @@ button.gt-experience-card {
 
   align-self: center;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -14480,7 +14481,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-stay-strip span {
-  color: #8d98a8;
+  color: #4a5461;
 
   font-size: 0.63rem;
 }
@@ -14529,7 +14530,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-insight-grid span {
-  color: #8793a6;
+  color: #495362;
 
   font-size: 0.67rem;
 }
@@ -14590,7 +14591,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #68758a;
+  color: #4e5767;
 
   background: transparent;
 
@@ -14599,7 +14600,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-sort-chip-active {
-  color: #1746d1;
+  color: #1642c6;
 
   background: #edf4ff;
 }
@@ -14607,7 +14608,7 @@ button.gt-experience-card {
 .gt-hotels-toolbar > span {
   padding-right: 8px;
 
-  color: #909bac;
+  color: #495362;
 
   font-size: 0.68rem;
 }
@@ -14668,7 +14669,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-filter-heading span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.62rem;
   font-weight: 850;
@@ -14706,7 +14707,7 @@ button.gt-experience-card {
 
   gap: 8px;
 
-  color: #667085;
+  color: #4e5565;
 
   font-size: 0.75rem;
 }
@@ -14755,7 +14756,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -14778,7 +14779,7 @@ button.gt-experience-card {
 .gt-hotels-filter-tip span {
   margin-top: 4px;
 
-  color: #8793a6;
+  color: #495362;
 
   font-size: 0.64rem;
 
@@ -14883,7 +14884,7 @@ button.gt-experience-card {
 
   gap: 8px;
 
-  color: #8290a4;
+  color: #485363;
 }
 
 .gt-hotel-image-placeholder svg {
@@ -14949,7 +14950,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   background: #edf4ff;
 
@@ -14977,7 +14978,7 @@ button.gt-experience-card {
 
   gap: 7px;
 
-  color: #7d899b;
+  color: #4a5360;
 
   font-size: 0.73rem;
 
@@ -14992,7 +14993,7 @@ button.gt-experience-card {
 
   margin-top: 1px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -15028,7 +15029,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #64748b;
+  color: #4b5869;
 
   background: #fafbfd;
 
@@ -15093,7 +15094,7 @@ button.gt-experience-card {
   > div span {
   margin-top: 2px;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.61rem;
 }
@@ -15117,7 +15118,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   font-size: 0.85rem;
@@ -15136,7 +15137,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-availability-copy span {
-  color: #99a3b2;
+  color: #4b5564;
 
   font-size: 0.61rem;
 }
@@ -15171,7 +15172,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1746d1,
-      #2563eb
+      #134cca
     );
 
   box-shadow:
@@ -15215,7 +15216,7 @@ button.gt-experience-card {
   width: 35px;
   height: 35px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
 
@@ -15227,7 +15228,7 @@ button.gt-experience-card {
 }
 
 .gt-hotels-filter-empty p {
-  color: #8290a4;
+  color: #485363;
 }
 
 .gt-hotels-filter-empty button {
@@ -15241,7 +15242,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   background: #f7faff;
 
@@ -15256,7 +15257,7 @@ button.gt-experience-card {
 
   border-radius: 12px;
 
-  color: #7f8b9d;
+  color: #4a5461;
 
   background: #e9eef4;
 
@@ -15774,7 +15775,7 @@ button.gt-experience-card {
 
 .gt-restaurants-search-heading
   > div span {
-  color: #ea580c;
+  color: #8e3507;
 
   font-size: 0.66rem;
   font-weight: 850;
@@ -15784,7 +15785,7 @@ button.gt-experience-card {
 
 .gt-restaurants-search-heading
   > div strong {
-  color: #6b7280;
+  color: #4e535d;
 
   font-size: 0.78rem;
 }
@@ -15803,7 +15804,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #c2410c;
+  color: #903009;
 
   background: #fff1e9;
 
@@ -15894,7 +15895,7 @@ button.gt-experience-card {
   > span,
 .gt-restaurant-filter-field
   > span {
-  color: #8a8f98;
+  color: #50545a;
 
   font-size: 0.64rem;
   font-weight: 750;
@@ -15915,7 +15916,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #ea580c;
+  color: #8e3507;
 
   fill: none;
 
@@ -16213,7 +16214,7 @@ button.gt-experience-card {
 }
 
 .gt-restaurants-section-eyebrow {
-  color: #ea580c;
+  color: #8e3507;
 
   font-size: 0.68rem;
 
@@ -16247,7 +16248,7 @@ button.gt-experience-card {
 
   margin: 0;
 
-  color: #78716c;
+  color: #56514e;
 
   line-height: 1.7;
 }
@@ -16417,7 +16418,7 @@ button.gt-experience-card {
   margin:
     3px 0 0;
 
-  color: #8b817b;
+  color: #58514d;
 }
 
 .gt-restaurants-skeleton-grid {
@@ -16558,7 +16559,7 @@ button.gt-experience-card {
 
   border-radius: 18px;
 
-  color: #b42318;
+  color: #a01f15;
 
   background: #fee4e2;
 
@@ -16569,7 +16570,7 @@ button.gt-experience-card {
 
 .gt-restaurants-error-state
   .gt-restaurants-empty-icon {
-  color: #ea580c;
+  color: #8e3507;
 
   background: #ffedd5;
 }
@@ -16593,7 +16594,7 @@ button.gt-experience-card {
 
 .gt-restaurants-error-state
   p {
-  color: #8b817b;
+  color: #58514d;
 }
 
 
@@ -16632,7 +16633,7 @@ button.gt-experience-card {
   p {
   margin: 0;
 
-  color: #847b76;
+  color: #58524e;
 }
 
 .gt-restaurants-results-meta {
@@ -16652,7 +16653,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #92400e;
+  color: #843a0c;
 
   background: #fef3c7;
 
@@ -16663,7 +16664,7 @@ button.gt-experience-card {
 
 .gt-restaurants-results-meta
   small {
-  color: #9c928c;
+  color: #58504c;
 
   font-size: 0.65rem;
 }
@@ -16714,7 +16715,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #ea580c;
+  color: #8e3507;
 
   fill: none;
 
@@ -16732,7 +16733,7 @@ button.gt-experience-card {
 
 .gt-restaurants-insight-grid
   span {
-  color: #928881;
+  color: #5d5550;
 
   font-size: 0.64rem;
 }
@@ -16788,7 +16789,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #78716c;
+  color: #56514e;
 
   background: transparent;
 
@@ -16798,7 +16799,7 @@ button.gt-experience-card {
 }
 
 .gt-restaurant-sort-active {
-  color: #c2410c;
+  color: #903009;
 
   background: #fff1e9;
 }
@@ -16807,7 +16808,7 @@ button.gt-experience-card {
   > span {
   padding-right: 7px;
 
-  color: #9b918b;
+  color: #58504c;
 
   font-size: 0.68rem;
 }
@@ -16899,7 +16900,7 @@ button.gt-experience-card {
     linear-gradient(
       135deg,
       #1e3a8a,
-      #2563eb
+      #134cca
     );
 }
 
@@ -17034,7 +17035,7 @@ button.gt-experience-card {
 
 .gt-restaurant-card-heading
   > span {
-  color: #ea580c;
+  color: #8e3507;
 
   font-size: 0.62rem;
 
@@ -17076,7 +17077,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #9a3412;
+  color: #913111;
 
   background: #fff1e9;
 
@@ -17094,7 +17095,7 @@ button.gt-experience-card {
 
   gap: 7px;
 
-  color: #78716c;
+  color: #56514e;
 
   font-size: 0.7rem;
 
@@ -17109,7 +17110,7 @@ button.gt-experience-card {
 
   margin-top: 2px;
 
-  color: #ea580c;
+  color: #8e3507;
 
   fill: none;
 
@@ -17205,13 +17206,13 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #78716c;
+  color: #56514e;
 
   background: #faf9f8;
 }
 
 .gt-restaurant-icon-button:hover {
-  color: #c2410c;
+  color: #903009;
 
   border-color: #fed7aa;
 
@@ -17243,7 +17244,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #8f8680;
+  color: #504b47;
 
   background: #ede9e6;
 
@@ -17497,7 +17498,7 @@ button.gt-experience-card {
 
 .gt-cars-eyebrow,
 .gt-cars-section-eyebrow {
-  color: #5eead4;
+  color: #0c5e51;
 
   font-size: 0.7rem;
   font-weight: 850;
@@ -17629,7 +17630,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-search-heading > div span {
-  color: #0f766e;
+  color: #0b5953;
 
   font-size: 0.66rem;
   font-weight: 850;
@@ -17638,7 +17639,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-search-heading > div strong {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 0.78rem;
 }
@@ -17656,7 +17657,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #0f766e;
+  color: #0b5953;
   background: #ccfbf1;
 
   font-size: 0.67rem;
@@ -17723,7 +17724,7 @@ button.gt-experience-card {
 
 .gt-car-main-field > span,
 .gt-car-filter-field > span {
-  color: #8a96a3;
+  color: #4b5560;
 
   font-size: 0.64rem;
   font-weight: 750;
@@ -17744,7 +17745,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #0d9488;
+  color: #086059;
 
   fill: none;
   stroke: currentColor;
@@ -17877,7 +17878,7 @@ button.gt-experience-card {
 
   background: #f8fafb;
 
-  color: #52606d;
+  color: #495661;
 
   font-size: 0.7rem;
   font-weight: 650;
@@ -17966,7 +17967,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-start-copy p {
-  color: #71808a;
+  color: #4a545a;
 
   line-height: 1.7;
 }
@@ -18042,7 +18043,7 @@ button.gt-experience-card {
 .gt-cars-start-grid article > span {
   margin-top: 35px;
 
-  color: #0f766e;
+  color: #0b5953;
 
   font-size: 0.66rem;
   font-weight: 800;
@@ -18060,7 +18061,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-start-grid p {
-  color: #77858e;
+  color: #4a545a;
 
   font-size: 0.79rem;
 
@@ -18110,7 +18111,7 @@ button.gt-experience-card {
   margin:
     3px 0 0;
 
-  color: #849198;
+  color: #4b5459;
 }
 
 .gt-cars-skeleton-list {
@@ -18223,7 +18224,7 @@ button.gt-experience-card {
 
   border-radius: 18px;
 
-  color: #b42318;
+  color: #a01f15;
   background: #fee4e2;
 
   font-size: 1.3rem;
@@ -18232,7 +18233,7 @@ button.gt-experience-card {
 
 .gt-cars-error-state
   .gt-cars-empty-icon {
-  color: #0f766e;
+  color: #0b5953;
   background: #ccfbf1;
 }
 
@@ -18274,7 +18275,7 @@ button.gt-experience-card {
 .gt-cars-results-heading p {
   margin: 0;
 
-  color: #77858e;
+  color: #4a545a;
 }
 
 .gt-cars-results-meta {
@@ -18292,7 +18293,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #0f766e;
+  color: #0b5953;
   background: #ccfbf1;
 
   font-size: 0.64rem;
@@ -18300,7 +18301,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-results-meta small {
-  color: #8c989e;
+  color: #4b5458;
 
   font-size: 0.65rem;
 }
@@ -18343,7 +18344,7 @@ button.gt-experience-card {
   width: 24px;
   height: 24px;
 
-  color: #0d9488;
+  color: #086059;
 
   fill: none;
   stroke: currentColor;
@@ -18356,7 +18357,7 @@ button.gt-experience-card {
 }
 
 .gt-cars-insight-grid span {
-  color: #829097;
+  color: #4e585e;
 
   font-size: 0.64rem;
 }
@@ -18450,7 +18451,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #64748b;
+  color: #4b5869;
   background: transparent;
 
   font-size: 0.73rem;
@@ -18458,12 +18459,12 @@ button.gt-experience-card {
 }
 
 .gt-car-sort-active {
-  color: #0f766e;
+  color: #0b5953;
   background: #ccfbf1;
 }
 
 .gt-cars-toolbar > span {
-  color: #8a979e;
+  color: #4f595f;
 
   font-size: 0.68rem;
 }
@@ -18535,7 +18536,7 @@ button.gt-experience-card {
     linear-gradient(
       145deg,
       #1e3a8a,
-      #2563eb
+      #134cca
     );
 }
 
@@ -18658,7 +18659,7 @@ button.gt-experience-card {
 }
 
 .gt-car-result-type {
-  color: #0d9488;
+  color: #086059;
 
   font-size: 0.63rem;
   font-weight: 850;
@@ -18686,7 +18687,7 @@ button.gt-experience-card {
 
   gap: 7px;
 
-  color: #718087;
+  color: #464f54;
 
   font-size: 0.72rem;
 }
@@ -18707,7 +18708,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #0d9488;
+  color: #086059;
 
   fill: none;
   stroke: currentColor;
@@ -18739,7 +18740,7 @@ button.gt-experience-card {
 
   border-radius: 8px;
 
-  color: #607078;
+  color: #49565c;
   background: #f8fafb;
 
   font-size: 0.62rem;
@@ -18768,7 +18769,7 @@ button.gt-experience-card {
 }
 
 .gt-car-result-action-label {
-  color: #95a1a7;
+  color: #4f595f;
 
   font-size: 0.61rem;
 }
@@ -18847,7 +18848,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #607078;
+  color: #49565c;
   background: #f8fafb;
 
   font-size: 0.64rem;
@@ -18855,7 +18856,7 @@ button.gt-experience-card {
 }
 
 .gt-car-external-actions a:hover {
-  color: #0f766e;
+  color: #0b5953;
 
   border-color: #99f6e4;
 
@@ -18885,7 +18886,7 @@ button.gt-experience-card {
 
   border-radius: 12px;
 
-  color: #718087;
+  color: #464f54;
   background: #e9eff0;
 }
 
@@ -19428,7 +19429,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-panel-eyebrow {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.63rem;
   font-weight: 850;
@@ -19437,11 +19438,11 @@ button.gt-experience-card {
 }
 
 .gt-detail-panel-eyebrow-orange {
-  color: #ea580c;
+  color: #8e3507;
 }
 
 .gt-detail-panel-eyebrow-teal {
-  color: #0d9488;
+  color: #086059;
 }
 
 .gt-detail-panel h2 {
@@ -19456,7 +19457,7 @@ button.gt-experience-card {
 .gt-detail-description {
   margin: 0;
 
-  color: #697586;
+  color: #4f5865;
 
   white-space: pre-line;
 
@@ -19465,7 +19466,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-muted {
-  color: #98a2b3;
+  color: #495363;
 }
 
 /* HOTEL CHAIN */
@@ -19480,7 +19481,7 @@ button.gt-experience-card {
 
   border-radius: 12px;
 
-  color: #2563eb;
+  color: #1248bf;
   background: #f0f6ff;
 }
 
@@ -19498,7 +19499,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-chain-card span {
-  color: #7f8fa4;
+  color: #475464;
   font-size: 0.61rem;
 }
 
@@ -19528,7 +19529,7 @@ button.gt-experience-card {
   border: 1px solid #e6eaf0;
   border-radius: 10px;
 
-  color: #667085;
+  color: #4e5565;
   background: #fafbfd;
 
   font-size: 0.72rem;
@@ -19541,7 +19542,7 @@ button.gt-experience-card {
 
   flex-shrink: 0;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
   stroke: currentColor;
@@ -19590,7 +19591,7 @@ button.gt-experience-card {
   width: 20px;
   height: 20px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   fill: none;
   stroke: currentColor;
@@ -19602,7 +19603,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-stay-detail span {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.61rem;
 }
 
@@ -19619,7 +19620,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #92400e;
+  color: #843a0c;
   background: #fffbeb;
 
   font-size: 0.67rem;
@@ -19656,7 +19657,7 @@ button.gt-experience-card {
 .gt-detail-section-heading p {
   margin: 0;
 
-  color: #8793a5;
+  color: #4a5463;
 
   font-size: 0.75rem;
 }
@@ -19722,7 +19723,7 @@ button.gt-experience-card {
 
   border-radius: 13px;
 
-  color: #2563eb;
+  color: #1248bf;
   background: #edf4ff;
 }
 
@@ -19735,7 +19736,7 @@ button.gt-experience-card {
 }
 
 .gt-hotel-rate-copy > span {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 0.59rem;
   font-weight: 850;
@@ -19761,7 +19762,7 @@ button.gt-experience-card {
   align-items: center;
   gap: 5px;
 
-  color: #7e899a;
+  color: #4b5360;
 
   font-size: 0.65rem;
 }
@@ -19782,7 +19783,7 @@ button.gt-experience-card {
 
 .gt-hotel-rate-price span,
 .gt-hotel-rate-price small {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.59rem;
 }
 
@@ -20070,7 +20071,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-info-row span {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.6rem;
 }
 
@@ -20099,7 +20100,7 @@ button.gt-experience-card {
 
   border-radius: 9px;
 
-  color: #697586;
+  color: #4f5865;
   background: #f8fafc;
 
   font-size: 0.72rem;
@@ -20150,7 +20151,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-contact-list span {
-  color: #98a2b3;
+  color: #495363;
   font-size: 0.57rem;
 }
 
@@ -20174,12 +20175,12 @@ button.gt-experience-card {
 }
 
 .gt-detail-source-orange {
-  color: #9a3412;
+  color: #913111;
   background: #fff1e9;
 }
 
 .gt-detail-source-teal {
-  color: #0f766e;
+  color: #0b5953;
   background: #ccfbf1;
 }
 
@@ -20198,7 +20199,7 @@ button.gt-experience-card {
 
 .gt-detail-source-card span,
 .gt-detail-source-card small {
-  opacity: 0.7;
+  opacity: 1;
   font-size: 0.58rem;
 }
 
@@ -20224,7 +20225,7 @@ button.gt-experience-card {
   width: 35px;
   height: 35px;
 
-  color: #98a2b3;
+  color: #495363;
 
   fill: none;
   stroke: currentColor;
@@ -20239,7 +20240,7 @@ button.gt-experience-card {
 
   margin: 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.75rem;
   line-height: 1.6;
@@ -20370,7 +20371,7 @@ button.gt-experience-card {
 .gt-car-provider-notice p {
   margin: 0;
 
-  color: #47736f;
+  color: #365855;
 
   font-size: 0.73rem;
   line-height: 1.6;
@@ -20392,7 +20393,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #667085;
+  color: #4e5565;
   background: #e9eef4;
 
   font-size: 0.67rem;
@@ -20437,7 +20438,7 @@ button.gt-experience-card {
 
   border-radius: 14px;
 
-  color: #2563eb;
+  color: #1248bf;
   background: #edf4ff;
 }
 
@@ -20460,7 +20461,7 @@ button.gt-experience-card {
 
   margin: 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.73rem;
 }
@@ -20555,17 +20556,17 @@ button.gt-experience-card {
 
   border-radius: 20px;
 
-  color: #2563eb;
+  color: #1248bf;
   background: #dbeafe;
 }
 
 .gt-detail-error-orange {
-  color: #ea580c;
+  color: #8e3507;
   background: #ffedd5;
 }
 
 .gt-detail-error-teal {
-  color: #0d9488;
+  color: #086059;
   background: #ccfbf1;
 }
 
@@ -20578,7 +20579,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-error-state > span {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 0.65rem;
   font-weight: 850;
@@ -20598,7 +20599,7 @@ button.gt-experience-card {
 }
 
 .gt-detail-error-state p {
-  color: #8491a3;
+  color: #495361;
 }
 
 .gt-detail-error-state button {
@@ -20616,7 +20617,7 @@ button.gt-experience-card {
   border-radius: 10px;
 
   color: #ffffff;
-  background: #2563eb;
+  background: #134cca;
 
   font-weight: 750;
 }
@@ -21106,7 +21107,7 @@ button.gt-experience-card {
 
   border-radius: 50%;
 
-  background: #2563eb;
+  background: #134cca;
 
   box-shadow:
     0 0 0 5px
@@ -21143,7 +21144,7 @@ button.gt-experience-card {
 
   border-radius: 11px;
 
-  color: #68758a;
+  color: #4e5767;
 
   font-size: 0.75rem;
 
@@ -21156,7 +21157,7 @@ button.gt-experience-card {
 }
 
 .analytics-sidebar-link:hover {
-  color: #1746d1;
+  color: #1642c6;
 
   background: #f0f5ff;
 
@@ -21165,7 +21166,7 @@ button.gt-experience-card {
 }
 
 .analytics-sidebar-link-active {
-  color: #1746d1;
+  color: #1642c6;
 
   background:
     linear-gradient(
@@ -21214,7 +21215,7 @@ button.gt-experience-card {
 }
 
 .analytics-sidebar-info span {
-  color: #8a96a8;
+  color: #4d5868;
 
   font-size: 0.6rem;
 
@@ -21236,7 +21237,7 @@ button.gt-experience-card {
 .analytics-sidebar-info small {
   margin-top: 5px;
 
-  color: #8491a3;
+  color: #495361;
 
   font-size: 0.6rem;
 
@@ -21290,7 +21291,7 @@ button.gt-experience-card {
       135deg,
       #0b1f4a 0%,
       #143c8c 52%,
-      #2563eb 100%
+      #134cca 100%
     );
 
   box-shadow:
@@ -21593,7 +21594,7 @@ button.gt-experience-card {
 /* KPI VARIANTS */
 
 .dashboard-kpi-primary::after {
-  background: #2563eb;
+  background: #134cca;
 }
 
 .dashboard-kpi-secondary::after {
@@ -21618,7 +21619,7 @@ button.gt-experience-card {
 
   gap: 9px;
 
-  color: #718096;
+  color: #495362;
 
   font-size: 0.67rem;
 
@@ -21637,7 +21638,7 @@ button.gt-experience-card {
 
   border-radius: 10px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   background: #edf4ff;
 }
@@ -21658,7 +21659,7 @@ button.gt-experience-card {
 
 .dashboard-kpi-route
   .dashboard-kpi-icon {
-  color: #0f766e;
+  color: #0b5953;
 
   background: #e6fffb;
 }
@@ -21696,7 +21697,7 @@ button.gt-experience-card {
 
   padding-top: 12px;
 
-  color: #9aa5b5;
+  color: #4c5768;
 
   font-size: 0.62rem;
 
@@ -21812,7 +21813,7 @@ button.gt-experience-card {
   margin:
     5px 0 0;
 
-  color: #929dad;
+  color: #495362;
 
   font-size: 0.67rem;
 
@@ -21827,7 +21828,7 @@ button.gt-experience-card {
 
   border-radius: 999px;
 
-  color: #1d4ed8;
+  color: #183fb0;
 
   background: #edf4ff;
 
@@ -21868,7 +21869,7 @@ button.gt-experience-card {
 
 .dashboard-panel
   .recharts-legend-item-text {
-  color: #64748b !important;
+  color: #4b5869 !important;
 
   font-size: 0.68rem;
 }
@@ -21965,7 +21966,7 @@ button.gt-experience-card {
   background:
     linear-gradient(
       90deg,
-      #2563eb,
+      #134cca,
       #38bdf8,
       #6366f1
     );
@@ -21996,7 +21997,7 @@ button.gt-experience-card {
 }
 
 #popular-destinations::before {
-  background: #2563eb;
+  background: #134cca;
 }
 
 #popular-routes::before {
@@ -22028,7 +22029,7 @@ button.gt-experience-card {
 
   border-radius: 14px;
 
-  color: #7d8999;
+  color: #4a535e;
 
   background:
     linear-gradient(
@@ -22052,7 +22053,7 @@ button.gt-experience-card {
   margin:
     7px 0 0;
 
-  color: #98a2b3;
+  color: #495363;
 
   font-size: 0.67rem;
 
@@ -22080,7 +22081,7 @@ button.gt-experience-card {
 
   gap: 13px;
 
-  color: #64748b;
+  color: #4b5869;
 }
 
 .dashboard-loading-spinner {
@@ -22107,7 +22108,8 @@ button.gt-experience-card {
   }
 }
 
-.dashboard-loading p {
+.dashboard-loading p,
+.dashboard-loading h1 {
   font-size: 0.75rem;
 
   font-weight: 700;
@@ -22140,14 +22142,15 @@ button.gt-experience-card {
   text-align: center;
 }
 
-.dashboard-error h2 {
+.dashboard-error h2,
+.dashboard-error h1 {
   color: #172033;
 
   font-size: 1.7rem;
 }
 
 .dashboard-error p {
-  color: #8995a6;
+  color: #495361;
 }
 
 
@@ -22403,7 +22406,7 @@ button.gt-experience-card {
   color: #fff;
   background:
     radial-gradient(circle at 80% 10%, rgba(96, 165, 250, .22), transparent 30%),
-    linear-gradient(135deg, #071a3c, #123d87 58%, #2563eb);
+    linear-gradient(135deg, #071a3c, #123d87 58%, #134cca);
 }
 
 .gt-wishlist-hero-inner {
@@ -22605,7 +22608,7 @@ button.gt-experience-card {
 
 .gt-wishlist-card-body > p {
   margin: 6px 0 0;
-  color: #7c899a;
+  color: #4a5460;
   font-size: .72rem;
   line-height: 1.5;
 }
@@ -22628,7 +22631,7 @@ button.gt-experience-card {
 }
 
 .gt-wishlist-metadata small {
-  color: #98a2b3;
+  color: #495363;
   font-size: .55rem;
 }
 
@@ -22648,7 +22651,7 @@ button.gt-experience-card {
 }
 
 .gt-wishlist-card-footer > small {
-  color: #98a2b3;
+  color: #495363;
   font-size: .58rem;
 }
 
@@ -22656,7 +22659,7 @@ button.gt-experience-card {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: #2563eb;
+  color: #1248bf;
   font-size: .68rem;
   font-weight: 800;
   text-decoration: none;
@@ -22689,7 +22692,7 @@ button.gt-experience-card {
   display: grid;
   place-items: center;
   border-radius: 24px;
-  color: #2563eb;
+  color: #1248bf;
   background: #eaf2ff;
 }
 
@@ -22704,7 +22707,7 @@ button.gt-experience-card {
 
 .gt-wishlist-empty > span,
 .gt-wishlist-guest > span {
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .gt-wishlist-empty h2,
@@ -22718,7 +22721,7 @@ button.gt-experience-card {
 .gt-wishlist-guest p {
   max-width: 500px;
   margin: 0;
-  color: #7f8b9d;
+  color: #4a5461;
   line-height: 1.6;
 }
 
@@ -22736,7 +22739,7 @@ button.gt-experience-card {
   border: 0;
   border-radius: 10px;
   color: #fff;
-  background: #2563eb;
+  background: #134cca;
   font-size: .7rem;
   font-weight: 800;
   text-decoration: none;
@@ -22749,7 +22752,7 @@ button.gt-experience-card {
   place-content: center;
   justify-items: center;
   gap: 15px;
-  color: #64748b;
+  color: #4b5869;
 }
 
 .gt-wishlist-spinner {
@@ -22776,7 +22779,7 @@ button.gt-experience-card {
   place-items: center;
   border-radius: 999px;
   color: #fff;
-  background: #2563eb;
+  background: #134cca;
   font-size: .58rem;
   font-weight: 800;
 }
@@ -23493,7 +23496,7 @@ button.gt-experience-card {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .gt-travel-plan-search-heading strong {
@@ -23541,7 +23544,7 @@ button.gt-experience-card {
 
 .gt-travel-plan-trip-type button.active {
   border-color: #2563eb;
-  background: #2563eb;
+  background: #134cca;
   color: #ffffff;
 }
 
@@ -23587,7 +23590,7 @@ button.gt-experience-card {
   font-weight: 800;
   letter-spacing: 0.07em;
 
-  color: #69758b;
+  color: #4f5868;
 }
 
 
@@ -23653,7 +23656,7 @@ button.gt-experience-card {
 
   background: #ffffff;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 21px;
   font-weight: 700;
@@ -23688,7 +23691,7 @@ button.gt-experience-card {
   border: none;
   border-radius: 14px;
 
-  background: #2563eb;
+  background: #134cca;
   color: #ffffff;
 
   font-size: 14px;
@@ -23758,7 +23761,7 @@ button.gt-experience-card {
   font-weight: 800;
   letter-spacing: 0.08em;
 
-  color: #2563eb;
+  color: #1248bf;
 }
 
 .travel-plan-results-heading h2 {
@@ -23774,7 +23777,7 @@ button.gt-experience-card {
 .travel-plan-results-heading p {
   margin: 0;
 
-  color: #66758f;
+  color: #485365;
 
   font-size: 15px;
   line-height: 1.6;
@@ -23812,7 +23815,7 @@ button.gt-experience-card {
 .travel-plan-status p {
   margin: 0;
 
-  color: #64748b;
+  color: #4b5869;
 }
 
 .travel-plan-empty {
@@ -23823,7 +23826,7 @@ button.gt-experience-card {
   border: 1px solid #e2e8f0;
   border-radius: 18px;
 
-  color: #64748b;
+  color: #4b5869;
 
   text-align: center;
 }
@@ -23899,7 +23902,7 @@ button.gt-experience-card {
 }
 
 .gt-travel-plan-flight-label small {
-  color: #718096;
+  color: #495362;
 
   font-size: 13px;
 }
@@ -23922,7 +23925,7 @@ button.gt-experience-card {
 }
 
 .gt-travel-plan-route small {
-  color: #718096;
+  color: #495362;
 
   font-size: 11px;
   font-weight: 800;
@@ -23938,7 +23941,7 @@ button.gt-experience-card {
 }
 
 .gt-travel-plan-route span {
-  color: #66758f;
+  color: #485365;
 
   font-size: 12px;
 }
@@ -23954,13 +23957,13 @@ button.gt-experience-card {
 }
 
 .gt-travel-plan-price > span {
-  color: #718096;
+  color: #495362;
 
   font-size: 12px;
 }
 
 .gt-travel-plan-price > strong {
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 26px;
   font-weight: 800;
@@ -23974,7 +23977,7 @@ button.gt-experience-card {
   border: none;
   border-radius: 10px;
 
-  background: #2563eb;
+  background: #134cca;
   color: #ffffff;
 
   font-size: 13px;
@@ -24042,7 +24045,7 @@ button.gt-experience-card {
 
   margin-bottom: 7px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 11px;
   font-weight: 800;
@@ -24062,7 +24065,7 @@ button.gt-experience-card {
 .travel-plan-service-card p {
   margin: 0 0 12px;
 
-  color: #66758f;
+  color: #485365;
 
   font-size: 14px;
   line-height: 1.5;
@@ -24114,7 +24117,7 @@ button.gt-experience-card {
 }
 
 .travel-plan-summary-grid span {
-  color: #718096;
+  color: #495362;
 
   font-size: 12px;
   font-weight: 700;
@@ -24286,7 +24289,7 @@ button.gt-experience-card {
 .travel-plan-star-label {
   margin-left: 0.4rem;
   font-size: 0.82rem;
-  color: #667c87;
+  color: #46555d;
   white-space: nowrap;
 }
 
@@ -24305,19 +24308,19 @@ button.gt-experience-card {
 .travel-plan-score-icon {
   font-size: 1.05rem;
   line-height: 1;
-  color: #1d4ed8;
+  color: #183fb0;
 }
 
 /* Cantidad de reseñas */
 .travel-plan-hotel-reviews {
   font-size: 0.82rem;
-  color: #667c87;
+  color: #46555d;
 }
 
 /* Cuando no existe categoría de estrellas */
 .travel-plan-no-rating {
   font-size: 0.82rem;
-  color: #667c87;
+  color: #46555d;
 }
 
 /* Responsive */
@@ -24351,7 +24354,7 @@ button.gt-experience-card {
 
 .gt-travel-plan-flight-duration span:last-child {
   font-size: 0.78rem;
-  color: #667c87;
+  color: #46555d;
 }
 
 .gt-travel-plan-flight-label > div {
@@ -24580,7 +24583,7 @@ button.gt-experience-card {
 
   border-radius: 50%;
 
-  background: #2563eb;
+  background: #134cca;
 
   box-shadow:
     0 8px 20px
@@ -25075,7 +25078,7 @@ button.gt-experience-card {
 
   background: #eff6ff;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 11px;
   font-weight: 800;
@@ -25168,7 +25171,7 @@ button.gt-experience-card {
 }
 
 .gt-control-label {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 0.82rem;
   font-weight: 700;
@@ -25218,7 +25221,7 @@ button.gt-experience-card {
   width: 24px;
   height: 24px;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 12px;
 }
@@ -25226,7 +25229,7 @@ button.gt-experience-card {
 .gt-language-code {
   margin: 0 4px;
 
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 10px;
   font-weight: 900;
@@ -25336,7 +25339,7 @@ button.gt-experience-card {
 }
 
 .destination-autocomplete-city small {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 12px;
 }
@@ -25350,7 +25353,7 @@ button.gt-experience-card {
 
   background: #eff6ff;
 
-  color: #2563eb;
+  color: #1248bf;
 
   font-size: 12px;
   font-weight: 800;
@@ -25359,14 +25362,14 @@ button.gt-experience-card {
 .destination-autocomplete-status {
   padding: 14px;
 
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 13px;
   text-align: center;
 }
 
 .destination-autocomplete-error {
-  color: #b91c1c;
+  color: #a31919;
 }
 
 /* MOBILE LANGUAGE */
@@ -25379,7 +25382,7 @@ button.gt-experience-card {
 }
 
 .gt-mobile-language > span {
-  color: #64748b;
+  color: #4b5869;
 
   font-size: 12px;
   font-weight: 800;
@@ -26543,16 +26546,16 @@ body,
 
 .gt-select-option.is-active {
   background: #eef4ff;
-  color: #1d4ed8;
+  color: #183fb0;
 }
 
 .gt-select-option.is-selected {
-  color: #1d4ed8;
+  color: #183fb0;
   font-weight: 700;
 }
 
 .gt-select-option.is-disabled {
-  color: #98a2b3;
+  color: #495363;
   cursor: not-allowed;
 }
 
@@ -26815,7 +26818,7 @@ main.hotels-page {
   }
 
   .gt-mobile-link-active {
-    color: #1746d1;
+    color: #1642c6;
     background: #edf4ff;
   }
 
@@ -26835,7 +26838,7 @@ main.hotels-page {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #64748b;
+    color: #4b5869;
     font-size: 0.76rem;
     font-weight: 650;
   }
@@ -26868,7 +26871,7 @@ main.hotels-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #1d4ed8;
+    color: #183fb0;
     background: #dbeafe;
     font-weight: 800;
   }
@@ -26893,7 +26896,7 @@ main.hotels-page {
     padding: 0 12px;
     border: 1px solid #fecaca;
     border-radius: 9px;
-    color: #dc2626;
+    color: #a31a1a;
     background: #fff5f5;
     font-size: 0.73rem;
     font-weight: 700;
@@ -26930,4 +26933,141 @@ main.hotels-page {
 
 .recharts-responsive-container * {
   max-width: none;
+}
+
+/* =========================================================
+   CARGA GLOBAL — barra superior y aviso cuando algo tarda
+   ========================================================= */
+
+.gt-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.gt-global-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20000;
+
+  height: 4px;
+  overflow: hidden;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.gt-global-progress.is-visible {
+  opacity: 1;
+}
+
+.gt-global-progress span {
+  display: block;
+  width: 40%;
+  max-width: none;
+  height: 100%;
+
+  background: linear-gradient(90deg, #1746d1, #2f80ed);
+  border-radius: 0 4px 4px 0;
+
+  animation: gt-progress-slide 1.1s ease-in-out infinite;
+}
+
+@keyframes gt-progress-slide {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(260%);
+  }
+}
+
+.gt-global-loading-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 20000;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+
+  transform: translateX(-50%);
+
+  color: #ffffff;
+  background: #0f172a;
+
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28);
+
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.gt-global-loading-spinner {
+  flex-shrink: 0;
+
+  width: 18px;
+  height: 18px;
+
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+
+  animation: gt-spin 0.8s linear infinite;
+}
+
+@keyframes gt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-global-progress span {
+    width: 100%;
+    animation: none;
+    opacity: 0.85;
+  }
+
+  .gt-global-loading-spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+/* =========================================================
+   ACCESIBILIDAD — WCAG 2.2 AAA (contraste 7:1)
+   El logo del pie de página va sobre fondo oscuro: su "Tour" usa un
+   azul claro para mantener el contraste.
+   ========================================================= */
+
+.gt-footer .gt-brand-text strong,
+.gt-footer-logo .gt-brand-text strong {
+  color: #93c5fd;
+}
+
+.dashboard-loading h1 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* La etiqueta del encabezado de Alquiler de autos va sobre la foto
+   oscura: mantiene su verde claro (la de las secciones claras usa el
+   verde oscuro de arriba). */
+.gt-cars-eyebrow {
+  color: #5eead4;
 }

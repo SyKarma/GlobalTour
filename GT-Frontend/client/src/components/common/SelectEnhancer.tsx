@@ -330,16 +330,20 @@ function SelectEnhancer() {
   const selectedValue = state.select.value;
   const listId = 'gt-select-popup';
 
+  const listLabel =
+    state.select.getAttribute('aria-label') ??
+    (state.select.labels?.[0]?.textContent?.trim() ||
+      'Opciones');
+
+  // The list lives in its own labelled region so it is not "content
+  // outside landmarks" for screen readers and axe.
   return createPortal(
+    <div role="region" aria-label={listLabel}>
     <ul
       ref={listRef}
       id={listId}
       role="listbox"
-      aria-label={
-        state.select.getAttribute('aria-label') ??
-        state.select.labels?.[0]?.textContent?.trim() ??
-        undefined
-      }
+      aria-label={listLabel}
       className={`gt-select-popup gt-select-popup-${state.placement}`}
       style={{
         top: state.placement === 'down' ? state.top : undefined,
@@ -394,7 +398,8 @@ function SelectEnhancer() {
           </li>
         );
       })}
-    </ul>,
+    </ul>
+    </div>,
     document.body,
   );
 }

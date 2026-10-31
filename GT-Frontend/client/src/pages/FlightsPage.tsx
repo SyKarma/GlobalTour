@@ -1669,7 +1669,7 @@ function FlightsPage() {
 
               <section className="gt-flight-results-layout">
 
-                <aside className="gt-flight-filter-panel">
+                <div className="gt-flight-filter-panel">
 
                   <div className="gt-flight-filter-header">
 
@@ -1919,7 +1919,7 @@ function FlightsPage() {
 
                   </div>
 
-                </aside>
+                </div>
 
                 <div className="gt-flight-results-column">
 
@@ -2445,4 +2445,4 @@ function InfoIcon() {
   );
 }
 
-export default FlightsPage;
+export default FlightsPage;

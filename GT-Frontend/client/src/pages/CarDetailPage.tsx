@@ -210,7 +210,26 @@ function CarDetailPage() {
     return (
       <main className="gt-car-detail-page">
 
-        <div className="gt-detail-loading-shell">
+        <div
+
+          className="gt-detail-loading-shell"
+
+          role="status"
+
+          aria-busy="true"
+
+        >
+
+          <h1 className="gt-visually-hidden">
+
+            {t(
+
+              'meta.loading',
+
+            )}
+
+          </h1>
+
 
           <div className="gt-detail-loading-hero" />
 
@@ -557,7 +576,7 @@ function CarDetailPage() {
 
           </div>
 
-          <aside className="gt-detail-sidebar">
+          <div className="gt-detail-sidebar">
 
             <article className="gt-detail-panel">
 
@@ -734,7 +753,7 @@ function CarDetailPage() {
 
             </article>
 
-          </aside>
+          </div>
 
         </section>
 

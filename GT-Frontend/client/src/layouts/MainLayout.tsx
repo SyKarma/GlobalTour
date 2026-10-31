@@ -161,7 +161,12 @@ function MainLayout() {
             </span>
           </NavLink>
 
-          <nav className="gt-desktop-nav">
+          <nav
+            className="gt-desktop-nav"
+            aria-label={t(
+              'meta.mainNavigation',
+            )}
+          >
 
             {navigation.map(
               (
@@ -420,7 +425,12 @@ function MainLayout() {
         {isMobileMenuOpen && (
           <div className="gt-mobile-panel">
 
-            <nav className="gt-mobile-navigation">
+            <nav
+              className="gt-mobile-navigation"
+              aria-label={t(
+                'meta.mobileNavigation',
+              )}
+            >
 
               {navigation.map(
                 (

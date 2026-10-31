@@ -1,4 +1,6 @@
 import { apiClient } from '../api/client';
+import i18n from '../i18n';
+import { startLoading } from './loadingTracker';
 import type {
   AuthMeResponse,
   AuthUser,
@@ -16,6 +18,9 @@ export const loginWithGoogle = () => {
     returnTo: returnTo.toString(),
   });
 
+  // Leaving for Google can take a moment: show that it is in progress.
+  startLoading(i18n.t('common.connectingGoogle'));
+
   window.location.assign(
     `${API_URL}/api/auth/google?${params.toString()}`,
   );
@@ -30,4 +35,4 @@ export const getCurrentUser = async (): Promise<AuthUser> => {
 
 export const logout = async (): Promise<void> => {
   await apiClient.post('/api/auth/logout');
-};
+};

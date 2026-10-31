@@ -1,4 +1,17 @@
 {
+  "meta": {
+    "siteName": "GlobalTour",
+    "tagline": "Compare voos, hotéis, restaurantes e carros",
+    "description": "O GlobalTour reúne voos, hospedagem, restaurantes e aluguel de carros em um só lugar para planejar sua viagem.",
+    "hotelDetail": "Detalhes da hospedagem",
+    "restaurantDetail": "Detalhes do restaurante",
+    "carDetail": "Detalhes do aluguel",
+    "notFound": "Página não encontrada",
+    "loading": "Carregando…",
+    "mainNavigation": "Navegação principal",
+    "mobileNavigation": "Navegação do menu",
+    "dashboardNavigation": "Seções do painel"
+  },
   "language": {
     "selector": "Idioma",
     "spanish": "Espanhol",
@@ -20,6 +33,8 @@
     "currency": "Moeda",
     "language": "Idioma",
     "loading": "Carregando...",
+    "loadingSlow": "Isso está demorando um pouco mais que o normal, ainda carregando…",
+    "connectingGoogle": "Conectando com o Google…",
     "searching": "Buscando...",
     "search": "Buscar",
     "error": "Ocorreu um erro",

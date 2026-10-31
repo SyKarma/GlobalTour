@@ -388,15 +388,19 @@ function DashboardPage() {
     return (
       <main className="analytics-page">
 
-        <div className="dashboard-loading">
+        <div
+          className="dashboard-loading"
+          role="status"
+          aria-busy="true"
+        >
 
           <div className="dashboard-loading-spinner" />
 
-          <p>
+          <h1>
             {t(
               'dashboard.loading',
             )}
-          </p>
+          </h1>
 
         </div>
 
@@ -413,11 +417,11 @@ function DashboardPage() {
 
         <div className="dashboard-error">
 
-          <h2>
+          <h1>
             {t(
               'dashboard.errors.title',
             )}
-          </h2>
+          </h1>
 
           <p>
             {t(
@@ -442,7 +446,7 @@ function DashboardPage() {
 
       <div className="analytics-layout">
 
-        <aside className="analytics-sidebar">
+        <div className="analytics-sidebar">
 
           <div className="analytics-sidebar-heading">
             {t(
@@ -450,7 +454,12 @@ function DashboardPage() {
             )}
           </div>
 
-          <nav className="analytics-sidebar-nav">
+          <nav
+            className="analytics-sidebar-nav"
+            aria-label={t(
+              'meta.dashboardNavigation',
+            )}
+          >
 
             <a
               href="#dashboard-summary"
@@ -560,7 +569,7 @@ function DashboardPage() {
 
           </div>
 
-        </aside>
+        </div>
 
         <section className="analytics-content">
 

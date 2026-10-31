@@ -609,7 +609,26 @@ function HotelDetailPage() {
     return (
       <main className="gt-hotel-detail-page">
 
-        <div className="gt-detail-loading-shell">
+        <div
+
+          className="gt-detail-loading-shell"
+
+          role="status"
+
+          aria-busy="true"
+
+        >
+
+          <h1 className="gt-visually-hidden">
+
+            {t(
+
+              'meta.loading',
+
+            )}
+
+          </h1>
+
 
           <div className="gt-detail-loading-hero" />
 
@@ -1040,7 +1059,7 @@ function HotelDetailPage() {
 
           </div>
 
-          <aside className="gt-hotel-stay-card">
+          <div className="gt-hotel-stay-card">
 
             <span className="gt-detail-panel-eyebrow">
               {t(
@@ -1163,7 +1182,7 @@ function HotelDetailPage() {
               </p>
             )}
 
-          </aside>
+          </div>
 
         </section>
 
