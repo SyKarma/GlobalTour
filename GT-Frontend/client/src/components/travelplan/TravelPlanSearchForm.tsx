@@ -13,6 +13,11 @@ import {
   useCurrency,
 } from '../../hooks/useCurrency';
 
+import {
+  getTodayIso,
+  isPastDate,
+} from '../../utils/dates';
+
 import type {
   Destination,
 } from '../../types/destination.types';
@@ -132,6 +137,7 @@ function TravelPlanSearchForm({
     event.preventDefault();
 
     if (
+      hasInvalidDates ||
       !origin ||
       !destination ||
       !departureDate
@@ -168,7 +174,19 @@ function TravelPlanSearchForm({
     });
   };
 
+  const today = getTodayIso();
+
+  const hasInvalidDates =
+    isPastDate(departureDate) ||
+    (
+      tripType ===
+        'round-trip' &&
+      Boolean(returnDate) &&
+      returnDate < departureDate
+    );
+
   const isSearchDisabled =
+    hasInvalidDates ||
     !origin ||
     !destination ||
     !departureDate ||
@@ -370,6 +388,8 @@ function TravelPlanSearchForm({
                   value={
                     departureDate
                   }
+                  min={today}
+                  aria-invalid={isPastDate(departureDate)}
                   aria-label={t(
                     'travelPlan.form.fields.departureAria',
                   )}
@@ -401,7 +421,7 @@ function TravelPlanSearchForm({
                     }
                     min={
                       departureDate ||
-                      undefined
+                      today
                     }
                     aria-label={t(
                       'travelPlan.form.fields.returnAria',

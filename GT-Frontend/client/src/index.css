@@ -27071,3 +27071,140 @@ main.hotels-page {
 .gt-cars-eyebrow {
   color: #5eead4;
 }
+
+
+/* =========================================================
+   LOGO — nuevo logotipo (avión sobre el globo) en el encabezado
+   y el pie de página. Va sobre una placa blanca para que se lea
+   igual en fondos claros y oscuros.
+   ========================================================= */
+
+.gt-brand-symbol {
+  padding: 2px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+}
+
+.gt-brand-symbol img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* =========================================================
+   INICIO — BUSCADOR "EXPLORAR"
+   Los formularios de vuelos y hospedaje se muestran en una sola
+   fila (como en sus propias páginas) en lugar de campos apilados.
+   ========================================================= */
+
+.gt-home-search-content .trip-search,
+.gt-home-search-content .hotel-search {
+  margin: 0;
+  padding: 8px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.gt-home-search-content .trip-search-row,
+.gt-home-search-content .hotel-search-row {
+  display: grid;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.gt-home-search-content .trip-search-row {
+  grid-template-columns:
+    minmax(0, 1.3fr)
+    minmax(0, 1.3fr)
+    minmax(0, 0.9fr)
+    minmax(0, 0.9fr)
+    auto;
+}
+
+.gt-home-search-content .hotel-search-row {
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(0, 0.9fr)
+    minmax(0, 0.9fr)
+    minmax(0, 0.8fr)
+    auto;
+}
+
+.gt-home-search-content .trip-search-row > *,
+.gt-home-search-content .hotel-search-row > * {
+  min-width: 0;
+}
+
+.gt-home-search-content .search-box {
+  min-height: 72px;
+  border-radius: 14px;
+}
+
+.gt-home-search-content .search-box input,
+.gt-home-search-content .search-box select {
+  font-size: 1rem;
+}
+
+.gt-home-search-content .search-button {
+  width: auto;
+  min-width: 150px;
+  min-height: 72px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.gt-home-search-content .search-button:disabled {
+  opacity: 0.6;
+}
+
+@media (max-width: 1100px) {
+  .gt-home-search-content .trip-search-row,
+  .gt-home-search-content .hotel-search-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gt-home-search-content .hotel-search-row .search-city {
+    grid-column: 1 / -1;
+  }
+
+  .gt-home-search-content .search-button {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 56px;
+  }
+}
+
+@media (max-width: 640px) {
+  .gt-home-search-content .trip-search-row,
+  .gt-home-search-content .hotel-search-row {
+    grid-template-columns: 1fr;
+  }
+
+  .gt-home-search-content .trip-search,
+  .gt-home-search-content .hotel-search {
+    padding: 4px;
+  }
+
+  .gt-home-search-content .search-box {
+    min-height: 64px;
+  }
+}
+
+/* La ciudad del hospedaje ocupa la fila completa en tablet
+   también en la página de Hospedaje. */
+@media (max-width: 950px) {
+  .hotel-search-row .search-city {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Fecha anterior a hoy escrita a mano: se marca en rojo. */
+.search-box:has(input[aria-invalid="true"]),
+.gt-travel-plan-field:has(input[aria-invalid="true"]) {
+  border-color: #b42318;
+}

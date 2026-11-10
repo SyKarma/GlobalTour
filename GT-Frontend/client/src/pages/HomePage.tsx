@@ -1,7 +1,6 @@
 import {
   useEffect,
   useState,
-  type ReactNode,
 } from 'react';
 
 import {
@@ -15,6 +14,7 @@ import {
 
 import TripSearchForm from '../components/trip/TripSearchForm';
 import HotelSearchForm from '../components/hotels/HotelSearchForm';
+import PlaceQuickSearchForm from '../components/home/PlaceQuickSearchForm';
 
 type SearchTab =
   | 'flights'
@@ -543,46 +543,12 @@ function HomePage() {
 
               {activeTab ===
                 'restaurants' && (
-                <ModuleSearchShortcut
-                  eyebrow={t(
-                    'home.search.restaurants.eyebrow',
-                  )}
-                  title={t(
-                    'home.search.restaurants.title',
-                  )}
-                  description={t(
-                    'home.search.restaurants.description',
-                  )}
-                  route="/restaurants"
-                  buttonText={t(
-                    'home.search.restaurants.button',
-                  )}
-                  icon={
-                    <RestaurantIcon />
-                  }
-                />
+                <PlaceQuickSearchForm kind="restaurants" />
               )}
 
               {activeTab ===
                 'cars' && (
-                <ModuleSearchShortcut
-                  eyebrow={t(
-                    'home.search.cars.eyebrow',
-                  )}
-                  title={t(
-                    'home.search.cars.title',
-                  )}
-                  description={t(
-                    'home.search.cars.description',
-                  )}
-                  route="/cars"
-                  buttonText={t(
-                    'home.search.cars.button',
-                  )}
-                  icon={
-                    <CarIcon />
-                  }
-                />
+                <PlaceQuickSearchForm kind="cars" />
               )}
 
             </div>
@@ -940,65 +906,6 @@ function ExperienceContent({
         <ArrowIcon />
       </div>
     </>
-  );
-}
-
-/*
- * =========================================
- * SHORTCUT
- * =========================================
- */
-
-interface ModuleSearchShortcutProps {
-  eyebrow: string;
-  title: string;
-  description: string;
-  route: string;
-  buttonText: string;
-  icon: ReactNode;
-}
-
-function ModuleSearchShortcut({
-  eyebrow,
-  title,
-  description,
-  route,
-  buttonText,
-  icon,
-}: ModuleSearchShortcutProps) {
-  return (
-    <div className="gt-module-shortcut">
-
-      <div className="gt-module-shortcut-icon">
-        {icon}
-      </div>
-
-      <div className="gt-module-shortcut-copy">
-
-        <span>
-          {eyebrow}
-        </span>
-
-        <h3>
-          {title}
-        </h3>
-
-        <p>
-          {description}
-        </p>
-
-      </div>
-
-      <Link
-        to={route}
-        className="gt-primary-action"
-      >
-        {buttonText}
-
-        <ArrowIcon />
-      </Link>
-
-    </div>
   );
 }
 

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
 import { getDestinationByIata } from '../../services/destinations.service';
 import { useCurrency } from '../../hooks/useCurrency';
+import { getTodayIso, isPastDate } from '../../utils/dates';
 
 import type { Destination } from '../../types/destination.types';
 
@@ -183,6 +184,7 @@ function FlightSearchEditor({
     event.preventDefault();
 
     if (
+      hasInvalidDates ||
       !origin ||
       !destination ||
       !departureDate
@@ -231,11 +233,23 @@ function FlightSearchEditor({
     setIsOpen(false);
   };
 
+  const today = getTodayIso();
+
+  const hasInvalidDates =
+    isPastDate(departureDate) ||
+    (
+      tripType ===
+        'round-trip' &&
+      Boolean(returnDate) &&
+      returnDate < departureDate
+    );
+
   const isSearchDisabled =
     isInitializing ||
     !origin ||
     !destination ||
     !departureDate ||
+    hasInvalidDates ||
     (
       tripType ===
         'round-trip' &&
@@ -373,6 +387,8 @@ function FlightSearchEditor({
                 value={
                   departureDate
                 }
+                min={today}
+                aria-invalid={isPastDate(departureDate)}
                 aria-label={t(
                   'forms.flights.editor.departureAria',
                 )}
@@ -405,7 +421,7 @@ function FlightSearchEditor({
                   }
                   min={
                     departureDate ||
-                    undefined
+                    today
                   }
                   aria-label={t(
                     'forms.flights.editor.returnAria',

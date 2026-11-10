@@ -22,6 +22,11 @@ import {
   useCurrency,
 } from '../../hooks/useCurrency';
 
+import {
+  getTodayIso,
+  isPastDate,
+} from '../../utils/dates';
+
 import type {
   Destination,
 } from '../../types/destination.types';
@@ -172,6 +177,7 @@ function TripSearchForm({
     event.preventDefault();
 
     if (
+      hasInvalidDates ||
       !origin ||
       !destination ||
       !departureAt
@@ -207,7 +213,17 @@ function TripSearchForm({
     );
   };
 
+  const today = getTodayIso();
+
+  const hasInvalidDates =
+    isPastDate(departureAt) ||
+    (
+      Boolean(returnAt) &&
+      returnAt < departureAt
+    );
+
   const isSearchDisabled =
+    hasInvalidDates ||
     !origin ||
     !destination ||
     !departureAt;
@@ -267,6 +283,8 @@ function TripSearchForm({
             value={
               departureAt
             }
+            min={today}
+            aria-invalid={isPastDate(departureAt)}
             onChange={(
               event,
             ) =>
@@ -297,7 +315,7 @@ function TripSearchForm({
             }
             min={
               departureAt ||
-              undefined
+              today
             }
             onChange={(
               event,

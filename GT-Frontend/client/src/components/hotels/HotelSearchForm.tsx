@@ -5,25 +5,37 @@ import {
 
 import {
   useNavigate,
+  useSearchParams,
 } from 'react-router-dom';
 
 import {
   useTranslation,
 } from 'react-i18next';
 
-import DestinationAutocomplete from '../destinations/DestinationAutocomplete';
-
 import {
   useCurrency,
 } from '../../hooks/useCurrency';
 
-import type {
-  Destination,
-} from '../../types/destination.types';
+import {
+  addDaysIso,
+  getTodayIso,
+  isPastDate,
+} from '../../utils/dates';
+
+/*
+ * Hotel search works with any city, town or area name.
+ * The backend geocodes the text, so it does not depend on
+ * the airport list used by the flight search.
+ */
 
 function HotelSearchForm() {
   const navigate =
     useNavigate();
+
+  const [
+    searchParams,
+  ] =
+    useSearchParams();
 
   const {
     t,
@@ -35,31 +47,72 @@ function HotelSearchForm() {
   } =
     useCurrency();
 
+  const today =
+    getTodayIso();
+
+  const initialCheckin =
+    searchParams.get(
+      'checkin',
+    ) ?? '';
+
+  const initialCheckout =
+    searchParams.get(
+      'checkout',
+    ) ?? '';
+
   const [
-    destination,
-    setDestination,
+    cityName,
+    setCityName,
   ] =
-    useState<Destination | null>(
-      null,
+    useState(
+      searchParams.get(
+        'cityName',
+      ) ?? '',
     );
 
   const [
     checkin,
     setCheckin,
   ] =
-    useState('');
+    useState(
+      isPastDate(
+        initialCheckin,
+      )
+        ? ''
+        : initialCheckin,
+    );
 
   const [
     checkout,
     setCheckout,
   ] =
-    useState('');
+    useState(
+      isPastDate(
+        initialCheckout,
+      )
+        ? ''
+        : initialCheckout,
+    );
 
   const [
     adults,
     setAdults,
   ] =
-    useState('2');
+    useState(
+      searchParams.get(
+        'adults',
+      ) || '2',
+    );
+
+  const cleanCity =
+    cityName.trim();
+
+  const checkoutMin =
+    addDaysIso(
+      checkin ||
+        today,
+      1,
+    );
 
   const handleCheckinChange =
     (
@@ -80,6 +133,28 @@ function HotelSearchForm() {
       }
     };
 
+  const hasInvalidDates =
+    isPastDate(
+      checkin,
+    ) ||
+    (
+      Boolean(
+        checkin,
+      ) &&
+      Boolean(
+        checkout,
+      ) &&
+      checkout <=
+        checkin
+    );
+
+  const isSearchDisabled =
+    cleanCity.length <
+      2 ||
+    !checkin ||
+    !checkout ||
+    hasInvalidDates;
+
   const handleSubmit = (
     event:
       FormEvent<HTMLFormElement>,
@@ -87,9 +162,7 @@ function HotelSearchForm() {
     event.preventDefault();
 
     if (
-      !destination ||
-      !checkin ||
-      !checkout
+      isSearchDisabled
     ) {
       return;
     }
@@ -97,10 +170,7 @@ function HotelSearchForm() {
     const params =
       new URLSearchParams({
         cityName:
-          destination.cityName,
-
-        countryCode:
-          destination.countryCode,
+          cleanCity,
 
         checkin,
 
@@ -117,11 +187,6 @@ function HotelSearchForm() {
     );
   };
 
-  const isSearchDisabled =
-    !destination ||
-    !checkin ||
-    !checkout;
-
   return (
     <form
       className="hotel-search"
@@ -131,20 +196,37 @@ function HotelSearchForm() {
     >
       <div className="hotel-search-row">
 
-        <DestinationAutocomplete
-          label={t(
-            'forms.hotels.destination',
-          )}
-          placeholder={t(
-            'forms.hotels.destinationPlaceholder',
-          )}
-          value={
-            destination
-          }
-          onChange={
-            setDestination
-          }
-        />
+        <label className="search-box search-city">
+
+          <span>
+            {t(
+              'forms.hotels.destination',
+            )}
+          </span>
+
+          <input
+            type="text"
+            value={
+              cityName
+            }
+            maxLength={
+              80
+            }
+            autoComplete="off"
+            placeholder={t(
+              'forms.hotels.destinationPlaceholder',
+            )}
+            onChange={(
+              event,
+            ) =>
+              setCityName(
+                event.target
+                  .value,
+              )
+            }
+          />
+
+        </label>
 
         <label className="search-box search-date">
 
@@ -162,6 +244,12 @@ function HotelSearchForm() {
             value={
               checkin
             }
+            min={
+              today
+            }
+            aria-invalid={isPastDate(
+              checkin,
+            )}
             onChange={(
               event,
             ) =>
@@ -191,8 +279,7 @@ function HotelSearchForm() {
               checkout
             }
             min={
-              checkin ||
-              undefined
+              checkoutMin
             }
             onChange={(
               event,

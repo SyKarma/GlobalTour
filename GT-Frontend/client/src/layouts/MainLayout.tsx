@@ -150,7 +150,7 @@ function MainLayout() {
             }
           >
             <span className="gt-brand-symbol">
-              <GlobeIcon />
+              <img src="/logo.svg" alt="" width="34" height="34" />
             </span>
 
             <span className="gt-brand-text">
@@ -586,7 +586,7 @@ function MainLayout() {
               className="gt-brand gt-footer-logo"
             >
               <span className="gt-brand-symbol">
-                <GlobeIcon />
+                <img src="/logo.svg" alt="" width="34" height="34" />
               </span>
 
               <span className="gt-brand-text">
@@ -684,27 +684,6 @@ function MainLayout() {
       </footer>
 
     </div>
-  );
-}
-
-function GlobeIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <circle
-        cx="12"
-        cy="12"
-        r="9"
-      />
-
-      <path d="M3 12h18" />
-
-      <path d="M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21" />
-
-      <path d="M12 3C9.5 5.7 8.2 8.7 8.2 12S9.5 18.3 12 21" />
-    </svg>
   );
 }
 
